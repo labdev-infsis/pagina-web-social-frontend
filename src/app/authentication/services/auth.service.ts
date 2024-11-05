@@ -25,12 +25,13 @@ export class AuthService {
     return token != null;
   }
 
-  login(phone: number, password: string) {
+  login(username: string, password: string) {
     var user = new User();
 
     //@ts-ignore
     user.id = 0;
-    user.phone = phone;
+    user.name = username;
+    user.phone = 0;
     user.password = password;
     user.password_confirmation = password;
 

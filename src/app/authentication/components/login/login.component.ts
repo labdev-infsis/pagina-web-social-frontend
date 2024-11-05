@@ -1,16 +1,20 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [ReactiveFormsModule, NgClass, NgIf],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
   public hide = true;
+  public inputType: string = 'password';
   public errorMessage!: string;
   @ViewChild('userFocus', { static: true })
   usernameField!: ElementRef;
@@ -28,7 +32,7 @@ export class LoginComponent implements OnInit {
 
   private buildForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.maxLength(100)]],
+      username: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
       password: ['', [Validators.required, Validators.maxLength(100)]]
     });
   }
@@ -46,8 +50,13 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  hasErrors(controlName:string, errorType: string){
+    return this.loginForm.get(controlName)?.hasError(errorType) && this.loginForm.get(controlName)?.touched;
+  }
+
   togglePasswordVisibility() {
     this.hide = !this.hide;
+    this.inputType = this.inputType === 'password' ? 'text' : 'password';
   }
 
 }

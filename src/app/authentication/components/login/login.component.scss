@@ -1,0 +1,45 @@
+.container {
+    background-image: linear-gradient(rgb(0 55 112 / 99%),rgb(255 238 0 / 90%));
+    border-radius: 0.5rem;
+    padding: 1.7rem 2rem;
+}
+
+.modal-content {
+    color: white;
+    background-image: 
+    linear-gradient(rgb(0 55 112 / 70%),rgb(255 238 0 / 70%));
+    // url("../../assets/imagen-fondo-form-login.png");
+    padding: 2rem 1rem;
+}
+
+.btn {
+    background-color: #003770;
+}
+
+.botones {
+    justify-items: center;
+    padding: 1rem 0;
+}
+
+.input-password {
+    position: relative;
+}
+
+.bi {
+    cursor: pointer;
+    position: absolute;
+    right: 10px; //35px is-invalid
+    color: #9FB0E7; 
+    transform: translateY(-150%);
+    transition: .4s ease all;
+}
+
+.bi:hover {
+    color: var(--bs-body-color); //#1C1B1F
+}
+
+@media (max-width: 576px) { 
+    .boton {
+        min-width: 100%;
+    }
+}

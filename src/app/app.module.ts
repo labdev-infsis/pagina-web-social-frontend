@@ -13,6 +13,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import { CommonModule } from '@angular/common';
+import { LoginComponent } from "./authentication/components/login/login.component";
+import {  HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -30,8 +32,10 @@ import { CommonModule } from '@angular/common';
     InputTextModule,
     RippleModule,
     CommonModule,
-    PostsModule
-  ],
+    PostsModule,
+    LoginComponent,
+    HttpClientModule
+],
   providers: [],
   bootstrap: [AppComponent]
 })
