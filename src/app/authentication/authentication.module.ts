@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthGuardService } from './services/auth-guard.service';
@@ -10,10 +9,7 @@ import { UserService } from './services/user.service';
 import { JwtDecodeService } from './services/jwt-decode.service';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { HttpClientModule } from '@angular/common/http';
-
-import { InputTextModule } from "primeng/inputtext";
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { LoginComponent } from './components/login/login.component';
 @NgModule({
   declarations: [LoginComponent, ChangePasswordComponent],
   imports: [
@@ -21,16 +17,13 @@ import { InputNumberModule } from 'primeng/inputnumber';
     FormsModule,
     RouterModule,
     HttpClientModule,
-    ReactiveFormsModule,
-		InputTextModule,
-		ButtonModule,
-    InputNumberModule,
+    ReactiveFormsModule
   ],
   providers: [
     AuthGuardService,
     AuthService,
     JwtDecodeService,
-    UserDatastoreService,    
+    UserDatastoreService,
     UserService
   ]
 })
