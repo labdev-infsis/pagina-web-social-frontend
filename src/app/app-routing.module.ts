@@ -5,7 +5,7 @@ import { LoginComponent } from './authentication/components/login/login.componen
 import { ViewAllPostsComponent } from './posts/components/view-all-posts/view-all-posts.component';
 
 const routes: Routes = [
-  { path: 'login', redirectTo: 'login', pathMatch: 'full' },
+  /* { path: 'login', redirectTo: 'login', pathMatch: 'full' }, */
   {
     path: '', component: HomeComponent,
     children: [
@@ -15,8 +15,8 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'login', component: LoginComponent },
-  { path: '**', component: LoginComponent }
+ /*  { path: 'login', component: LoginComponent },
+  { path: '**', component: LoginComponent } */
 ];
 
 @NgModule({

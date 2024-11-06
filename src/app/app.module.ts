@@ -8,7 +8,6 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { PostsModule } from './posts/posts.module';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from "./authentication/components/login/login.component";
 import {  HttpClientModule } from '@angular/common/http';
 
 @NgModule({
