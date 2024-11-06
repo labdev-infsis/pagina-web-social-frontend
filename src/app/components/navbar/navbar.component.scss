@@ -1,103 +1,24 @@
-.header-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f8f9fa;
-}
-
-.header-image img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 15px;
-    /* Espaciado entre el banner y el contenido */
-}
-
-
-.header-details {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.header-image {
-    position: relative;
-}
-
-.logo-overlay {
-    position: absolute;
-    bottom: -40px;
-    /* Ajusta la posición vertical para que el logo esté sobre el banner */
-    left: 50%;
-    /* Centra horizontalmente */
-    transform: translateX(-50%);
-}
-
-.career-logo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 3px solid white;
-}
-
-
-.career-info h1 {
-    font-size: 1.8rem;
-    color: white;
-}
-
-.career-info p {
-    font-size: 1rem;
-    color: white;
-}
-
-.user-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.user-actions .fa-user-circle {
-    font-size: 2rem;
-    color: white;
-    margin-left: 10px;
-}
-
-.tabs-container {
-    margin-top: 10px;
-    background-color: white;
-}
-
-.tabs {
-    display: flex;
-    justify-content: space-around;
-    padding: 0;
-    list-style: none;
-}
-
-.tabs li a {
-    padding: 10px 15px;
-    text-decoration: none;
-    color: black;
-    font-weight: normal;  /* Cambiamos a peso normal */
-    border-bottom: 2px solid transparent;
-}
-
-.tabs li a:hover {
-    border-bottom: 2px solid #003f7f;
-}
-
-.search-bar {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-}
-
-.search-bar input {
-    width: 100%;
+/* Estilos del navbar */
+.navbar-custom {
+    background: linear-gradient(to right, #004a8b, #fdb913);
     padding: 10px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .navbar-custom .logo {
+    max-width: 150px;
+  }
+  
+  .navbar-custom .search-bar {
+    flex-grow: 1;
+    margin-left: 20px;
+  }
+  
+  .navbar-custom .user-icon {
+    color: #fdb913;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
