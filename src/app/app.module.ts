@@ -10,12 +10,14 @@ import { PostsModule } from './posts/posts.module';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from "./authentication/components/login/login.component";
 import {  HttpClientModule } from '@angular/common/http';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    HomeComponent
+    HomeComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
