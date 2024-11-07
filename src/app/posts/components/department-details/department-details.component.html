@@ -1,44 +1,46 @@
 <!-- src/app/components/department-details/department-details.component.html -->
-<div *ngIf="institution">
-  <div class="details-container">
-    <h3>Detalle</h3>
-    <p class="subtitle">
-      {{ institution.description }}
-    </p>
+<div class="main-container">
+  <div *ngIf="institution">
+    <div class="details-container">
+      <h3>Detalle</h3>
+      <p class="subtitle">
+        {{ institution.description }}
+      </p>
 
-    <!-- Información de contacto -->
-    <div class="info-item">
-      <i class="bi bi-geo-alt-fill"></i>
-      <span>{{ institution.location }}</span>
-    </div>
-
-    <div class="info-item">
-      <i class="bi bi-info-circle-fill"></i>
-      <span>{{ institution.category }}</span>
-    </div>
-
-    <div class="info-item">
-      <i class="bi bi-envelope-fill"></i>
-      <a href="mailto:{{ institution.email }}">{{ institution.email }}</a>
-    </div>
-
-    <div class="info-item">
-      <i class="bi bi-globe"></i>
-      <a href="http://{{ institution.url }}" target="_blank">{{ institution.url }}</a>
-    </div>
-  </div>
-
-  <!-- Sección de Fotos -->
-  <div class="photos-container">
-    <h3 class="photos-title">
-      Fotos <a href="#" class="view-all-link">Ver todas las fotos</a>
-    </h3>
-    <div class="photos-grid">
-      <div class="photo-card">
-        <img [src]="institution.logo_url" alt="Logo de {{ institution.name }}">
+      <!-- Información de contacto -->
+      <div class="info-item">
+        <i class="bi bi-geo-alt-fill"></i>
+        <span>{{ institution.location }}</span>
       </div>
-      <div class="photo-card">
-        <img [src]="institution.background_url" alt="Background">
+
+      <div class="info-item">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>{{ institution.category }}</span>
+      </div>
+
+      <div class="info-item">
+        <i class="bi bi-envelope-fill"></i>
+        <a href="mailto:{{ institution.email }}">{{ institution.email }}</a>
+      </div>
+
+      <div class="info-item">
+        <i class="bi bi-globe"></i>
+        <a href="http://{{ institution.url }}" target="_blank">{{ institution.url }}</a>
+      </div>
+    </div>
+
+    <!-- Sección de Fotos -->
+    <div class="photos-container">
+      <h3 class="photos-title">
+        Fotos <a href="#" class="view-all-link">Ver todas las fotos</a>
+      </h3>
+      <div class="photos-grid">
+        <div class="photo-card">
+          <img [src]="institution.logo_url" alt="Logo de {{ institution.name }}">
+        </div>
+        <div class="photo-card">
+          <img [src]="institution.background_url" alt="Background">
+        </div>
       </div>
     </div>
   </div>

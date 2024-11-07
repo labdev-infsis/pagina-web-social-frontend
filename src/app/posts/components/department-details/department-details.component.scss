@@ -1,48 +1,67 @@
 /* src/app/components/department-details/department-details.component.scss */
-.details-container {
-  background-color: #f8f9fa;
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
+}
+
+.details-container {
+  background-color: #ffffff; /* Cambiamos a blanco para un mejor contraste */
+  padding: 20px;
+  border-radius: 10px; /* Bordes redondeados más suaves */
   margin-bottom: 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); /* Sombra más prominente para mayor relieve */
+  border: 1px solid #e0e0e0; /* Borde ligero para destacar el card */
+  width: 100%;
 
   h3 {
-    font-size: 1.2rem;
+    font-size: 1.5rem; /* Aumentar el tamaño de letra del título */
     font-weight: bold;
-    color: #1e73be;
+    color: #000000;
     margin-bottom: 10px;
   }
 
   .subtitle {
-    font-size: 0.9rem;
+    font-size: 1.2rem; /* Ajuste del tamaño para que sea similar al mockup */
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
   }
 
   .info-item {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    font-size: 0.9rem;
+    font-size: 1.15rem; /* Ajuste del tamaño para mayor legibilidad */
     color: #555;
 
     i {
       font-size: 1.2rem;
       margin-right: 8px;
-      color: #1e73be;
+      color: #1e73be; /* Color de icono en azul */
     }
 
     span, a {
       color: #333;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   }
 }
 
 .photos-container {
+  width: 100%;
   margin-top: 20px;
 
   .photos-title {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #333;
     display: flex;
@@ -52,7 +71,7 @@
   }
 
   .view-all-link {
-    font-size: 0.9rem;
+    font-size: 0.95rem; /* Tamaño del link ajustado */
     color: #1e73be;
     text-decoration: none;
 
@@ -70,14 +89,17 @@
       overflow: hidden;
       border-radius: 8px;
       border: 1px solid #ddd;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve en las imágenes */
+      background-color: #ffffff;
 
       img {
         width: 100%;
-        height: auto;
+        height: 100%;
         display: block;
         border-radius: 8px;
+        object-fit: cover;
       }
     }
   }
 }
+
