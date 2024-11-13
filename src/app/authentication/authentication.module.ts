@@ -19,6 +19,7 @@ import { LoginComponent } from './components/login/login.component';
     HttpClientModule,
     ReactiveFormsModule
   ],
+  exports: [LoginComponent],
   providers: [
     AuthGuardService,
     AuthService,
