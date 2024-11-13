@@ -1,5 +1,6 @@
 
 .navbar-custom {
+<<<<<<< Updated upstream
     background: linear-gradient(to right, #004a8b, #fdb913);
     padding: 10px;
     display: flex;
@@ -22,3 +23,68 @@
     cursor: pointer;
   }
   
+=======
+  background: linear-gradient(to right, #FFEE00E5, #003770E5);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .logo {
+    max-width: 60px;
+    height: auto;
+    margin-left: 15px;
+  }
+
+  .user-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #FFEE00E5;
+    cursor: pointer;
+    margin-right: 15px;
+    position: relative;
+  }
+
+  .user-icon {
+    color: #FFEE00E5;
+    font-size: 2rem;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 180px;
+    background: linear-gradient(to bottom, rgba(0, 55, 112, 0.9), rgba(255, 238, 0, 0.9));
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(5px);
+
+    .menu-icon {
+      color: #FFEE00E5;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .dropdown-item {
+      color: white;
+      font-size: 1rem;
+      text-decoration: none;
+      margin: 8px 0;
+    }
+
+    .dropdown-item:hover {
+      color: #FFEE00E5;
+    }
+  }
+}
+>>>>>>> Stashed changes

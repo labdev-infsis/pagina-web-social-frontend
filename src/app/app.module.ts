@@ -8,9 +8,17 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { PostsModule } from './posts/posts.module';
 import { CommonModule } from '@angular/common';
+<<<<<<< Updated upstream
 import { LoginComponent } from "./authentication/components/login/login.component";
 import {  HttpClientModule } from '@angular/common/http';
+=======
+import { HttpClientModule } from '@angular/common/http';
+>>>>>>> Stashed changes
 import { NavbarComponent } from './components/navbar/navbar.component';
+
+// Importaciones de Font Awesome
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -25,9 +33,14 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     AuthenticationModule,
     CommonModule,
     PostsModule,
-    HttpClientModule
-],
+    HttpClientModule,
+    FontAwesomeModule // Agrega FontAwesomeModule aquí
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faUser); // Agrega el icono faUser a la librería
+  }
+}
