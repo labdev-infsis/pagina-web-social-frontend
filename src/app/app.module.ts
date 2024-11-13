@@ -8,12 +8,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { PostsModule } from './posts/posts.module';
 import { CommonModule } from '@angular/common';
-<<<<<<< Updated upstream
-import { LoginComponent } from "./authentication/components/login/login.component";
-import {  HttpClientModule } from '@angular/common/http';
-=======
 import { HttpClientModule } from '@angular/common/http';
->>>>>>> Stashed changes
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 // Importaciones de Font Awesome
