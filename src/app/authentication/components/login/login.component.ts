@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   @ViewChild('userFocus', { static: true })
   usernameField!: ElementRef;
   showAlert: boolean = false;
+  public isLoggedIn = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,16 +36,24 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    var login = this.loginForm.value;
+    this.loginForm.markAllAsTouched();
+    let dataValid = this.loginForm.valid
+    if(dataValid){
+      let login = this.loginForm.value;
 
-    this.auth.login(login.username, login.password).subscribe(
-      () => {
-        this.router.navigate(['/']);
-      },
-      (error: any) => {
-        alert(error.error.error.message)
-      }
-    );
+      this.auth.login(login.username, login.password).subscribe(
+        () => {
+          this.isLoggedIn = true;
+          this.router.navigate(['/']);
+        },
+        (error: any) => {
+          alert(error.message)
+        }
+      );
+    }else{
+      alert('Datos invalidos')
+    }
+    
   }
 
   hasErrors(controlName:string, errorType: string){

@@ -10,6 +10,7 @@ import { DepartmentDetailsComponent } from './components/department-details/depa
     ViewAllPostsComponent,
     DepartmentDetailsComponent
   ],
+  exports: [ViewAllPostsComponent],
   imports: [
     CommonModule
   ]

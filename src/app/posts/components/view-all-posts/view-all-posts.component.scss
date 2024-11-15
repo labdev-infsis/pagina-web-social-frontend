@@ -1,0 +1,65 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+  
+.post-container {
+  background-color: #ffffff; 
+  padding: 20px;
+  border-radius: 10px; 
+  margin-bottom: 20px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); 
+  border: 1px solid #e0e0e0;
+  width: 100%;
+
+  .img-profile{
+      width: 55px; 
+      height: 55px;
+      border-radius: 50%; 
+      border: 1px solid #ccc; 
+  }
+
+  h2 {
+    font-size: 1rem; 
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 5px;
+  }
+
+  p{
+    font-size: 0.9rem; 
+    font-weight: lighter;
+    color: gray;
+    margin-bottom: 10px;
+  }
+
+  .text-post {
+    font-size: 1rem; /* Ajuste del tamaño para que sea similar al mockup */
+    color: #333;
+    margin-bottom: 15px;
+    line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
+  }
+
+}
+
+.img-post {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  margin-bottom: 10px;
+  max-height: 300px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+}
