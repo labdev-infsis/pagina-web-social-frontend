@@ -8,7 +8,7 @@ import { PostService } from '../../services/post.service';
 })
 export class ViewAllPostsComponent {
   posts: any;
-  images: any;
+  
 
   constructor(private postService: PostService){}
 

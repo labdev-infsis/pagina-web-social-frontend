@@ -5,28 +5,7 @@
     </div>
     <div class="col-7">
       <div *ngIf="posts" class="main-container">
-        <div class="post-container">
-          <!-- Parte superior del post -->
-           <div class="post-user d-flex gap-3 mb-3">
-             <img src="../../../../assets/logo-informatica.png" alt="Foto" class="img-profile">
-             <div class="info-user">
-               <h2>Ingeniería Informática y Sistemas</h2>
-               <p>Hace 2 horas</p>
-             </div>
-           </div>
-          <!-- Contenido del post -->  
-          <p class="text-post">
-            {{ posts[0].content.text }}
-          </p>
-          <div class="img-post">
-            <img src="https://i.ibb.co/h1NjJnT/416112299-857056533095998-8086811567574606659-n.jpg" alt="Foto del post"> 
-          </div>
-          <div class="bottuns d-flex justify-content-evenly">
-            <button type="button" class="btn btn-secondary" disabled>Me gusta</button>
-            <button type="button" class="btn btn-secondary" disabled>Comentar</button>
-            <button type="button" class="btn btn-secondary" disabled>Compartir</button>
-          </div>
-        </div>
+        <app-post *ngFor="let post of posts" [post]="post"></app-post>
       </div>
     </div>
   </div>
