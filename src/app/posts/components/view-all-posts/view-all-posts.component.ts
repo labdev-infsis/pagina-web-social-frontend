@@ -17,7 +17,6 @@ export class ViewAllPostsComponent {
     this.postService.getPosts().subscribe(
       (data) => {
         this.posts = data;
-        console.log(this.posts)
       },
       (error) => {
         console.error('Error al obtener los datos de los posts', error);
