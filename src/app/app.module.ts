@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
-// Importaciones de Font Awesome
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
@@ -29,8 +28,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
     CommonModule,
     PostsModule,
     HttpClientModule,
-    FontAwesomeModule // Agrega FontAwesomeModule aquí
-  ],
+    FontAwesomeModule
+],
   providers: [],
   bootstrap: [AppComponent]
 })
