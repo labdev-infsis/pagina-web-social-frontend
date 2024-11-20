@@ -3,6 +3,10 @@
     <div class="col-5">
       <app-department-details></app-department-details>
     </div>
-    <div class="col-7"></div>
+    <div class="col-7">
+      <div *ngIf="posts" class="main-container">
+        <app-post *ngFor="let post of posts" [post]="post"></app-post>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,0 +1,39 @@
+<div class="post-container">
+  <!-- Parte superior del post -->
+  <div class="post-user d-flex gap-3 mb-3">
+    <img
+      src="../../../../assets/logo-informatica.png"
+      alt="Foto"
+      class="img-profile"
+    />
+    <div class="info-user">
+      <h2>Ingeniería Informática y Sistemas</h2>
+      <p>Hace 2 horas</p>
+    </div>
+  </div>
+  <!-- Contenido del post -->
+  <p class="text-post">
+    {{ post.content.text }}
+  </p>
+  <div class="post-images" [ngClass]="getGridClass(images)">
+    <!-- <img *ngFor="let urlImage of images" [src]="urlImage" alt="Foto del post" /> -->
+    <ng-container *ngFor="let image of images; let i = index">
+      <!-- Mostrar las primeras 3 imágenes directamente -->
+      <img *ngIf="i < 3 || images.length == 4" [src]="image" [alt]="image.alt || 'Imagen del post'">
+      <!-- Quinta imagen: Con superposición si hay más imágenes -->
+      <div 
+        *ngIf="i === 3 && images.length > 4" 
+        class="more" 
+        [title]="images.length - 4"
+        >
+        <img [src]="image" [alt]="image.alt || 'Imagen del post'">
+        <div class="overlay"></div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="bottuns d-flex justify-content-evenly m-2">
+    <button type="button" class="btn btn-secondary" disabled>Me gusta</button>
+    <button type="button" class="btn btn-secondary" disabled>Comentar</button>
+    <button type="button" class="btn btn-secondary" disabled>Compartir</button>
+  </div>
+</div>

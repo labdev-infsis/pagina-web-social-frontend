@@ -15,7 +15,8 @@ export class LoginComponent implements OnInit {
   public errorMessage!: string;
   @ViewChild('userFocus', { static: true })
   usernameField!: ElementRef;
-  showAlert: boolean = false;
+  correctCredentials: boolean = true;
+  public isLoggedIn = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -29,22 +30,30 @@ export class LoginComponent implements OnInit {
 
   private buildForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      password: ['', [Validators.required, Validators.maxLength(100)]]
+      username: ['202004185@est.umss.edu', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      password: ['Control123', [Validators.required, Validators.maxLength(100)]]
     });
   }
 
   login() {
-    var login = this.loginForm.value;
+    this.loginForm.markAllAsTouched();
+    let dataValid = this.loginForm.valid
+    if(dataValid){
+      let login = this.loginForm.value;
 
-    this.auth.login(login.username, login.password).subscribe(
-      () => {
-        this.router.navigate(['/']);
-      },
-      (error: any) => {
-        alert(error.error.error.message)
-      }
-    );
+      this.auth.login(login.username, login.password).subscribe(
+        () => {
+          this.isLoggedIn = true;
+          this.router.navigate(['/']);
+          window.location.reload()
+        },
+        (error: any) => {
+          console.log(error)
+          this.correctCredentials = false;
+        }
+      );
+    }
+    
   }
 
   hasErrors(controlName:string, errorType: string){
@@ -54,6 +63,11 @@ export class LoginComponent implements OnInit {
   togglePasswordVisibility() {
     this.hide = !this.hide;
     this.inputType = this.inputType === 'password' ? 'text' : 'password';
+  }
+
+  loginReset(){
+    this.loginForm.reset()
+    this.correctCredentials = true
   }
 
 }

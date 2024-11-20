@@ -1,0 +1,106 @@
+.post-container {
+    background-color: #ffffff; 
+    padding: 20px;
+    border-radius: 10px; 
+    margin-bottom: 20px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); 
+    border: 1px solid #e0e0e0;
+    width: 100%;
+    max-width: 500px;
+  
+    .img-profile{
+        width: 55px; 
+        height: 55px;
+        border-radius: 50%; 
+        border: 1px solid #ccc; 
+    }
+  
+    h2 {
+      font-size: 1rem; 
+      font-weight: bold;
+      color: #000000;
+      margin-bottom: 5px;
+    }
+  
+    p{
+      font-size: 0.9rem; 
+      font-weight: lighter;
+      color: gray;
+      margin-bottom: 10px;
+    }
+  
+    .text-post {
+      font-size: 1rem; /* Ajuste del tamaño para que sea similar al mockup */
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
+    }
+  
+  }
+  
+  .post-images {
+    display: grid; 
+    gap: 10px; 
+    grid-template-columns: repeat(2, minmax(100px, 1fr)); 
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    background-color: #ffffff;
+    margin: auto; 
+    min-height: fit-content;
+  
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+  }
+  
+  .post-images.single {
+    grid-template-columns: 1fr; /* Una sola columna */
+  }
+  
+  .post-images.two {
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  }
+  
+  .post-images.three {
+    grid-template-columns: 2fr 1fr; /* Dos columnas principales */
+    grid-template-rows: repeat(2, 1fr); /* Dos filas */
+  }
+  .post-images.three img:nth-child(1) {
+    grid-row: span 2; /* Imagen más grande a la izquierda */
+  }
+  
+  .post-images.four {
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas iguales */
+    
+  }
+  
+  .post-images > .more {
+    color: white; /* Texto blanco */
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex; /* Centrar el texto */
+    align-items: center; /* Vertical */
+    justify-content: center; /* Horizontal */
+    position: relative;
+    
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  }
+  
+  .post-images .more::after {
+    content: "+"attr(title); /* "+n" dinámico */
+    position: absolute;
+    cursor: pointer;
+  }

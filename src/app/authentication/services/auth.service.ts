@@ -26,22 +26,18 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    var user = new User();
-
-    //@ts-ignore
-    user.id = 0;
-    user.name = username;
-    user.phone = 0;
-    user.password = password;
-    user.password_confirmation = password;
+    let user = {
+      email: username,
+      password
+    }
 
     const reqHeader = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
 
-    return this.http.post<any>(environment.BACK_END_HOST + 'login', user, reqHeader)
+    return this.http.post<any>('http://localhost:9090/api/auth/' + 'login', user, reqHeader)
       .pipe(
         map(user => {
-          this.token = this.jwtDecodeService.decodeToken(user.access_token);
-          localStorage.setItem('token', user.access_token);
+          this.token = user.accessToken;
+          localStorage.setItem('token', this.token);
 
           return true;
         })
