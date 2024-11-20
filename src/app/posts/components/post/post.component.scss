@@ -6,6 +6,7 @@
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); 
     border: 1px solid #e0e0e0;
     width: 100%;
+    max-width: 500px;
   
     .img-profile{
         width: 55px; 
@@ -76,27 +77,30 @@
   
   .post-images.four {
     grid-template-columns: repeat(2, 1fr); /* Dos columnas iguales */
+    
   }
   
-  .post-images.more {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+  .post-images > .more {
+    color: white; /* Texto blanco */
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex; /* Centrar el texto */
+    align-items: center; /* Vertical */
+    justify-content: center; /* Horizontal */
+    position: relative;
+    
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      cursor: pointer;
+    }
   }
-  .post-images.more img:nth-child(5) {
-    grid-column: span 1; /* Imagen grande ocupando una fila */
-    opacity: 0.5; /* Efecto de superposición */
-    position: absolute;
-    bottom: 0;
-    height: auto;
   
-  }
-  .post-images.more::after {
-    content: "+5"; /* Ejemplo: Número de imágenes restantes */
+  .post-images .more::after {
+    content: "+"attr(title); /* "+n" dinámico */
     position: absolute;
-    bottom: 0;
-    right: 0;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 5px 10px;
-    border-radius: 5px;
+    cursor: pointer;
   }
