@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,9 +27,14 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     AuthenticationModule,
     CommonModule,
     PostsModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule
 ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faUser); // Agrega el icono faUser a la librería
+  }
+}

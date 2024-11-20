@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
@@ -7,9 +6,9 @@ declare var bootstrap: any;
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+  isMenuOpen = false;
 
-  openModal() {
-    const modal = new bootstrap.Modal(document.getElementById('userModal')!);
-    modal.show();
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 }
