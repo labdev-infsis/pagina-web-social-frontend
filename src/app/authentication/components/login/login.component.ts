@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   public errorMessage!: string;
   @ViewChild('userFocus', { static: true })
   usernameField!: ElementRef;
-  showAlert: boolean = false;
+  correctCredentials: boolean = true;
   public isLoggedIn = false;
 
   constructor(
@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
 
   private buildForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      password: ['', [Validators.required, Validators.maxLength(100)]]
+      username: ['202004185@est.umss.edu', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      password: ['Control123', [Validators.required, Validators.maxLength(100)]]
     });
   }
 
@@ -45,13 +45,13 @@ export class LoginComponent implements OnInit {
         () => {
           this.isLoggedIn = true;
           this.router.navigate(['/']);
+          window.location.reload()
         },
         (error: any) => {
-          alert(error.message)
+          console.log(error)
+          this.correctCredentials = false;
         }
       );
-    }else{
-      alert('Datos invalidos')
     }
     
   }
@@ -63,6 +63,11 @@ export class LoginComponent implements OnInit {
   togglePasswordVisibility() {
     this.hide = !this.hide;
     this.inputType = this.inputType === 'password' ? 'text' : 'password';
+  }
+
+  loginReset(){
+    this.loginForm.reset()
+    this.correctCredentials = true
   }
 
 }
