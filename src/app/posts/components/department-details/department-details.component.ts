@@ -12,7 +12,7 @@ export class DepartmentDetailsComponent {
   constructor(private postService: PostService) {}
 
   ngOnInit(): void {
-    const uuid = "77f803b4-f63b-4c4a-be05-eae84cef0c0c";//"7887b1dc-f947-43c1-be80-1f8e939042e3";
+    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
 
     this.postService.getInstitution(uuid).subscribe(
       (data) => {
