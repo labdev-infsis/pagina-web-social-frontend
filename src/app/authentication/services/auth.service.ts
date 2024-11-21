@@ -31,9 +31,7 @@ export class AuthService {
       password
     }
 
-    const reqHeader = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
-
-    return this.http.post<any>('http://localhost:9090/api/auth/' + 'login', user, reqHeader)
+    return this.http.post<any>('http://localhost:9090/api/auth/' + 'login', user)
       .pipe(
         map(user => {
           this.token = user.accessToken;

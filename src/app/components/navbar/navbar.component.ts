@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../authentication/services/auth.service';
+import { PostService } from '../../posts/services/post.service';
 
 @Component({
   selector: 'app-navbar',
@@ -6,9 +8,34 @@ import { Component } from '@angular/core';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+  authenticated: boolean
+  institution: any
   isMenuOpen = false;
+
+  constructor(private authService: AuthService,
+    private postService: PostService
+  ){
+    this.authenticated = authService.isAuthenticated()
+  }
+
+  ngOnInit(){
+    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
+    this.postService.getInstitution(uuid).subscribe({
+      next:(institutionData)=>{
+        this.institution = institutionData
+      },
+      error: (error)=>{
+        console.log(error)
+      }
+    });
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  logout(){
+    this.authService.logout();
+    window.location.reload();
   }
 }
