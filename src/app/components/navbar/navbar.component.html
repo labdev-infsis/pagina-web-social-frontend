@@ -23,14 +23,23 @@
           href="#"
           (click)="toggleMenu()"
         >
-          <fa-icon [icon]="['fas', 'user']" class="user-icon"></fa-icon>
+          <fa-icon [icon]="['fas', 'user']" *ngIf="!authenticated" class="user-icon"></fa-icon>
+          <ng-container *ngIf="institution">
+            <img *ngIf="authenticated" class="user-profile-img" [src]="institution.logo_url" [alt]="institution.logo_url.alt || 'Foto de perfil'">
+          </ng-container>
         </a>
         <div *ngIf="isMenuOpen" class="dropdown-menu">
-          <a href="#" class="dropdown-item">Ver perfil</a>
-          <a href="#" class="dropdown-item">Iniciar Sesión</a>
-          <a href="#" class="dropdown-item">Registrarse</a>
+          <ng-container *ngIf="authenticated">
+            <a href="#" class="dropdown-item">Ver perfil</a>
+            <a href="#" class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
+          </ng-container>
+          <ng-container *ngIf="!authenticated">
+            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
+            <a href="#" class="dropdown-item">Registrarse</a>
+          </ng-container>
         </div>
       </li>
     </ul>
   </div>
 </nav>
+<app-login></app-login>
