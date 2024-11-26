@@ -1,0 +1,43 @@
+<!-- Seccion posts  ¿Qué estás pensando?-->
+<div class="create-post-container">
+  <div class="d-flex gap-3 align-items-center">
+    <ng-container *ngIf="institution">
+      <img
+        [src]="institution.logo_url"
+        [alt]="institution.logo_url.alt || 'Foto de perfil'"
+        class="img-profile"
+      />
+    </ng-container>
+    <div class="new-post fw-semibold ml-3" (click)="openModalCreatePost()">
+      <p>¿Qué estás pensando?</p>
+    </div>
+  </div>
+</div>
+<!-- Modal crear un post -->
+<div class="modal fade" id="modalCreatePost" tabindex="-1" aria-labelledby="modalNewPost" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header p-2">
+        <h5 class="modal-title fw-bold" id="modalNewPost">Crear publicación</h5>
+        <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body user-post-container">
+        <div class="info-user d-flex gap-3 mb-3">
+          <ng-container *ngIf="institution">
+            <img
+              [src]="institution.logo_url"
+              [alt]="institution.logo_url.alt || 'Foto de perfil'"
+              class="img-profile"
+            />
+            <p class="fw-bold">{{ institution.name }}</p>
+          </ng-container>
+        </div>
+        <form class="d-flex flex-column">
+          <textarea name="" id="" placeholder="¿Qué estás pensando?"></textarea>
+
+          <button type="button" class="btn btn-primary">Publicar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
