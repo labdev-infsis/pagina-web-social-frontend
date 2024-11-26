@@ -1,6 +1,6 @@
 <div class="post-container">
   <!-- Parte superior del post -->
-  <div class="post-user d-flex gap-3 mb-3">
+  <div class="d-flex gap-3 mb-3">
     <ng-container *ngIf="institution">
       <img
         [src]="institution.logo_url"
@@ -32,6 +32,17 @@
       </div>
     </ng-container>
   </div>
+  <div class="reactions-comments d-flex justify-content-between">
+    <div class="likes">
+      <i class="fa-solid fa-thumbs-up"></i>
+      <span>3</span>
+    </div>    
+    <div class="comments">
+      <span>10</span>
+      <i class="bi bi-chat-fill"></i>
+    </div>
+  </div>
+  <hr>
   <div class="bottuns d-flex justify-content-evenly m-2">
     <button type="button" class="btn btn-secondary" disabled>Me gusta</button>
     <button type="button" class="btn btn-secondary" disabled>Comentar</button>
