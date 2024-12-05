@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: 'app-create-account',
+  templateUrl: './create-account.component.html',
+  styleUrl: './create-account.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class CreateAccountComponent implements OnInit {
   public loginForm!: FormGroup;
   public hide = true;
   public inputType: string = 'password';
@@ -69,5 +69,4 @@ export class LoginComponent implements OnInit {
     this.loginForm.reset()
     this.correctCredentials = true
   }
-
 }
