@@ -34,7 +34,17 @@
   </div>
   <div class="bottuns d-flex justify-content-evenly m-2">
     <button type="button" class="btn btn-secondary" disabled>Me gusta</button>
-    <button type="button" class="btn btn-secondary" disabled>Comentar</button>
+    <button type="button" class="btn btn-secondary" (click)="openComments()">Comentar</button>
     <button type="button" class="btn btn-secondary" disabled>Compartir</button>
   </div>
+  
+  <!-- Popup de comentarios -->
+  <app-comments
+    *ngIf="showComments"
+    [postId]="post.id"
+    [postTitle]="post.title"
+    [postImage]="post.content.media[0]?.path"
+    [postDescription]="post.content.text"
+    (close)="closeComments()"
+  ></app-comments>
 </div>
