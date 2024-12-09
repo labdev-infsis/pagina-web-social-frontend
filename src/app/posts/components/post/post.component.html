@@ -39,12 +39,12 @@
   </div>
   
   <!-- Popup de comentarios -->
-  <app-comments
-    *ngIf="showComments"
-    [postId]="post.id"
-    [postTitle]="post.title"
-    [postImage]="post.content.media[0]?.path"
-    [postDescription]="post.content.text"
-    (close)="closeComments()"
-  ></app-comments>
+  <app-comments  
+  *ngIf="showComments"  
+  [postImage]="post.content.media[0]?.path"  
+  [postAuthor]="institution.name"  
+  [postTime]="calculateTimePost()"  
+  [postDescription]="post.content.text"  
+  (close)="closeComments()"  
+></app-comments>  
 </div>
