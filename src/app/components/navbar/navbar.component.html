@@ -35,7 +35,8 @@
           </ng-container>
           <ng-container *ngIf="!authenticated">
             <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
-            <a href="#" class="dropdown-item" (click)="createAccount()">Registrarse</a>
+            
+            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
           </ng-container>
         </div>
       </li>
@@ -43,3 +44,5 @@
   </div>
 </nav>
 <app-login></app-login>
+
+<app-register></app-register>

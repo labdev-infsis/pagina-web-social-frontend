@@ -1,0 +1,79 @@
+<!-- Modal de Registro -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerModalLabel">Registro de Usuario</h5>
+          <!-- Botón de Cierre "X" -->
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForm()"></button>
+        </div>
+
+
+
+
+        <div class="modal-body">
+          <!-- Formulario de registro -->
+          <div class="container">
+            <form [formGroup]="registerForm" (ngSubmit)="register()" class="needs-validation" novalidate>
+
+              <!-- Nombre Completo -->
+            <div class="mb-3 mt-3">
+              <label for="fullName" class="form-label">Nombre Completo</label>
+              <input type="text" class="form-control" [ngClass]="{'is-invalid': hasErrors('fullName', 'required')}" id="fullName" formControlName="fullName" />
+              <div class="invalid-feedback" *ngIf="hasErrors('fullName', 'required')">
+                Nombre completo requerido
+              </div>
+            </div>
+
+              <div class="mb-3 mt-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" [ngClass]="{'is-invalid': hasErrors('email', 'required') || hasErrors('email', 'email')}" id="email" formControlName="email" />
+                <div class="invalid-feedback" *ngIf="hasErrors('email', 'required')">
+                  Correo requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="hasErrors('email', 'email')">
+                  Correo inválido
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-password">
+                  <input [type]="inputType" class="form-control" [ngClass]="{ 'is-invalid': hasErrors('password', 'required') }" id="password" formControlName="password" />
+                  <div class="eye" (click)="togglePasswordVisibility()">
+                    <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!hide" width="18" height="18" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                      <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                      <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" *ngIf="hide" width="18" height="18" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                      <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                    </svg>
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasErrors('password', 'required')">Contraseña requerida</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                <input [type]="inputType" class="form-control" [ngClass]="{ 'is-invalid': hasErrors('confirmPassword', 'required') || passwordMismatch }" id="confirmPassword" formControlName="confirmPassword" />
+                <div class="invalid-feedback" *ngIf="hasErrors('confirmPassword', 'required')">
+                  Confirmación de contraseña requerida
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordMismatch">
+                  Las contraseñas no coinciden
+                </div>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+                  Registrarse
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
