@@ -22,7 +22,7 @@ export class ViewAllPostsComponent {
 
     this.postService.getPosts().subscribe({
       next:(data) => {
-        this.posts = data;
+        this.posts = data.reverse();
       },
       error:(error) => {
         console.error('Error al obtener los posts', error);

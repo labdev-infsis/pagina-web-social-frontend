@@ -4,6 +4,7 @@ import { ViewAllPostsComponent } from './components/view-all-posts/view-all-post
 import { DepartmentDetailsComponent } from './components/department-details/department-details.component';
 import { PostComponent } from './components/post/post.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -16,7 +17,8 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
   ],
   exports: [ViewAllPostsComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule
   ]
 })
 export class PostsModule { }

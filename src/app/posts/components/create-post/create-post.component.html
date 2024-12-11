@@ -29,13 +29,43 @@
               [alt]="institution.logo_url.alt || 'Foto de perfil'"
               class="img-profile"
             />
-            <p class="fw-bold">{{ institution.name }}</p>
+            <p class="fw-bold fs-6">{{ institution.name }}</p>
           </ng-container>
         </div>
-        <form class="d-flex flex-column">
-          <textarea name="" id="" placeholder="¿Qué estás pensando?"></textarea>
-
-          <button type="button" class="btn btn-primary">Publicar</button>
+        <form [formGroup]="postForm" class="form d-flex flex-column">
+          <div class="container">
+            <textarea id="text-area" placeholder="¿Qué estás pensando?" rows="4" (input)="changeTextArea($event)" formControlName="contentPost"></textarea>
+            <div class="area-media" *ngIf="visibleAreaMedia">
+              <button type="button" class="btn-close m-0" aria-label="Close" (click)="closeCleanPreviewImg()"></button>
+              <div *ngIf="!showPreviewImages" class="back-media d-flex flex-column align-items-center justify-content-center" (click)="openInputFile()" (drop)="changeInputMedia($event)" (dragover)="onDragOver($event)">
+                <i class="bi bi-plus-square-dotted fs-4"></i>
+                <h5 class="mb-0">Añadir fotos/vídeos</h5>
+                <label class="text-secondary" for="input-file">o usa la opción de arrastrar y soltar</label>
+              </div>
+              <div class="images" *ngIf="showPreviewImages" [ngClass]="getGridClass()">
+                <ng-container *ngFor="let img of imagesPreview; let i = index"> 
+                  <!-- <img [src]="img" alt="Foto"> -->
+                   <!-- Mostrar las primeras 3 imágenes directamente -->
+                  <img *ngIf="i < 3 || imagesPreview.length == 4" [src]="img" [alt]="'Imagen del post'">
+                  <!-- Quinta imagen: Con superposición si hay más imágenes -->
+                  <div 
+                    *ngIf="i === 3 && imagesPreview.length > 4" 
+                    class="more" 
+                    [title]="imagesPreview.length - 4"
+                    >
+                    <img [src]="img" [alt]="'Imagen del post'">
+                    <div class="overlay"></div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <input type="file" name="" id="input-file" hidden (input)="changeInputMedia($event)" formControlName="media" multiple>
+          </div>
+          <div class="add-media d-flex flex-row align-items-center justify-content-between">
+            <p class="fw-semibold">Añadir a tu publicación</p>
+            <span class="d-flex align-items-center" (click)="showAreaMedia()"><i class="bi bi-image fs-5"></i></span>
+          </div>
+          <button type="button" class="btn btn-primary" [disabled]="disabledPublishButton" (click)="post()">Publicar</button>
         </form>
       </div>
     </div>
