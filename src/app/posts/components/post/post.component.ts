@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { PostService } from '../../services/post.service';
+import { CreateReaction } from '../../models/create-reaction';
+import { Post } from '../../models/post';
+import { Institution } from '../../models/institution';
 
 @Component({
   selector: 'app-post',
@@ -9,7 +12,7 @@ import { PostService } from '../../services/post.service';
 export class PostComponent {
 
   @Input() post: any
-  institution: any
+  institution!: Institution
   like = false
   images: any;
   myReaction = {
@@ -21,7 +24,7 @@ export class PostComponent {
     thumbs_up: "3f696a78-c73f-475c-80a6-f5a858648af1",
     red_heart: "7v236a78-c73f-475c-80a6-f5a858648af1",
     crying_face: "n1596a78-c73f-475c-80a6-f5a858648af1",
-    angry_face: ''
+    angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
 
 
@@ -164,14 +167,14 @@ export class PostComponent {
         emoji: '',
         name: 'Me enfada'
       }
-      // this.react(postUuid, this.emoji_type_id.angry_face)
+      this.react(postUuid, this.emoji_type_id.angry_face)
     }
   }
 
   react(postUuid:string, emoji_id:string){
-    const newReaction = {
+    const newReaction: CreateReaction = {
       "emoji_type_id" : emoji_id,
-      "reaction_date" : new Date().toString()
+      "reaction_date" : new Date()
     }
     this.postService.postReaction(postUuid, newReaction).subscribe({
       next: ()=>{

@@ -1,6 +1,6 @@
 import { Media } from "./media";
 
 export interface Content {
-    text:  string;
+    text?:  string;
     media?: Media[];
 }

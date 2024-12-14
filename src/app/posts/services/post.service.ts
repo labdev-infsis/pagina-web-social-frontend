@@ -1,8 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Post } from '../models/post';
 import { AuthService } from '../../authentication/services/auth.service';
+import { CreatePost } from '../models/create-post';
+import { Institution } from '../models/institution';
+import { Post } from '../models/post';
+import { UploadedImage } from '../models/uploaded-image';
+import { CreateReaction } from '../models/create-reaction';
 
 @Injectable({
   providedIn: 'root'
@@ -14,36 +18,36 @@ export class PostService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   // Método para obtener los datos de una institución
-  getInstitution(uuid: string): Observable<any> {
+  getInstitution(uuid: string): Observable<Institution> {
     const urlInstitution = 'institutions'
-    return this.http.get<any>(`${this.baseUrl}/${urlInstitution}/${uuid}`);
+    return this.http.get<Institution>(`${this.baseUrl}/${urlInstitution}/${uuid}`);
   }
 
   // Método para obtener los posts
-  getPosts(): Observable<any>{
+  getPosts(): Observable<Post[]>{
     const getPosts = 'posts'
-    return this.http.get<any>(`${this.baseUrl}/${getPosts}`);
+    return this.http.get<Post[]>(`${this.baseUrl}/${getPosts}`);
   }
 
   //Método para crear un post
-  createPost(dataPost: any): Observable<any>{
+  createPost(dataPost: CreatePost): Observable<CreatePost>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
     const createPost = 'posts'
-    return this.http.post<any>(`${this.baseUrl}/${createPost}`, dataPost, reqHeader)
+    return this.http.post<CreatePost>(`${this.baseUrl}/${createPost}`, dataPost, reqHeader)
   }
 
   //Método para subir imagenes
-  uploadImages(formData: FormData): Observable<any>{
+  uploadImages(formData: FormData): Observable<UploadedImage[]>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
-    const uploadImgs = 'images/upload'
-    return this.http.post<any>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
+    const uploadImgs = 'images/posts'
+    return this.http.post<UploadedImage[]>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
   }
 
   //Método para reaccionar a una publicacion
-  postReaction(uuid: string, body:any){
+  postReaction(postUuid: string, body: CreateReaction): Observable<any>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
     const urlReactPost = 'reactions'
-    return this.http.post<any>(`${this.baseUrl}/posts/${uuid}/${urlReactPost}`, body)
+    return this.http.post<any>(`${this.baseUrl}/posts/${postUuid}/${urlReactPost}`, body, reqHeader)
   }
 
   

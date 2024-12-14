@@ -10,7 +10,8 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  public urlBase = 'https://devpws.cs.umss.edu.bo/api/auth/';
+  // public urlBase = 'https://devpws.cs.umss.edu.bo/api/auth/';
+  public urlBase = 'http://localhost:9090/api/auth/';
 
   public token : any
   constructor(

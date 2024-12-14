@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Media } from '../../models/media';
+import { concatMap } from 'rxjs';
+import { UploadedImage } from '../../models/uploaded-image';
+import { CreatePost } from '../../models/create-post';
+import { Institution } from '../../models/institution';
 
 @Component({
   selector: 'app-create-post',
@@ -9,7 +14,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './create-post.component.scss'
 })
 export class CreatePostComponent {
-  institution: any;
+  institution!: Institution;
   visibleAreaMedia = false;
   showPreviewImages = false;
   disabledPublishButton = true; 
@@ -25,7 +30,7 @@ export class CreatePostComponent {
   ngOnInit(){
     const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
     this.postService.getInstitution(uuid).subscribe({
-      next:(institutionData)=>{
+      next:(institutionData: Institution)=>{
         this.institution = institutionData
       },
       error: (error)=>{
@@ -94,14 +99,6 @@ export class CreatePostComponent {
           formData.append('media', file);
         });
       }
-      console.log('ValueMedia(event)',valueMedia)
-      console.log('FormData:',formData)
-      console.log('Media form:',this.postForm.get('media'))
-      console.log('listFile',this.listFile)
-      // Actualizar el valor del formulario postForm
-      // this.postForm.patchValue({
-      //   media: this.listFile // Actualizamos el valor del FormControl
-      // });
       const imagePromises = this.listFile.map(file => this.readFileAsDataURL(file));
       
       this.imagesPreview = await Promise.all(imagePromises);
@@ -141,70 +138,45 @@ export class CreatePostComponent {
   }
 
   post(){
-    const newPost = this.postForm.value
+    const valueFormPost = this.postForm.value
     const formData = new FormData()
+    const responseImages: Media[] = [] 
 
-    const files = this.listFile
-    if(files){
-      Array.from(files).forEach((file) => {
+    if(this.listFile){ //Si hay archivos se los procesa
+      //Convertir los archivos en Form Data
+      Array.from(this.listFile).forEach((file) => {
         formData.append('images', file);
       });
-      console.log(files)
-      console.log(formData)
-    }
-    const responseImages: any = [] 
-    let hayError = true;
-    this.postService.uploadImages(formData).subscribe({
-      next: (response)=> {
-        // responseImages.push({
-        //   number: 1,
-        //   type: response[0].type,
-        //   path: response[0].urlResource
-        // })
-        if (Array.isArray(response)) {
-          response.forEach((image, index) => {
+
+      this.postService.uploadImages(formData).pipe(
+        concatMap((uploadResponse: UploadedImage[]) => {
+          uploadResponse.forEach((image, index) => {
             responseImages.push({
               number: index + 1,
               type: image.type,
               path: image.urlResource
             });
           });
-        } else {
-          console.error('La respuesta del servidor no es un array');
-        }
-        console.log(response)
-        hayError = false
-      },
-      error: (error) => {
-        console.log("Error al subir la(s) imagen(es)",error)
-      }
-    })
 
-    const post = {
-      institution_id: this.institution.uuid,
-      user_id: "j5818068-9280-4055-987c-087f1b1f6635",
-      date: new Date(),
-      comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
-      content: {
-        text: newPost.contentPost,
-        media: responseImages
-        // [ 
-        //   {
-        //     number: 1,
-        //     type: "image",
-        //     path: 'https://i.ibb.co/JKBRfqg/posesion.jpg'
-        //   }
-        // ]
-      }
-    }
+          const post: CreatePost = {
+            institution_id: this.institution.uuid,
+            date: new Date(),
+            comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
+            content: {
+              text: valueFormPost.contentPost,
+              media: responseImages
+            }
+          }
 
-    if(newPost.contentPost != '' || !hayError){
-      this.postService.createPost(post).subscribe({
-        next:()=>{
+          return this.postService.createPost(post);
+        })
+      ).subscribe({
+        next: ()=> {
           window.location.reload()
+          console.log('post creado con exito')
         },
-        error: (error)=>{
-          console.log(error)
+        error: (error) => {
+          console.log('Error al crear el post',error)
         }
       })
     }

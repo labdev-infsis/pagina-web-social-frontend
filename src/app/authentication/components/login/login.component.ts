@@ -41,17 +41,17 @@ export class LoginComponent implements OnInit {
     if(dataValid){
       let login = this.loginForm.value;
 
-      this.auth.login(login.username, login.password).subscribe(
-        () => {
+      this.auth.login(login.username, login.password).subscribe({
+        next: () => {
           this.isLoggedIn = true;
           this.router.navigate(['/']);
           window.location.reload()
         },
-        (error: any) => {
-          console.log(error)
+        error: (error: any) => {
+          console.log('se imprime esto',error)
           this.correctCredentials = false;
         }
-      );
+      });
     }
     
   }
