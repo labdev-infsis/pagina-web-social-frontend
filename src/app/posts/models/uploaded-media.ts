@@ -1,4 +1,4 @@
-export interface UploadedImage {
+export interface UploadedMedia {
     uuid:           string;
     urlResource:    string;
     type:           string;

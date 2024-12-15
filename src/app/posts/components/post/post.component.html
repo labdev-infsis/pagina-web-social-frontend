@@ -18,7 +18,7 @@
     {{ post.content.text }}
   </p>
   <!-- Visualizar imagenes -->
-  <ng-container *ngIf="post.content.media[0].type == 'image'">
+  <ng-container *ngIf="typeImages.includes(post.content.media[0].type)">
     <div class="post-images" [ngClass]="getGridClass(images)">
       <ng-container *ngFor="let image of images; let i = index">
         <!-- Mostrar las primeras 3 imágenes directamente -->

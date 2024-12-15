@@ -4,7 +4,7 @@ import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Media } from '../../models/media';
 import { concatMap } from 'rxjs';
-import { UploadedImage } from '../../models/uploaded-image';
+import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
 
@@ -16,11 +16,16 @@ import { Institution } from '../../models/institution';
 export class CreatePostComponent {
   institution!: Institution;
   visibleAreaMedia = false;
+  visibleAreaMediaDoc = false;
   showPreviewImages = false;
+  showPreviewDoc = false;
+  disableLoadImage = false;
+  disableLoadDoc = false;
   disabledPublishButton = true; 
   postForm!: FormGroup
   imagesPreview:string[] = []
   listFile!: File[];
+  fileDoc!: File;
 
   constructor(
     private postService: PostService,
@@ -43,7 +48,8 @@ export class CreatePostComponent {
   private buildForm() {
     this.postForm = this.formBuilder.group({
       contentPost: ['',  [Validators.maxLength(1000),Validators.minLength(1)]],
-      media: [[]]
+      media: [[]],
+      mediaDoc: [[]]
     });
   }
 
@@ -56,7 +62,13 @@ export class CreatePostComponent {
   }
 
   showAreaMedia(){
-    this.visibleAreaMedia = true
+    this.visibleAreaMedia = true;
+    this.disableLoadDoc = true;
+  }
+
+  showAreaDoc(){
+    this.visibleAreaMediaDoc = true;
+    this.disableLoadImage = true;
   }
 
   changeTextArea(event: Event){
@@ -105,6 +117,32 @@ export class CreatePostComponent {
     }
   }
 
+  changeInputMediaDoc(event: Event){
+    if(event.target instanceof HTMLInputElement && event.target.files){
+      this.fileDoc = event.target.files[0]
+      this.disabledPublishButton = false;
+      this.showPreviewDoc = true;
+    }
+  }
+
+  getTypeFile(type: string){
+    const types = 
+    {
+      pdf : 'application/pdf',
+      document : ['application/doc','application/docx','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      presentation: ['application/pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+      text : 'application/txt' 
+    }
+    if(type === types.pdf)
+      return 'File PDF'
+    else if(types.document.includes(type))
+      return 'File DOCUMENTO'
+    else if(types.presentation.includes(type))
+      return 'File PRESENTACION'
+    else
+      return 'File DOCUMENTO'
+  }
+
   onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
@@ -132,24 +170,30 @@ export class CreatePostComponent {
     });
   }
 
-  openInputFile(){
-    const inputFile = document.getElementById('input-file')
+  openInputFileImgVid(){
+    const inputFile = document.getElementById('input-file-img-vid')
     inputFile?.click()
+  }
+
+  openInputFileDoc(){
+    const inputFileDoc = document.getElementById('input-file-doc');
+    inputFileDoc?.click()
   }
 
   post(){
     const valueFormPost = this.postForm.value
     const formData = new FormData()
     const responseImages: Media[] = [] 
+    let responseDoc: Media
 
-    if(this.listFile){ //Si hay archivos se los procesa
-      //Convertir los archivos en Form Data
+    if(this.listFile){ //Si hay imagenes se los procesa
+      //Convertir las imagenes en Form Data
       Array.from(this.listFile).forEach((file) => {
         formData.append('images', file);
       });
 
       this.postService.uploadImages(formData).pipe(
-        concatMap((uploadResponse: UploadedImage[]) => {
+        concatMap((uploadResponse: UploadedMedia[]) => {
           uploadResponse.forEach((image, index) => {
             responseImages.push({
               number: index + 1,
@@ -160,25 +204,60 @@ export class CreatePostComponent {
 
           const post: CreatePost = {
             institution_id: this.institution.uuid,
-            date: new Date(),
+            date: new Date(Date.now()),
             comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
             content: {
               text: valueFormPost.contentPost,
               media: responseImages
             }
           }
-
           return this.postService.createPost(post);
         })
       ).subscribe({
         next: ()=> {
           window.location.reload()
-          console.log('post creado con exito')
+          console.log('post con imagen (es) creado con exito')
         },
         error: (error) => {
-          console.log('Error al crear el post',error)
+          console.log('Error al crear el post con imagen (es)',error)
         }
       })
+    }else if(this.fileDoc){//Si hay un archivo
+      //Convertir el archivo en form data
+      formData.append('file', this.fileDoc);
+      console.log('formData', formData)
+
+      this.postService.uploadDocument(formData).pipe(
+        concatMap((uploadResponse: UploadedMedia) => {
+          responseDoc = {
+            number: 1,
+            type: 'document',//uploadResponse.type,
+            path: uploadResponse.urlResource
+          }
+
+          const post: CreatePost = {
+            institution_id: this.institution.uuid,
+            date: new Date(),
+            comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
+            content: {
+              text: valueFormPost.contentPost,
+              media: [
+                responseDoc
+              ]
+            }
+          }
+          console.log('post a subir', post)
+          return this.postService.createPost(post);
+        })
+      ).subscribe({
+        next: ()=> {
+          // window.location.reload()
+          console.log('post con archivo creado con exito')
+        },
+        error: (error) => {
+          console.log('Error al crear el post con archivo',error)
+        }
+      })      
     }
   }
 
@@ -205,8 +284,16 @@ export class CreatePostComponent {
   closeCleanPreviewImg(){
     this.imagesPreview = []
     this.disabledPublishButton = true;
+    this.disableLoadDoc = false;
     this.showPreviewImages = this.visibleAreaMedia = false;
     this.listFile = []
     this.postForm.get('media')?.reset();
+  }
+
+  closeCleanPreviewDoc(){
+    this.disabledPublishButton = true;
+    this.listFile = []
+    this.postForm.get('media')?.reset();
+    this.showPreviewDoc = this.visibleAreaMediaDoc = this.disableLoadImage = false;
   }
 }

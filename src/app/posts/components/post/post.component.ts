@@ -26,6 +26,7 @@ export class PostComponent {
     crying_face: "n1596a78-c73f-475c-80a6-f5a858648af1",
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
+  typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
 
 
   constructor(private postService: PostService){}

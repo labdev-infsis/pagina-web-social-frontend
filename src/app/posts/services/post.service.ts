@@ -5,7 +5,7 @@ import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
 import { Post } from '../models/post';
-import { UploadedImage } from '../models/uploaded-image';
+import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 
 @Injectable({
@@ -37,10 +37,17 @@ export class PostService {
   }
 
   //Método para subir imagenes
-  uploadImages(formData: FormData): Observable<UploadedImage[]>{
+  uploadImages(formData: FormData): Observable<UploadedMedia[]>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
     const uploadImgs = 'images/posts'
-    return this.http.post<UploadedImage[]>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
+    return this.http.post<UploadedMedia[]>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
+  }
+
+  //Método para subir un archivo
+  uploadDocument(formData: FormData): Observable<any>{
+    const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
+    const uploadImgs = 'documents/upload'
+    return this.http.post<any>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
   }
 
   //Método para reaccionar a una publicacion
