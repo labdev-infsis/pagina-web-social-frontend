@@ -217,6 +217,36 @@
       border: 1px solid #ddd;
     }
   }
+
+  .doc-post {
+    background-color: #F0F2F5;
+    padding: 10px 5px;
+    cursor: pointer;
+
+    .icon-doc {
+      margin: 0 10px;
+
+      img {
+        height: 48px;
+        width: 48px;
+      }
+    }
+
+    .details-doc {
+      .type-doc {
+        p {
+          font-size: 13px;
+        }
+      }
+
+      .name-doc {
+        p {
+          font-size: 18px;
+          color: #000;
+        }
+      }
+    }
+  }
   
   .post-images.single {
     grid-template-columns: 1fr; /* Una sola columna */
