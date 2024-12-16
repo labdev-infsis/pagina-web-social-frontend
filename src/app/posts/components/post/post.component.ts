@@ -15,10 +15,8 @@ export class PostComponent {
   images: any;
   showComments: boolean = false; // Controla la visibilidad del popup
 
-  @Input() post: any
-  institution!: Institution
+  //institution!: Institution
   like = false
-  images: any;
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -206,3 +204,4 @@ export class PostComponent {
     })
   }
 
+}

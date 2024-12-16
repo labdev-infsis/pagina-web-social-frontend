@@ -16,7 +16,7 @@ import { CommentsComponent } from './components/comments/comments.component';
     ViewAllPostsComponent,
     DepartmentDetailsComponent,
     PostComponent,
-    CreatePostComponent
+    CreatePostComponent,
     CommentsComponent
   ],
   imports: [
