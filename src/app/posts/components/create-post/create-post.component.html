@@ -1,0 +1,103 @@
+<!-- Seccion posts  ¿Qué estás pensando?-->
+<div class="create-post-container">
+  <div class="d-flex gap-3 align-items-center">
+    <ng-container *ngIf="institution">
+      <img
+        [src]="institution.logo_url"
+        [alt]="'Foto de perfil'"
+        class="img-profile"
+      />
+    </ng-container>
+    <div class="new-post fw-semibold ml-3" (click)="openModalCreatePost()">
+      <p>¿Qué estás pensando?</p>
+    </div>
+  </div>
+</div>
+<!-- Modal crear un post -->
+<div class="modal fade" id="modalCreatePost" tabindex="-1" aria-labelledby="modalNewPost" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header p-2">
+        <h5 class="modal-title fw-bold" id="modalNewPost">Crear publicación</h5>
+        <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body user-post-container">
+        <div class="info-user d-flex gap-3 mb-3">
+          <ng-container *ngIf="institution">
+            <img
+              [src]="institution.logo_url"
+              [alt]="'Foto de perfil'"
+              class="img-profile"
+            />
+            <p class="fw-bold fs-6">{{ institution.name }}</p>
+          </ng-container>
+        </div>
+        <form [formGroup]="postForm" class="form d-flex flex-column">
+          <div class="container">
+            <textarea id="text-area" placeholder="¿Qué estás pensando?" rows="4" (input)="changeTextArea($event)" formControlName="contentPost"></textarea>
+            
+            <!-- Seleccionar imagen (es) -->
+            <div class="area-media" *ngIf="visibleAreaMedia">
+              <button type="button" class="btn-close m-0" aria-label="Close" (click)="closeCleanPreviewImg()"></button>
+              <div *ngIf="!showPreviewImages" class="back-media d-flex flex-column align-items-center justify-content-center" (click)="openInputFileImgVid()" (drop)="changeInputMedia($event)" (dragover)="onDragOver($event)">
+                <i class="bi bi-plus-square-dotted fs-4"></i>
+                <h5 class="mb-0">Añadir fotos/vídeos</h5>
+                <label class="text-secondary" for="input-file-img-vid">o usa la opción de arrastrar y soltar</label>
+              </div>
+
+              <!-- Preview de imagenes elegidas -->
+              <div class="images" *ngIf="showPreviewImages" [ngClass]="getGridClass()">
+                <ng-container *ngFor="let img of imagesPreview; let i = index"> 
+                   <!-- Mostrar las primeras 3 imágenes directamente -->
+                  <img *ngIf="i < 3 || imagesPreview.length == 4" [src]="img" [alt]="'Imagen del post'">
+                  <!-- Quinta imagen: Con superposición si hay más imágenes -->
+                  <div 
+                    *ngIf="i === 3 && imagesPreview.length > 4" 
+                    class="more" 
+                    [title]="imagesPreview.length - 4"
+                    >
+                    <img [src]="img" [alt]="'Imagen del post'">
+                    <div class="overlay"></div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- Seleccionar archivo -->
+            <div class="area-media-doc" *ngIf="visibleAreaMediaDoc">
+              <button type="button" class="btn-close m-0" aria-label="Close" (click)="closeCleanPreviewDoc()"></button>
+              <div class="back-doc d-flex flex-column px-3 py-3" *ngIf="!showPreviewDoc">
+                <span>Subir un archivo</span>
+                <p>Los archivos deben ocupar un máximo de 100MB</p>
+                <button type="button" class="btn" (click)="openInputFileDoc()">Elegir archivo</button>
+              </div>
+
+              <!-- Preview archivo -->
+              <div class="preview-doc d-flex flex-row" *ngIf="showPreviewDoc">
+                <div class="icon-doc d-flex align-items-center justify-content-center">
+                  <img src="../../../../assets/{{getTypeFile(fileDoc.type)}}.png" alt="Document">
+                </div>
+                <div class="name-doc d-flex align-items-center">
+                  <span>{{ fileDoc.name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <input type="file" name="" id="input-file-img-vid" hidden (input)="changeInputMedia($event)" formControlName="media" multiple accept="image/*,video/*">
+            <input type="file" name="" id="input-file-doc" hidden (input)="changeInputMediaDoc($event)" formControlName="mediaDoc" accept=".doc,.docx,.pdf,.pptx">
+          </div>
+
+          <!-- Añadir a la publicacion -->
+          <div class="add-media d-flex flex-row align-items-center justify-content-between">
+            <p class="fw-semibold">Añadir a tu publicación</p>
+            <div class="add-post d-flex ">
+              <span class="d-flex align-items-center" [ngClass]="{'disabled': disableLoadImage}" (click)="!disableLoadImage && showAreaMedia()"><i class="bi bi-image fs-5"></i></span>
+              <span class="d-flex align-items-center" [ngClass]="{'disabled': disableLoadDoc}" (click)="!disableLoadDoc && showAreaDoc()"><i class="bi bi-file-earmark-text-fill fs-5"></i></span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" [disabled]="disabledPublishButton" (click)="post()">Publicar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
