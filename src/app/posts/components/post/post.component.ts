@@ -3,6 +3,7 @@ import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
 import { Institution } from '../../models/institution';
+import { UploadedDocument } from '../../models/uploaded-document';
 
 @Component({
   selector: 'app-post',
@@ -27,6 +28,7 @@ export class PostComponent {
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
+  detailDoc!: UploadedDocument
 
 
   constructor(private postService: PostService){}
@@ -41,6 +43,9 @@ export class PostComponent {
         console.log(error);
       }
     })
+    if(this.post?.content.media[0].type == 'document'){
+      this.getDetailDocuments(this.post.content.media[0].path);
+    }
   }
   //Asignar clase para multiples fotos de posts
   getGridClass(images: any[]): string {
@@ -104,6 +109,26 @@ export class PostComponent {
     //"emoji_type": "crying-face"  id: 
     //"emoji_type": "angry-face" id: 
 
+  }
+
+  getDetailDocuments(urlDoc: string){
+    this.postService.getDetailsDoc(urlDoc).subscribe({
+      next: (responseDoc: UploadedDocument) => {
+        this.detailDoc = responseDoc;
+      },
+      error: (error) => {
+        console.log('error al obtener detalles del doc',error)
+      }
+    })
+  }
+
+  getTypeDoc(typeDoc: string){
+    if(typeDoc == 'application/pdf')
+      return 'PDF';
+    else if(typeDoc == 'application/pptx')
+      return 'PRESENTACIÓN';
+    else
+      return 'DOCUMENTO';
   }
 
   getReactions(index:number){

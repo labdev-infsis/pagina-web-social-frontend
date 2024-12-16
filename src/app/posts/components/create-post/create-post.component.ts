@@ -7,6 +7,7 @@ import { concatMap } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
+import { UploadedDocument } from '../../models/uploaded-document';
 
 @Component({
   selector: 'app-create-post',
@@ -228,11 +229,11 @@ export class CreatePostComponent {
       console.log('formData', formData)
 
       this.postService.uploadDocument(formData).pipe(
-        concatMap((uploadResponse: UploadedMedia) => {
+        concatMap((uploadResponse: UploadedDocument) => {
           responseDoc = {
             number: 1,
             type: 'document',//uploadResponse.type,
-            path: uploadResponse.urlResource
+            path: uploadResponse.url
           }
 
           const post: CreatePost = {

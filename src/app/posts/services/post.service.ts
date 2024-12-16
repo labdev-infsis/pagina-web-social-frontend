@@ -46,8 +46,12 @@ export class PostService {
   //Método para subir un archivo
   uploadDocument(formData: FormData): Observable<any>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
-    const uploadImgs = 'documents/upload'
+    const uploadImgs = 'documents/posts'
     return this.http.post<any>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
+  }
+
+  getDetailsDoc(url:string): Observable<any>{
+    return this.http.get<any>(url)
   }
 
   //Método para reaccionar a una publicacion
