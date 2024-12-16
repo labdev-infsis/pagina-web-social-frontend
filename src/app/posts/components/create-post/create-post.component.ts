@@ -259,6 +259,25 @@ export class CreatePostComponent {
           console.log('Error al crear el post con archivo',error)
         }
       })      
+    }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+      const post: CreatePost = {
+        institution_id: this.institution.uuid,
+        date: new Date(),
+        comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
+        content: {
+          text: valueFormPost.contentPost,
+          media: []
+        }
+      }
+
+      this.postService.createPost(post).subscribe({
+        next: () => {
+          window.location.reload()
+        },
+        error: (error) => {
+          console.log('Error al subir post solo texto', error)
+        }
+      })
     }
   }
 

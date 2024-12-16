@@ -18,7 +18,7 @@
     {{ post.content.text }}
   </p>
   <!-- Visualizar imagenes -->
-  <ng-container *ngIf="typeImages.includes(post.content.media[0].type)">
+  <ng-container *ngIf="post.content.media.length > 0 && typeImages.includes(post.content.media[0].type)">
     <div class="post-images" [ngClass]="getGridClass(images)">
       <ng-container *ngFor="let image of images; let i = index">
         <!-- Mostrar las primeras 3 imágenes directamente -->
@@ -36,7 +36,7 @@
     </div>
   </ng-container>
   <!-- Visualizar documento -->
-  <ng-container *ngIf="post.content.media[0].type == 'document' && detailDoc">
+  <ng-container *ngIf="post.content.media.length > 0 && post.content.media[0].type == 'document' && detailDoc">
     <a [href]="detailDoc.urlResource" target="_blank" class="text-decoration-none">
       <div class="doc-post d-flex flex-row">
         <div class="icon-doc d-flex align-items-center justify-content-center">
@@ -51,7 +51,7 @@
   </ng-container>
 
   <!-- Visualizar videos -->
-   <ng-container *ngIf="post.content.media[0].type == 'video'">
+   <ng-container *ngIf="post.content.media.length > 0 && post.content.media[0].type == 'video'">
     <div class="video-post">
       <video [src]="post.content.media[0].path" controls ></video>
     </div>

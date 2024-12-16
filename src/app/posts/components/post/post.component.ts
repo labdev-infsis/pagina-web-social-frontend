@@ -43,7 +43,7 @@ export class PostComponent {
         console.log(error);
       }
     })
-    if(this.post?.content.media[0].type == 'document'){
+    if(this.post.content.media.length > 0 && this.post?.content.media[0].type == 'document'){
       this.getDetailDocuments(this.post.content.media[0].path);
     }
   }
