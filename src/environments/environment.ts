@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  BACK_END_HOST: ''
+  BACK_END_HOST: 'https://devpws.cs.umss.edu.bo/api/v1'
 };
 /*
  * For easier debugging in development mode, you can import the following file

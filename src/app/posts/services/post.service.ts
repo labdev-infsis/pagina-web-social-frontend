@@ -7,17 +7,24 @@ import { Institution } from '../models/institution';
 import { Post } from '../models/post';
 import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
+import { environment } from '../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
+
   // private baseUrl = 'https://devpws.cs.umss.edu.bo/api/v1'; // URL base del backend
   private baseUrl = 'http://localhost:9090/api/v1'; // URL base del backend
+  readonly ROOT_URL = `${environment.BACK_END_HOST}`;
+  private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('token') }) };
+
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   // Método para obtener los datos de una institución
+
   getInstitution(uuid: string): Observable<Institution> {
     const urlInstitution = 'institutions'
     return this.http.get<Institution>(`${this.baseUrl}/${urlInstitution}/${uuid}`);
@@ -27,6 +34,7 @@ export class PostService {
   getPosts(): Observable<Post[]>{
     const getPosts = 'posts'
     return this.http.get<Post[]>(`${this.baseUrl}/${getPosts}`);
+
   }
 
   //Método para crear un post
