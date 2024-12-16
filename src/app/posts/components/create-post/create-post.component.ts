@@ -251,7 +251,7 @@ export class CreatePostComponent {
         })
       ).subscribe({
         next: ()=> {
-          // window.location.reload()
+          window.location.reload()
           console.log('post con archivo creado con exito')
         },
         error: (error) => {

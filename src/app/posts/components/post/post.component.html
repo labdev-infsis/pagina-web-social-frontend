@@ -50,6 +50,13 @@
     </a>
   </ng-container>
 
+  <!-- Visualizar videos -->
+   <ng-container *ngIf="post.content.media[0].type == 'video'">
+    <div class="video-post">
+      <video [src]="post.content.media[0].path" controls ></video>
+    </div>
+   </ng-container>
+
   <div class="reactions-comments d-flex justify-content-between" 
   *ngIf="amountReactions() > 0 || amountComments() > 0">
     <div class="likes" *ngIf="amountReactions() > 0">
