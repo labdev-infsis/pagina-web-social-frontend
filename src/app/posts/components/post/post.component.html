@@ -14,7 +14,7 @@
     </ng-container>
   </div>
   <!-- Contenido del post -->
-  <p class="text-post">
+  <p *ngIf="post.content.text != ''" class="text-post">
     {{ post.content.text }}
   </p>
   <!-- Visualizar imagenes -->
