@@ -23,6 +23,13 @@ export class PostService {
     return this.http.get<Institution>(`${this.baseUrl}/${urlInstitution}/${uuid}`);
   }
 
+  //Método para obtener un user
+  getUser(): Observable<any>{
+    const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
+    const getUser = 'users/me'
+    return this.http.get<any>(`${this.baseUrl}/${getUser}`, reqHeader)
+  }
+
   // Método para obtener los posts
   getPosts(): Observable<Post[]>{
     const getPosts = 'posts'

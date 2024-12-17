@@ -24,8 +24,8 @@
           (click)="toggleMenu()"
         >
           <fa-icon [icon]="['fas', 'user']" *ngIf="!authenticated" class="user-icon"></fa-icon>
-          <ng-container *ngIf="institution">
-            <img *ngIf="authenticated" class="user-profile-img" [src]="institution.logo_url" [alt]="institution.logo_url.alt || 'Foto de perfil'">
+          <ng-container *ngIf="authenticated && user">
+            <img *ngIf="authenticated" class="user-profile-img" [src]="user.photo_profile_path" [alt]="'Foto de perfil'">
           </ng-container>
         </a>
         <div *ngIf="isMenuOpen" class="dropdown-menu">
