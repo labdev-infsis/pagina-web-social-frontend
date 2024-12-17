@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
@@ -29,6 +29,7 @@ export class PostComponent {
   }
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
   detailDoc!: UploadedDocument
+  totalReactions = signal(0)
 
 
   constructor(private postService: PostService){}
@@ -46,6 +47,7 @@ export class PostComponent {
     if(this.post.content.media.length > 0 && this.post?.content.media[0].type == 'document'){
       this.getDetailDocuments(this.post.content.media[0].path);
     }
+    this.totalReactions.set(this.post.reactions.total_reactions);
   }
   //Asignar clase para multiples fotos de posts
   getGridClass(images: any[]): string {
@@ -145,7 +147,8 @@ export class PostComponent {
   }
 
   amountReactions(){
-    return this.post.reactions.total_reactions
+    // return this.post.reactions.total_reactions
+    return this.totalReactions();
   }
 
   amountComments(){
@@ -207,6 +210,7 @@ export class PostComponent {
       next: ()=>{
         this.like = !this.like
         console.log('Reaccion exitosa')
+        this.totalReactions.update(valor => valor + 1)
       },
       error:(error)=>{
         console.log('No se pudo reaccionar', error)
