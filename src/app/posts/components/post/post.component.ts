@@ -66,7 +66,8 @@ export class PostComponent {
 
   calculateTimePost(){
     const postDate = new Date(this.post.date)
-    const currentDate = new Date();
+    postDate.setHours(postDate.getHours() - 4);
+    const currentDate = new Date(Date.now());
     const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
