@@ -11,8 +11,9 @@ import { ChangePasswordComponent } from './components/change-password/change-pas
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
+import { RegisterComponent } from './components/register/register.component';
 @NgModule({
-  declarations: [LoginComponent, ChangePasswordComponent, CreateAccountComponent],
+  declarations: [LoginComponent, ChangePasswordComponent, CreateAccountComponent, RegisterComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -20,7 +21,7 @@ import { CreateAccountComponent } from './components/create-account/create-accou
     HttpClientModule,
     ReactiveFormsModule
   ],
-  exports: [LoginComponent, CreateAccountComponent],
+  exports: [LoginComponent, CreateAccountComponent, RegisterComponent],
   providers: [
     AuthGuardService,
     AuthService,

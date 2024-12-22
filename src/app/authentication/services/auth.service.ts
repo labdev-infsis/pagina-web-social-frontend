@@ -33,7 +33,11 @@ export class AuthService {
       password
     }
 
-    return this.http.post<any>(this.urlBase + 'login', user)
+
+
+
+    return this.http.post<any>('http://localhost:9090/api/auth/' + 'login', user)
+
       .pipe(
         map(user => {
           this.token = user.accessToken;
@@ -43,6 +47,28 @@ export class AuthService {
         })
       );
   }
+
+  // Agregar el método register MARCOS AÑADIDO
+  register(email: string, password: string) {
+    let user = {
+      email,
+      password
+    };
+
+    return this.http.post<any>('http://localhost:9090/api/auth/' + 'register', user) 
+      .pipe(
+        map(user => {
+          this.token = user.accessToken;
+          localStorage.setItem('token', this.token);
+
+          return true;
+        })
+      );
+  }
+
+
+
+
 
   getToken() {
     return localStorage.getItem('token');
