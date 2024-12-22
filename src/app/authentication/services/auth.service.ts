@@ -51,7 +51,7 @@ export class AuthService {
       password
     };
 
-    return this.http.post<any>('http://localhost:9090/api/auth/' + 'register', user) // Asegúrate de que este endpoint sea el correcto
+    return this.http.post<any>('http://localhost:9090/api/auth/' + 'register', user) 
       .pipe(
         map(user => {
           this.token = user.accessToken;

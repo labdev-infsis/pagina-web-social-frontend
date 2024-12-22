@@ -11,37 +11,37 @@
 }
 
 .modal-header {
-    border-bottom: none;  /* Elimina el borde inferior */
+    border-bottom: none;  
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text-align: center;  /* Centra el contenido dentro de la cabecera */
-    padding: 0;  /* Elimina el padding por defecto de la cabecera */
+    text-align: center;  
+    padding: 0;  
 
-    position: relative; /* Asegura que los elementos dentro se alineen correctamente */
+    position: relative;
 
 
 
 }
 
 .modal-title {
-    flex: 1;  /* Permite que el título se expanda para tomar el espacio disponible */
-    text-align: center;  /* Centra el texto */
-    color: white;  /* Cambia el color del texto a blanco */
+    flex: 1;  
+    text-align: center; 
+    color: white; 
 }
 
 .btn-close {
-    color: green;  /* Cambia el color de la "X" a blanco */
-    background: transparent;  /* Elimina el fondo del botón */
-    border: none;  /* Elimina el borde */
-    font-size: 1.25rem;  /* Aumenta el tamaño de la "X" si lo deseas */
-    line-height: 1;  /* Ajusta la altura de línea */
+    color: green; 
+    background: transparent;
+    border: none; 
+    font-size: 1.25rem; 
+    line-height: 1;  
 
     position: absolute;
-    right: 10px;  /* Coloca el botón en la esquina superior derecha */
-    top: 50%;  /* Centra la "X" verticalmente */
-    transform: translateY(-50%);  /* Ajusta la "X" para centrarla correctamente */
-    z-index: 10;  /* Asegura que el botón esté encima de otros elementos */
+    right: 10px;  
+    top: 50%;  
+    transform: translateY(-50%); 
+    z-index: 10;  
 
 }
 
@@ -67,7 +67,7 @@
 .bi {
     cursor: pointer;
     position: absolute;
-    right: 10px; /* 35px is-invalid */
+    right: 10px; 
     color: #9FB0E7;
     transform: translateY(-150%);
     transition: .4s ease all;
@@ -75,7 +75,7 @@
 
 
 .bi:hover {
-    color: var(--bs-body-color); //#1C1B1F
+    color: var(--bs-body-color);
 }
 
 @media (max-width: 576px) {
