@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
 
   private buildForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['202004185@est.umss.edu', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      password: ['Control123', [Validators.required, Validators.maxLength(100)]]
+      username: ['alicia.mercado@fcyt.umss.edu.bo', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      password: ['Control456', [Validators.required, Validators.maxLength(100)]]
     });
   }
 
@@ -41,17 +41,17 @@ export class LoginComponent implements OnInit {
     if(dataValid){
       let login = this.loginForm.value;
 
-      this.auth.login(login.username, login.password).subscribe(
-        () => {
+      this.auth.login(login.username, login.password).subscribe({
+        next: () => {
           this.isLoggedIn = true;
           this.router.navigate(['/']);
           window.location.reload()
         },
-        (error: any) => {
-          console.log(error)
+        error: (error: any) => {
+          console.log('se imprime esto',error)
           this.correctCredentials = false;
         }
-      );
+      });
     }
 
   }
