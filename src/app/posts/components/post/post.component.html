@@ -14,22 +14,20 @@
     </ng-container>
   </div>
   <!-- Contenido del post -->
-  <p *ngIf="post.content.text != ''" class="text-post">
-    {{ post.content.text }}
-  </p>
+  <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
   <!-- Visualizar imagenes -->
   <ng-container *ngIf="post.content.media.length > 0 && typeImages.includes(post.content.media[0].type)">
     <div class="post-images" [ngClass]="getGridClass(images)">
       <ng-container *ngFor="let image of images; let i = index">
         <!-- Mostrar las primeras 3 imágenes directamente -->
-        <img *ngIf="i < 3 || images.length == 4" [src]="image" [alt]="image.alt || 'Imagen del post'">
+        <img *ngIf="i < 3 || images.length == 4" [src]="image" alt="Imagen del post">
         <!-- Quinta imagen: Con superposición si hay más imágenes -->
         <div 
           *ngIf="i === 3 && images.length > 4" 
           class="more" 
           [title]="images.length - 4"
           >
-          <img [src]="image" [alt]="image.alt || 'Imagen del post'">
+          <img [src]="image" alt="Imagen del post">
           <div class="overlay"></div>
         </div>
       </ng-container>

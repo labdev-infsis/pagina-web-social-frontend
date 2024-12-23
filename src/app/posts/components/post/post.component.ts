@@ -4,6 +4,8 @@ import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
 import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
+import { ReactionsByType } from '../../models/reactions-by-type';
+import { Media } from '../../models/media';
 
 @Component({
   selector: 'app-post',
@@ -15,7 +17,7 @@ export class PostComponent {
   @Input() post: any
   institution!: Institution
   like = false
-  images: any;
+  images!: Media[];
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -59,7 +61,7 @@ export class PostComponent {
   }
 
   loadImagesPost(){
-    let imagesOfPost = []
+    let imagesOfPost: Media[] = []
     for (const image of this.post.content.media) {
       imagesOfPost.push(image.path)
     }
@@ -68,7 +70,7 @@ export class PostComponent {
 
   calculateTimePost(){
     const postDate = new Date(this.post.date)
-    postDate.setHours(postDate.getHours() - 4);
+    // console.log(this.post.date)
     const currentDate = new Date(Date.now());
     const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
     const unMinuto = 60 * 1000;
@@ -135,7 +137,7 @@ export class PostComponent {
   }
 
   getReactions(index:number){
-    const reactionsByType: [] = this.post.reactions.reactions_by_type;
+    const reactionsByType: ReactionsByType[] = this.post.reactions.reactions_by_type;
     const arrayOrdered:any[] = [...reactionsByType].sort((a:any,b:any)=> b.amount - a.amount )
     const arrayFinal = arrayOrdered.filter((reaction) => reaction.amount >  0)
     // return arrayOrdered[index].emoji_type
