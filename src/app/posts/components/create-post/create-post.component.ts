@@ -8,6 +8,7 @@ import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
+import moment from 'moment';
 
 @Component({
   selector: 'app-create-post',
@@ -48,7 +49,7 @@ export class CreatePostComponent {
 
   private buildForm() {
     this.postForm = this.formBuilder.group({
-      contentPost: ['',  [Validators.maxLength(1000),Validators.minLength(1)]],
+      contentPost: ['',  [Validators.maxLength(1000)]],
       media: [[]],
       mediaDoc: [[]]
     });
@@ -186,6 +187,15 @@ export class CreatePostComponent {
     const formData = new FormData()
     const responseImages: Media[] = [] 
     let responseDoc: Media
+    const post: CreatePost = {
+      institution_id: this.institution.uuid,
+      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
+      content: {
+        text: valueFormPost.contentPost,
+        media: []
+      }
+    }
 
     if(this.listFile){ //Si hay imagenes se los procesa
       //Convertir las imagenes en Form Data
@@ -203,21 +213,13 @@ export class CreatePostComponent {
             });
           });
 
-          const post: CreatePost = {
-            institution_id: this.institution.uuid,
-            date: new Date(Date.now()),
-            comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
-            content: {
-              text: valueFormPost.contentPost,
-              media: responseImages
-            }
-          }
+          post.content.media = responseImages
+
           return this.postService.createPost(post);
         })
       ).subscribe({
         next: ()=> {
           window.location.reload()
-          console.log('post con imagen (es) creado con exito')
         },
         error: (error) => {
           console.log('Error al crear el post con imagen (es)',error)
@@ -226,7 +228,6 @@ export class CreatePostComponent {
     }else if(this.fileDoc){//Si hay un archivo
       //Convertir el archivo en form data
       formData.append('file', this.fileDoc);
-      console.log('formData', formData)
 
       this.postService.uploadDocument(formData).pipe(
         concatMap((uploadResponse: UploadedDocument) => {
@@ -236,39 +237,19 @@ export class CreatePostComponent {
             path: uploadResponse.url
           }
 
-          const post: CreatePost = {
-            institution_id: this.institution.uuid,
-            date: new Date(),
-            comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
-            content: {
-              text: valueFormPost.contentPost,
-              media: [
-                responseDoc
-              ]
-            }
-          }
-          console.log('post a subir', post)
+          post.content.media?.push(responseDoc)
+
           return this.postService.createPost(post);
         })
       ).subscribe({
         next: ()=> {
           window.location.reload()
-          console.log('post con archivo creado con exito')
         },
         error: (error) => {
           console.log('Error al crear el post con archivo',error)
         }
       })      
     }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
-      const post: CreatePost = {
-        institution_id: this.institution.uuid,
-        date: new Date(),
-        comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
-        content: {
-          text: valueFormPost.contentPost,
-          media: []
-        }
-      }
 
       this.postService.createPost(post).subscribe({
         next: () => {
