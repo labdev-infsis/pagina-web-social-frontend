@@ -30,7 +30,6 @@ export class PostComponent {
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
-  detailDoc!: UploadedDocument
   totalReactions = signal(0)
 
 
@@ -46,9 +45,6 @@ export class PostComponent {
         console.log(error);
       }
     })
-    if(this.post.content.media.length > 0 && this.post?.content.media[0].type == 'document'){
-      this.getDetailDocuments(this.post.content.media[0].path);
-    }
     this.totalReactions.set(this.post.reactions.total_reactions);
   }
   //Asignar clase para multiples fotos de posts
@@ -116,17 +112,6 @@ export class PostComponent {
 
   }
 
-  getDetailDocuments(urlDoc: string){
-    this.postService.getDetailsDoc(urlDoc).subscribe({
-      next: (responseDoc: UploadedDocument) => {
-        this.detailDoc = responseDoc;
-      },
-      error: (error) => {
-        console.log('error al obtener detalles del doc',error)
-      }
-    })
-  }
-
   getTypeDoc(typeDoc: string){
     if(typeDoc == 'application/pdf')
       return 'PDF';
@@ -149,7 +134,6 @@ export class PostComponent {
   }
 
   amountReactions(){
-    // return this.post.reactions.total_reactions
     return this.totalReactions();
   }
 

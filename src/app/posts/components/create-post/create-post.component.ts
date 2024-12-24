@@ -107,6 +107,9 @@ export class CreatePostComponent {
       this.showPreviewImages = true;
       //Renderizar imagenes:
       this.listFile = Array.from(valueMedia.files);
+      console.log(this.listFile)
+      console.log(this.listFile[0])
+      console.log(this.listFile[0].name)
       const formData = new FormData()
       if(this.listFile){
         Array.from(this.listFile).forEach((file) => {
@@ -209,6 +212,7 @@ export class CreatePostComponent {
             responseImages.push({
               number: index + 1,
               type: image.type,
+              name: image.name,
               path: image.urlResource
             });
           });
@@ -234,7 +238,8 @@ export class CreatePostComponent {
           responseDoc = {
             number: 1,
             type: 'document',//uploadResponse.type,
-            path: uploadResponse.url
+            name: uploadResponse.name,
+            path: uploadResponse.urlResource
           }
 
           post.content.media?.push(responseDoc)
