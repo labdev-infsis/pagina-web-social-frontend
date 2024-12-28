@@ -9,6 +9,7 @@ import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
 import moment from 'moment';
+import { CommentConfig } from '../../models/comment-config';
 
 @Component({
   selector: 'app-create-post',
@@ -17,13 +18,15 @@ import moment from 'moment';
 })
 export class CreatePostComponent {
   institution!: Institution;
-  visibleAreaMedia = signal(false); //Controla cuando se quiere subir img, mandar hijo input, recibir cuando se cierre output
-  visibleAreaMediaDoc = signal(false);  //Doc
+  commentConfig!: CommentConfig[];
+  selectedCommentConfig!: string;
+  visibleAreaMedia = signal(false); 
+  visibleAreaMediaDoc = signal(false);
   disableLoadImage = signal(false);
   disableLoadDoc = signal(false);
   disabledPublishButton = signal(true); 
   postForm!: FormGroup
-  listFile!: File[]; //img
+  listFile!: File[]; 
   fileDoc!: File;
 
   constructor(
@@ -41,6 +44,15 @@ export class CreatePostComponent {
         console.log(error)
       }
     });
+    this.postService.getCommentsConfiguration().subscribe({
+      next: (commentsConfiguration: CommentConfig[])=>{
+        this.commentConfig = commentsConfiguration;
+        this.selectedCommentConfig = this.commentConfig[0].uuid;//Por defecto todos comentan
+      },
+      error: (error)=>{
+        console.log('Error al obtener la configuracion de comentarios', error)
+      }
+    })
     this.buildForm()
   }
 
@@ -103,7 +115,7 @@ export class CreatePostComponent {
     const post: CreatePost = {
       institution_id: this.institution.uuid,
       date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      comment_config_id: "875d7d7f-7a1c-4b77-ab63-77a9f76759d0",//Default todos comentan
+      comment_config_id: this.selectedCommentConfig,
       content: {
         text: valueFormPost.contentPost,
         media: []

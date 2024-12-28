@@ -58,6 +58,17 @@
     margin: 0;
     align-content: center;
   }
+
+  #option-comment {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    color: #000;
+  }
 }
 
 .form > .container {

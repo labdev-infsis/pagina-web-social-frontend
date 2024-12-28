@@ -29,7 +29,12 @@
               [alt]="'Foto de perfil'"
               class="img-profile"
             />
-            <p class="fw-bold fs-6">{{ institution.name }}</p>
+            <div>
+              <p class="fw-bold fs-6">{{ institution.name }}</p>
+              <select id="option-comment" *ngIf="commentConfig" [(ngModel)]="selectedCommentConfig">
+                <option *ngFor="let config of commentConfig" [value]="config.uuid">{{config.name}}</option>
+              </select>
+            </div>
           </ng-container>
         </div>
         <form [formGroup]="postForm" class="form d-flex flex-column">

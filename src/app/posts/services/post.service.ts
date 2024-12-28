@@ -7,6 +7,7 @@ import { Institution } from '../models/institution';
 import { Post } from '../models/post';
 import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
+import { CommentConfig } from '../models/comment-config';
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +65,9 @@ export class PostService {
     return this.http.post<any>(`${this.baseUrl}/posts/${postUuid}/${urlReactPost}`, body, reqHeader)
   }
 
-  
+  //Método para obtener configuraciones de comentarios
+  getCommentsConfiguration(): Observable<CommentConfig[]>{
+    const commentConfigUrl = 'comment-config'
+    return this.http.get<CommentConfig[]>(`${this.baseUrl}/${commentConfigUrl}`);
+  }
 }
