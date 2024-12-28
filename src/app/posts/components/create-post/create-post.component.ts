@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal} from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,16 +17,13 @@ import moment from 'moment';
 })
 export class CreatePostComponent {
   institution!: Institution;
-  visibleAreaMedia = false;
-  visibleAreaMediaDoc = false;
-  showPreviewImages = false;
-  showPreviewDoc = false;
-  disableLoadImage = false;
-  disableLoadDoc = false;
-  disabledPublishButton = true; 
+  visibleAreaMedia = signal(false); //Controla cuando se quiere subir img, mandar hijo input, recibir cuando se cierre output
+  visibleAreaMediaDoc = signal(false);  //Doc
+  disableLoadImage = signal(false);
+  disableLoadDoc = signal(false);
+  disabledPublishButton = signal(true); 
   postForm!: FormGroup
-  imagesPreview:string[] = []
-  listFile!: File[];
+  listFile!: File[]; //img
   fileDoc!: File;
 
   constructor(
@@ -63,126 +60,39 @@ export class CreatePostComponent {
     }
   }
 
+  getTextPost(text: string){
+    this.postForm.get('contentPost')?.setValue(text);
+    text != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+  }
+
   showAreaMedia(){
-    this.visibleAreaMedia = true;
-    this.disableLoadDoc = true;
+    this.visibleAreaMedia.set(true);
+    this.disableLoadDoc.set(true);
+  }
+
+  closeAreaMedia(option: boolean){
+    this.disableLoadDoc.set(option);
+    this.disabledPublishButton.set(true);
+  }
+
+  getFilesImagesPost(fileMedia: File[]){
+    this.listFile = fileMedia;
+    this.listFile ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   showAreaDoc(){
-    this.visibleAreaMediaDoc = true;
-    this.disableLoadImage = true;
+    this.visibleAreaMediaDoc.set(true);
+    this.disableLoadImage.set(true);
   }
 
-  changeTextArea(event: Event){
-    let contentPost = (event.target as HTMLTextAreaElement).value
-    let textArea = document.getElementById('text-area')
-    if(contentPost != ""){
-      this.disabledPublishButton = false
-    }else {
-      this.disabledPublishButton = true
-    }
-    if(textArea != null){
-      textArea.style.height = `${textArea.scrollHeight}px`;
-      textArea.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = `${this.scrollHeight}px`;
-    });
-    }
+  closeAreaDoc(option: boolean){
+    this.disableLoadImage.set(option);
+    this.disabledPublishButton.set(true);
   }
 
-  async changeInputMedia(event: Event | DragEvent){
-    event.preventDefault();
-    let valueMedia;
-    if (event instanceof DragEvent && event.dataTransfer) {
-      // Evento de arrastrar y soltar
-      valueMedia = event.dataTransfer;
-    } else if (event.target instanceof HTMLInputElement && event.target.files) {
-      // Evento de entrada de archivo
-      valueMedia = event.target;
-    }
-    
-    
-    if(valueMedia?.files && valueMedia.files.length >0 ){
-      this.disabledPublishButton = false;
-      this.showPreviewImages = true;
-      //Renderizar imagenes:
-      this.listFile = Array.from(valueMedia.files);
-      console.log(this.listFile)
-      console.log(this.listFile[0])
-      console.log(this.listFile[0].name)
-      const formData = new FormData()
-      if(this.listFile){
-        Array.from(this.listFile).forEach((file) => {
-          formData.append('media', file);
-        });
-      }
-      const imagePromises = this.listFile.map(file => this.readFileAsDataURL(file));
-      
-      this.imagesPreview = await Promise.all(imagePromises);
-    }
-  }
-
-  changeInputMediaDoc(event: Event){
-    if(event.target instanceof HTMLInputElement && event.target.files){
-      this.fileDoc = event.target.files[0]
-      this.disabledPublishButton = false;
-      this.showPreviewDoc = true;
-    }
-  }
-
-  getTypeFile(type: string){
-    const types = 
-    {
-      pdf : 'application/pdf',
-      document : ['application/doc','application/docx','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-      presentation: ['application/pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'],
-      text : 'application/txt' 
-    }
-    if(type === types.pdf)
-      return 'File PDF'
-    else if(types.document.includes(type))
-      return 'File DOCUMENTO'
-    else if(types.presentation.includes(type))
-      return 'File PRESENTACION'
-    else
-      return 'File DOCUMENTO'
-  }
-
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  getGridClass(): string {
-    if (this.imagesPreview.length === 1) return 'single';
-    if (this.imagesPreview.length === 2) return 'two';
-    if (this.imagesPreview.length === 3) return 'three';
-    if (this.imagesPreview.length === 4) return 'four';
-    return 'more';
-  }
-
-  private readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject('Error al leer el archivo');
-        }
-      };
-      reader.onerror = () => reject('Error al leer el archivo');
-      reader.readAsDataURL(file);
-    });
-  }
-
-  openInputFileImgVid(){
-    const inputFile = document.getElementById('input-file-img-vid')
-    inputFile?.click()
-  }
-
-  openInputFileDoc(){
-    const inputFileDoc = document.getElementById('input-file-doc');
-    inputFileDoc?.click()
+  getFileDocPost(doc: File){
+    this.fileDoc = doc;
+    this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   post(){
@@ -200,106 +110,75 @@ export class CreatePostComponent {
       }
     }
 
-    if(this.listFile){ //Si hay imagenes se los procesa
-      //Convertir las imagenes en Form Data
-      Array.from(this.listFile).forEach((file) => {
-        formData.append('images', file);
-      });
+    //Si hay info para postear
+    if(valueFormPost.contentPost != '' || this.listFile || this.fileDoc){
+      if(this.listFile){ //Si hay imagenes se los procesa
+        //Convertir las imagenes en Form Data
+        Array.from(this.listFile).forEach((file) => {
+          formData.append('images', file);
+        });
 
-      this.postService.uploadImages(formData).pipe(
-        concatMap((uploadResponse: UploadedMedia[]) => {
-          uploadResponse.forEach((image, index) => {
-            responseImages.push({
-              number: index + 1,
-              type: image.type,
-              name: image.name,
-              path: image.urlResource
+        this.postService.uploadImages(formData).pipe(
+          concatMap((uploadResponse: UploadedMedia[]) => {
+            uploadResponse.forEach((image, index) => {
+              responseImages.push({
+                number: index + 1,
+                type: image.type,
+                name: image.name,
+                path: image.urlResource
+              });
             });
-          });
 
-          post.content.media = responseImages
+            post.content.media = responseImages
 
-          return this.postService.createPost(post);
-        })
-      ).subscribe({
-        next: ()=> {
-          window.location.reload()
-        },
-        error: (error) => {
-          console.log('Error al crear el post con imagen (es)',error)
-        }
-      })
-    }else if(this.fileDoc){//Si hay un archivo
-      //Convertir el archivo en form data
-      formData.append('file', this.fileDoc);
-
-      this.postService.uploadDocument(formData).pipe(
-        concatMap((uploadResponse: UploadedDocument) => {
-          responseDoc = {
-            number: 1,
-            type: 'document',//uploadResponse.type,
-            name: uploadResponse.name,
-            path: uploadResponse.urlResource
+            return this.postService.createPost(post);
+          })
+        ).subscribe({
+          next: ()=> {
+            window.location.reload()
+          },
+          error: (error) => {
+            console.log('Error al crear el post con imagen (es)',error)
           }
-
-          post.content.media?.push(responseDoc)
-
-          return this.postService.createPost(post);
         })
-      ).subscribe({
-        next: ()=> {
-          window.location.reload()
-        },
-        error: (error) => {
-          console.log('Error al crear el post con archivo',error)
-        }
-      })      
-    }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+      }else if(this.fileDoc){//Si hay un archivo
+        //Convertir el archivo en form data
+        formData.append('file', this.fileDoc);
 
-      this.postService.createPost(post).subscribe({
-        next: () => {
-          window.location.reload()
-        },
-        error: (error) => {
-          console.log('Error al subir post solo texto', error)
-        }
-      })
-    }
-  }
+        this.postService.uploadDocument(formData).pipe(
+          concatMap((uploadResponse: UploadedDocument) => {
+            responseDoc = {
+              number: 1,
+              type: 'document',//uploadResponse.type,
+              name: uploadResponse.name,
+              path: uploadResponse.urlResource
+            }
 
-  deletePreviewImg(img:string){
-    let index = this.imagesPreview.indexOf(img)
-    this.imagesPreview.splice(index,1)
-    const fileInput = document.getElementById('input-file') as HTMLInputElement;
-    if (fileInput && fileInput.files) {
-      const files = Array.from(fileInput.files);
+            post.content.media?.push(responseDoc)
 
-      if (index >= 0 && index < files.length) {
-        files.splice(index, 1); // Elimina el archivo en la posición indicada
+            return this.postService.createPost(post);
+          })
+        ).subscribe({
+          next: ()=> {
+            window.location.reload()
+          },
+          error: (error) => {
+            console.log('Error al crear el post con archivo',error)
+          }
+        })      
+      }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+
+        this.postService.createPost(post).subscribe({
+          next: () => {
+            window.location.reload()
+          },
+          error: (error) => {
+            console.log('Error al subir post solo texto', error)
+          }
+        })
       }
-
-      // Usa DataTransfer para crear una nueva lista de archivos
-      const dataTransfer = new DataTransfer();
-      files.forEach(file => dataTransfer.items.add(file));
-
-      // Asigna la nueva lista de archivos al input
-      fileInput.files = dataTransfer.files;
+    }else{
+      console.error('No hay datos para postear');
     }
-  }
-
-  closeCleanPreviewImg(){
-    this.imagesPreview = []
-    this.disabledPublishButton = true;
-    this.disableLoadDoc = false;
-    this.showPreviewImages = this.visibleAreaMedia = false;
-    this.listFile = []
-    this.postForm.get('media')?.reset();
-  }
-
-  closeCleanPreviewDoc(){
-    this.disabledPublishButton = true;
-    this.listFile = []
-    this.postForm.get('media')?.reset();
-    this.showPreviewDoc = this.visibleAreaMediaDoc = this.disableLoadImage = false;
   }
 }

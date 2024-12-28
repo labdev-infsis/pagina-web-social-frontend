@@ -1,0 +1,104 @@
+.area-media {
+  border-radius: 10px;
+  border: 1.5px solid #e0e0e0;
+  // min-height: 160px;
+  margin-top: 5px;
+  padding: 10px;
+  position: relative;
+
+  .btn-close {
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    height: 20px;
+    width: 20px;
+    font-size: 10px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1;
+  }
+
+  .images {
+    min-height: 160px;
+    display: grid; 
+    gap: 5px; 
+    grid-template-columns: repeat(2, minmax(100px, 1fr)); 
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    background-color: #ffffff;
+    margin: auto;
+
+    img {        
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+  }
+
+  .images.single {
+    grid-template-columns: 1fr; /* Una sola columna */
+  }
+  
+  .images.two {
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  }
+  
+  .images.three {
+    grid-template-columns: 2fr 1fr; /* Dos columnas principales */
+    grid-template-rows: repeat(2, 1fr); /* Dos filas */
+  }
+  .images.three img:nth-child(1) {
+    grid-row: span 2; /* Imagen más grande a la izquierda */
+  }
+  
+  .images.four {
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas iguales */
+    
+  }
+  
+  .images > .more {
+    color: white; /* Texto blanco */
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex; /* Centrar el texto */
+    align-items: center; /* Vertical */
+    justify-content: center; /* Horizontal */
+    position: relative;
+    
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  }
+  
+  .images .more::after {
+    content: "+"attr(title); /* "+n" dinámico */
+    position: absolute;
+    cursor: pointer;
+  }
+
+  .back-media {
+    background-color: #f8f9fb;
+    height: 100%;
+    border-radius: inherit;
+    cursor: pointer;
+    min-height: 135px;
+
+    label {
+      cursor: pointer;
+    }
+  }
+
+  .back-media:hover {
+    background-color: #EBECEE;
+  }
+}
