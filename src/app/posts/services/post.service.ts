@@ -9,7 +9,6 @@ import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -28,6 +27,13 @@ export class PostService {
   getInstitution(uuid: string): Observable<Institution> {
     const urlInstitution = 'institutions'
     return this.http.get<Institution>(`${this.baseUrl}/${urlInstitution}/${uuid}`);
+  }
+
+  //Método para obtener un user
+  getUser(): Observable<any>{
+    const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
+    const getUser = 'users/me'
+    return this.http.get<any>(`${this.baseUrl}/${getUser}`, reqHeader)
   }
 
   // Método para obtener los posts
@@ -54,7 +60,7 @@ export class PostService {
   //Método para subir un archivo
   uploadDocument(formData: FormData): Observable<any>{
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
-    const uploadImgs = 'documents/upload'
+    const uploadImgs = 'documents/posts'
     return this.http.post<any>(`${this.baseUrl}/${uploadImgs}`, formData, reqHeader)
   }
 
@@ -65,5 +71,9 @@ export class PostService {
     return this.http.post<any>(`${this.baseUrl}/posts/${postUuid}/${urlReactPost}`, body, reqHeader)
   }
 
-  
+  //Método para obtener configuraciones de comentarios
+  getCommentsConfiguration(): Observable<CommentConfig[]>{
+    const commentConfigUrl = 'comment-config'
+    return this.http.get<CommentConfig[]>(`${this.baseUrl}/${commentConfigUrl}`);
+  }
 }

@@ -11,6 +11,7 @@ export class NavbarComponent {
   authenticated: boolean
   institution: any
   isMenuOpen = false;
+  user: any
 
   constructor(private authService: AuthService,
     private postService: PostService
@@ -28,6 +29,16 @@ export class NavbarComponent {
         console.log(error)
       }
     });
+    if(this.authenticated){
+      this.postService.getUser().subscribe({
+        next: (infoUser) => {
+          this.user = infoUser;
+        },
+        error: (error) => {
+          console.log('Error al obtener al user',error)
+        }
+      })
+    }
   }
 
   toggleMenu() {

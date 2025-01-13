@@ -6,7 +6,10 @@ import { DepartmentDetailsComponent } from './components/department-details/depa
 import { PostComponent } from './components/post/post.component';
 
 import { CreatePostComponent } from './components/create-post/create-post.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TextEditorComponent } from './components/create-post/text-editor/text-editor.component';
+import { ImagesUploaderComponent } from './components/create-post/images-uploader/images-uploader.component';
+import { DocumentUploaderComponent } from './components/create-post/document-uploader/document-uploader.component';
 
 import { CommentsComponent } from './components/comments/comments.component';
 
@@ -16,14 +19,17 @@ import { CommentsComponent } from './components/comments/comments.component';
     ViewAllPostsComponent,
     DepartmentDetailsComponent,
     PostComponent,
-    CreatePostComponent
-    CommentsComponent
+    CreatePostComponent,
+    TextEditorComponent,
+    ImagesUploaderComponent,
+    DocumentUploaderComponent
+
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule // Agregar FormsModule aquí
-  ],
-  exports: [ViewAllPostsComponent]
+    FormsModule
+  ]
+
 })
 export class PostsModule { }

@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
 import { Institution } from '../../models/institution';
+import { UploadedDocument } from '../../models/uploaded-document';
+import { ReactionsByType } from '../../models/reactions-by-type';
+import { Media } from '../../models/media';
 
 @Component({
   selector: 'app-post',
@@ -18,7 +21,7 @@ export class PostComponent {
   @Input() post: any
   institution!: Institution
   like = false
-  images: any;
+  images!: Media[];
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -31,6 +34,7 @@ export class PostComponent {
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
+  totalReactions = signal(0)
 
 
   constructor(private postService: PostService){}
@@ -45,17 +49,8 @@ export class PostComponent {
       error: (error) => {
         console.log(error);
       }
-    });
-  }
-
-  // Mostrar el popup de comentarios
-  openComments() {
-    this.showComments = true;
-  }
-
-  // Cerrar el popup de comentarios
-  closeComments() {
-    this.showComments = false;
+    })
+    this.totalReactions.set(this.post.reactions.total_reactions);
   }
 
   
@@ -68,14 +63,19 @@ export class PostComponent {
     return 'more';
   }
 
-  loadImagesPost() {
-    let imagesOfPost = [];
+  loadImagesPost(){
+    let imagesOfPost: Media[] = []
     for (const image of this.post.content.media) {
       imagesOfPost.push(image.path);
     }
     return imagesOfPost;
   }
 
+  calculateTimePost(){
+    const postDate = new Date(this.post.date)
+    // console.log(this.post.date)
+    const currentDate = new Date(Date.now());
+    const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
   calculateTimePost() {
     const postDate = new Date(this.post.date);
     const currentDate = new Date();
@@ -124,8 +124,17 @@ export class PostComponent {
 
   }
 
+  getTypeDoc(typeDoc: string){
+    if(typeDoc == 'application/pdf')
+      return 'PDF';
+    else if(typeDoc == 'application/pptx')
+      return 'PRESENTACIÓN';
+    else
+      return 'DOCUMENTO';
+  }
+
   getReactions(index:number){
-    const reactionsByType: [] = this.post.reactions.reactions_by_type;
+    const reactionsByType: ReactionsByType[] = this.post.reactions.reactions_by_type;
     const arrayOrdered:any[] = [...reactionsByType].sort((a:any,b:any)=> b.amount - a.amount )
     const arrayFinal = arrayOrdered.filter((reaction) => reaction.amount >  0)
     // return arrayOrdered[index].emoji_type
@@ -137,7 +146,7 @@ export class PostComponent {
   }
 
   amountReactions(){
-    return this.post.reactions.total_reactions
+    return this.totalReactions();
   }
 
   amountComments(){
@@ -199,6 +208,7 @@ export class PostComponent {
       next: ()=>{
         this.like = !this.like
         console.log('Reaccion exitosa')
+        this.totalReactions.update(valor => valor + 1)
       },
       error:(error)=>{
         console.log('No se pudo reaccionar', error)
