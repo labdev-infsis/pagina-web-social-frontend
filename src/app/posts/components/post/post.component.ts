@@ -10,9 +10,13 @@ import { Media } from '../../models/media';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrl: './post.component.scss'
+  styleUrls: ['./post.component.scss']
 })
 export class PostComponent {
+  @Input() post: any;
+  institution: any;
+  images: any;
+  showComments: boolean = false; // Controla la visibilidad del popup
 
   @Input() post: any
   institution!: Institution
@@ -36,6 +40,7 @@ export class PostComponent {
   constructor(private postService: PostService){}
 
   ngOnInit(){
+
     this.images = this.loadImagesPost();
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
@@ -47,7 +52,9 @@ export class PostComponent {
     })
     this.totalReactions.set(this.post.reactions.total_reactions);
   }
-  //Asignar clase para multiples fotos de posts
+
+  
+
   getGridClass(images: any[]): string {
     if (images.length === 1) return 'single';
     if (images.length === 2) return 'two';
@@ -59,9 +66,9 @@ export class PostComponent {
   loadImagesPost(){
     let imagesOfPost: Media[] = []
     for (const image of this.post.content.media) {
-      imagesOfPost.push(image.path)
+      imagesOfPost.push(image.path);
     }
-    return imagesOfPost
+    return imagesOfPost;
   }
 
   calculateTimePost(){
@@ -69,13 +76,17 @@ export class PostComponent {
     // console.log(this.post.date)
     const currentDate = new Date(Date.now());
     const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
+  calculateTimePost() {
+    const postDate = new Date(this.post.date);
+    const currentDate = new Date();
+    const diferenciaMs: number = currentDate.getTime() - postDate.getTime();
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
     const unDia = 24 * unaHora;
     const sieteDias = 7 * unDia;
 
     if (diferenciaMs < unMinuto) {
-        return "Hace un momento";
+      return 'Hace un momento';
     } else if (diferenciaMs < unaHora) {
         const minutos = Math.floor(diferenciaMs / unMinuto);
         return `Hace ${minutos} min`;
@@ -85,18 +96,19 @@ export class PostComponent {
     } else if (diferenciaMs < sieteDias) {
         const dias = Math.floor(diferenciaMs / unDia);
         return `Hace ${dias} d`;
+
     } else {
-        // Formatear la fecha en el formato "20 noviembre 2024 15:35"
-        const opciones: Intl.DateTimeFormatOptions = {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        };
-        return postDate.toLocaleDateString("es-ES", opciones);
+      const opciones: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return postDate.toLocaleDateString('es-ES', opciones);
     }
   }
+
 
   reactUserBoton(postUuid:any){
     if(!this.like){ //No seleccionaron ningun emoji por default Me gusta
@@ -203,4 +215,4 @@ export class PostComponent {
       }
     })
   }
-}
+

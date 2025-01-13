@@ -10,8 +10,9 @@ import { JwtDecodeService } from './services/jwt-decode.service';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
+import { CreateAccountComponent } from './components/create-account/create-account.component';
 @NgModule({
-  declarations: [LoginComponent, ChangePasswordComponent],
+  declarations: [LoginComponent, ChangePasswordComponent, CreateAccountComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -19,7 +20,7 @@ import { LoginComponent } from './components/login/login.component';
     HttpClientModule,
     ReactiveFormsModule
   ],
-  exports: [LoginComponent],
+  exports: [LoginComponent, CreateAccountComponent],
   providers: [
     AuthGuardService,
     AuthService,

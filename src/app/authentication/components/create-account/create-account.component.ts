@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: 'app-create-account',
+  templateUrl: './create-account.component.html',
+  styleUrl: './create-account.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class CreateAccountComponent implements OnInit {
   public loginForm!: FormGroup;
   public hide = true;
   public inputType: string = 'password';
@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
 
   private buildForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['alicia.mercado@fcyt.umss.edu.bo', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      password: ['Control456', [Validators.required, Validators.maxLength(100)]]
+      username: ['202004185@est.umss.edu', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      password: ['Control123', [Validators.required, Validators.maxLength(100)]]
     });
   }
 
@@ -41,17 +41,17 @@ export class LoginComponent implements OnInit {
     if(dataValid){
       let login = this.loginForm.value;
 
-      this.auth.login(login.username, login.password).subscribe({
-        next: () => {
+      this.auth.login(login.username, login.password).subscribe(
+        () => {
           this.isLoggedIn = true;
           this.router.navigate(['/']);
           window.location.reload()
         },
-        error: (error: any) => {
-          console.log('se imprime esto',error)
+        (error: any) => {
+          console.log(error)
           this.correctCredentials = false;
         }
-      });
+      );
     }
 
   }
@@ -69,5 +69,4 @@ export class LoginComponent implements OnInit {
     this.loginForm.reset()
     this.correctCredentials = true
   }
-
 }
