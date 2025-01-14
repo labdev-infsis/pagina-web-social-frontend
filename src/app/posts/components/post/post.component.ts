@@ -10,18 +10,14 @@ import { Media } from '../../models/media';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.scss']
+  styleUrl: './post.component.scss'
 })
 export class PostComponent {
   @Input() post: any;
-  institution: any;
-  images: any;
-  showComments: boolean = false; // Controla la visibilidad del popup
-
-  @Input() post: any
   institution!: Institution
-  like = false
   images!: Media[];
+  showComments: boolean = false; // Controla la visibilidad del popup
+  like = false
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -53,7 +49,15 @@ export class PostComponent {
     this.totalReactions.set(this.post.reactions.total_reactions);
   }
 
+  // Mostrar el popup de comentarios
+  openComments() {
+    this.showComments = true;
+  }
   
+  // Cerrar el popup de comentarios
+  closeComments() {
+    this.showComments = false;
+  }
 
   getGridClass(images: any[]): string {
     if (images.length === 1) return 'single';
@@ -76,10 +80,6 @@ export class PostComponent {
     // console.log(this.post.date)
     const currentDate = new Date(Date.now());
     const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
-  calculateTimePost() {
-    const postDate = new Date(this.post.date);
-    const currentDate = new Date();
-    const diferenciaMs: number = currentDate.getTime() - postDate.getTime();
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
     const unDia = 24 * unaHora;
@@ -215,4 +215,4 @@ export class PostComponent {
       }
     })
   }
-
+}

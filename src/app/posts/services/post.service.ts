@@ -8,6 +8,7 @@ import { Post } from '../models/post';
 import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
+import { CommentConfig } from '../models/comment-config';
 
 @Injectable({
   providedIn: 'root'
