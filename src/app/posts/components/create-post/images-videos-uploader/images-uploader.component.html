@@ -1,0 +1,33 @@
+<!-- Area para seleccionar imagenes videos -->
+<div class="area-media" *ngIf="showAreaMedia()">
+  <button type="button" class="btn-close m-0" aria-label="Close" (click)="closeCleanPreviewImgVid()"></button>
+  <div *ngIf="!showPreviewMedia" class="back-media d-flex flex-column align-items-center justify-content-center" (click)="openInputFileImgVid()" (drop)="changeInputMedia($event)" (dragover)="onDragOver($event)">
+    <i class="bi bi-plus-square-dotted fs-4"></i>
+    <h5 class="mb-0">Añadir fotos/vídeos</h5>
+    <label class="text-secondary" for="input-file-img-vid">o usa la opción de arrastrar y soltar</label>
+  </div>
+
+  <!-- Preview de imagenes videos elegidos -->
+  <div class="images-videos" *ngIf="showPreviewMedia" [ngClass]="getGridClass()">
+    <!-- Iterar imagenes y videos -->
+    <ng-container *ngFor="let img of mediaListPreview; let i = index"> 
+      <!-- Mostrar las primeras 4 imágenes o videos directamente -->
+       <!-- Mostrar <img> si es una imagen -->
+      <img *ngIf="isImage(img) && (i < 3 || mediaListPreview.length == 4); else mostrarVideo" [src]="img" [alt]="'Imagen del post'">
+      <!-- Mostrar <video> si no es una imagen -->
+      <ng-template #mostrarVideo>
+        <video *ngIf="i < 3 || mediaListPreview.length == 4" [src]="img" controls></video>
+      </ng-template>
+      <!-- Quinta imagen: Con superposición si hay más imágenes -->
+      <div 
+        *ngIf="i === 3 && mediaListPreview.length > 4" 
+        class="more" 
+        [title]="mediaListPreview.length - 4"
+        >
+        <img [src]="img" [alt]="'Imagen del post'">
+        <div class="overlay"></div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+<input type="file" name="" id="input-file-img-vid" hidden (input)="changeInputMedia($event)" multiple accept="image/*,video/*">

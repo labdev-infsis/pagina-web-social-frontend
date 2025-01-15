@@ -7,7 +7,7 @@ import { PostComponent } from './components/post/post.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TextEditorComponent } from './components/create-post/text-editor/text-editor.component';
-import { ImagesUploaderComponent } from './components/create-post/images-uploader/images-uploader.component';
+import { ImagesUploaderComponent } from './components/create-post/images-videos-uploader/images-uploader.component';
 import { DocumentUploaderComponent } from './components/create-post/document-uploader/document-uploader.component';
 
 import { CommentsComponent } from './components/comments/comments.component';
