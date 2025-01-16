@@ -15,7 +15,7 @@ import { Media } from '../../models/media';
 export class PostComponent {
   @Input() post: any;
   institution!: Institution
-  images!: Media[];
+  listMediaPost!: Media[]; // Lista de imagenes o videos del post 
   showComments: boolean = false; // Controla la visibilidad del popup
   like = false
   myReaction = {
@@ -29,15 +29,16 @@ export class PostComponent {
     crying_face: "n1596a78-c73f-475c-80a6-f5a858648af1",
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
-  typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
-  totalReactions = signal(0)
+  typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png'];
+  typeVideos = ['video', 'video/mp4'];
+  totalReactions = signal(0);
 
 
   constructor(private postService: PostService){}
 
   ngOnInit(){
 
-    this.images = this.loadImagesPost();
+    this.listMediaPost = this.loadMediaPost();
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
         this.institution = institutionData;
@@ -59,20 +60,20 @@ export class PostComponent {
     this.showComments = false;
   }
 
-  getGridClass(images: any[]): string {
-    if (images.length === 1) return 'single';
-    if (images.length === 2) return 'two';
-    if (images.length === 3) return 'three';
-    if (images.length === 4) return 'four';
-    return 'more';
+  getGridClass(media: Media[]): string {
+    if (media.length === 1) return 'single';
+    if (media.length === 2) return 'two';
+    if (media.length === 3) return 'three';
+    return 'four';
   }
 
-  loadImagesPost(){
-    let imagesOfPost: Media[] = []
-    for (const image of this.post.content.media) {
-      imagesOfPost.push(image.path);
+  // Cargar las imagenes o videos del post
+  loadMediaPost(){
+    let mediaOfPost: Media[] = []
+    for (const media of this.post.content.media) {
+      mediaOfPost.push(media);
     }
-    return imagesOfPost;
+    return mediaOfPost;
   }
 
   calculateTimePost(){

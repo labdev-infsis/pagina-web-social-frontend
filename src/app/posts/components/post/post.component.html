@@ -15,46 +15,56 @@
   </div>
   <!-- Contenido del post -->
   <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
-  <!-- Visualizar imagenes -->
-  <ng-container *ngIf="post.content.media.length > 0 && typeImages.includes(post.content.media[0].type)">
-    <div class="post-images" [ngClass]="getGridClass(images)">
-      <ng-container *ngFor="let image of images; let i = index">
-        <!-- Mostrar las primeras 3 imágenes directamente -->
-        <img *ngIf="i < 3 || images.length == 4" [src]="image" alt="Imagen del post">
-        <!-- Quinta imagen: Con superposición si hay más imágenes -->
-        <div 
-          *ngIf="i === 3 && images.length > 4" 
-          class="more" 
-          [title]="images.length - 4"
-          >
-          <img [src]="image" alt="Imagen del post">
-          <div class="overlay"></div>
+
+  <!-- Si hay contenido multi media (imagenes/videos, documento) -->
+  <ng-container *ngIf="listMediaPost.length > 0">
+    <!-- Visualizar posts con imagenes y/o videos -->
+    <div class="post-medias" [ngClass]="getGridClass(listMediaPost)">
+      <ng-container *ngFor="let media of listMediaPost; let i = index">
+        <!-- Mostrar las primeras 4 imágenes/videos directamente -->
+        <div *ngIf="i < 3 || listMediaPost.length == 4" class="media-post" [ngClass]="{'three': i == 0}">
+          <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path" [alt]="media.name || 'Imagen del post'">
+          <ng-template #mostrarVideo>
+            <video [src]="media.path" controls></video>
+          </ng-template>
+        </div>
+        <!-- Quinta imagen/video: Con superposición si hay más media -->
+        <div *ngIf="i === 3 && listMediaPost.length > 4" class="media-post">
+          <div class="more">
+            <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path" [alt]="media.name || 'Imagen del post'">
+            <ng-template #mostrarVideo>
+              <video [src]="media.path" controls></video>
+            </ng-template>
+            <div class="overlay">+{{ listMediaPost.length - 4 }}</div>
+          </div>
         </div>
       </ng-container>
     </div>
-  </ng-container>
-  <!-- Visualizar documento -->
-  <ng-container *ngIf="post.content.media.length > 0 && post.content.media[0].type == 'document'">
-    <a [href]="post.content.media[0].path" target="_blank" class="text-decoration-none">
-      <div class="doc-post d-flex flex-row">
-        <div class="icon-doc d-flex align-items-center justify-content-center">
-          <img src="../../../../assets/File PDF.png" alt="Document">
-        </div>
-        <div class="details-doc d-flex flex-column align-center">
-          <div class="type-doc d-flex align-center"><p class="m-0">{{ getTypeDoc(post.content.media[0].type) }}</p></div>
-          <div class="name-doc"><p class="fw-bold m-0" >{{ post.content.media[0].name }}</p></div>
-        </div>
+
+    <!-- Visualizar post de solo videos -->
+    <!-- <ng-container *ngIf="typeVideos.includes(post.content.media[0].type)">
+      <div class="video-post">
+        <video [src]="post.content.media[0].path" controls></video>
       </div>
-    </a>
+    </ng-container> -->
+
+    <!-- Visualizar post con solo documento -->
+    <ng-container *ngIf="post.content.media[0].type == 'document'">
+      <a [href]="post.content.media[0].path" target="_blank" class="text-decoration-none">
+        <div class="doc-post d-flex flex-row">
+          <div class="icon-doc d-flex align-items-center justify-content-center">
+            <img src="../../../../assets/File PDF.png" alt="Document">
+          </div>
+          <div class="details-doc d-flex flex-column align-center">
+            <div class="type-doc d-flex align-center"><p class="m-0">{{ getTypeDoc(post.content.media[0].type) }}</p></div>
+            <div class="name-doc"><p class="fw-bold m-0" >{{ post.content.media[0].name }}</p></div>
+          </div>
+        </div>
+      </a>
+    </ng-container>
   </ng-container>
 
-  <!-- Visualizar videos -->
-   <ng-container *ngIf="post.content.media.length > 0 && post.content.media[0].type == 'video'">
-    <div class="video-post">
-      <video [src]="post.content.media[0].path" controls ></video>
-    </div>
-   </ng-container>
-
+  <!-- Cantidad de reacciones y comentarios -->
   <div class="reactions-comments d-flex justify-content-between" 
   *ngIf="amountReactions() > 0 || amountComments() > 0">
     <div class="likes" *ngIf="amountReactions() > 0">
@@ -75,6 +85,8 @@
     </div>
   </div>
   <hr>
+
+  <!-- Botones de reaccionar, comentar y compartir -->
   <div class="bottuns d-flex justify-content-evenly m-2">
     <!-- Boton de Reaccionar -->
     <button type="button" class="btn" [ngClass]="myReaction.class" id="btn-like" (click)="reactUserBoton(post.uuid)">
@@ -89,9 +101,11 @@
         <img src="../../../../assets/angry-face.png" class="angry-face" (click)="clickReaction(post.uuid, 'angry-face')">
       </div>
     </button>
+    <!-- Boton de Comentar -->
     <button type="button" class="btn btn-secondary" disabled>
       <i class="bi bi-chat-left-text"></i>
       Comentar</button>
+    <!-- Boton de Compartir -->
     <button type="button" class="btn btn-secondary" disabled>
       <i class="fa-solid fa-share"></i>
       Compartir</button>
