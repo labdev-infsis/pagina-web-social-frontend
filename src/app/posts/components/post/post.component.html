@@ -18,11 +18,12 @@
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
   <ng-container *ngIf="listMediaPost.length > 0">
+
     <!-- Visualizar posts con imagenes y/o videos -->
     <div class="post-medias" [ngClass]="getGridClass(listMediaPost)">
       <ng-container *ngFor="let media of listMediaPost; let i = index">
         <!-- Mostrar las primeras 4 imágenes/videos directamente -->
-        <div *ngIf="i < 3 || listMediaPost.length == 4" class="media-post" [ngClass]="{'three': i == 0}">
+        <div *ngIf="i < 3 || listMediaPost.length == 4" class="media-post" [ngClass]="{'three': listMediaPost.length == 3 && i == 0}">
           <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path" [alt]="media.name || 'Imagen del post'">
           <ng-template #mostrarVideo>
             <video [src]="media.path" controls></video>
@@ -40,13 +41,6 @@
         </div>
       </ng-container>
     </div>
-
-    <!-- Visualizar post de solo videos -->
-    <!-- <ng-container *ngIf="typeVideos.includes(post.content.media[0].type)">
-      <div class="video-post">
-        <video [src]="post.content.media[0].path" controls></video>
-      </div>
-    </ng-container> -->
 
     <!-- Visualizar post con solo documento -->
     <ng-container *ngIf="post.content.media[0].type == 'document'">
@@ -84,7 +78,7 @@
       <i class="bi bi-chat-fill"></i>
     </div>
   </div>
-  <hr>
+  <hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}">
 
   <!-- Botones de reaccionar, comentar y compartir -->
   <div class="bottuns d-flex justify-content-evenly m-2">

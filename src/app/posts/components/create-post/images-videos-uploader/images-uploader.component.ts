@@ -15,7 +15,7 @@ export class ImagesUploaderComponent {
 
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
-  closeCleanPreviewImgVid(){
+  closeCleanPreviewMedia(){
     this.mediaListPreview = [];
     this.listFileMedia = [];
     this.showPreviewMedia = false;
@@ -24,7 +24,7 @@ export class ImagesUploaderComponent {
   }
 
   //Abrir el input para seleccionar imagenes videos
-  openInputFileImgVid(){
+  openInputFileMedia(){
     const inputFile = document.getElementById('input-file-img-vid')
     inputFile?.click()
   }
@@ -88,9 +88,9 @@ export class ImagesUploaderComponent {
   }
 
   //Eliminar imagen prevista NO USADA AUN
-  deletePreviewImg(img:string){
-    let index = this.mediaListPreview.indexOf(img)
-    this.mediaListPreview.splice(index,1)
+  deletePreviewMedia(media:string){
+    let index = this.mediaListPreview.indexOf(media);
+    this.mediaListPreview.splice(index,1);
     const fileInput = document.getElementById('input-file') as HTMLInputElement;
     if (fileInput && fileInput.files) {
       const files = Array.from(fileInput.files);
