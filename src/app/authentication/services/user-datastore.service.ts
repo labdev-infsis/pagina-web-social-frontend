@@ -9,7 +9,7 @@ import { EnableUser } from '../models/enable-user';
   providedIn: 'root'
 })
 export class UserDatastoreService {
-  readonly ROOT_URL = `${environment.BACK_END_HOST}users`;
+  private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV}/users`;
 
   constructor(private http: HttpClient) { }
 
@@ -26,6 +26,6 @@ export class UserDatastoreService {
   }
 
   changePassword(user: User) {
-    return this.http.post<any>(environment.BACK_END_HOST + 'users/changepassword', user);
+    return this.http.post<any>(environment.BACK_END_HOST_DEV + 'users/changepassword', user);
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, signal } from '@angular/core';
+import { Component, Input, signal, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
@@ -17,6 +17,7 @@ export class PostComponent {
   institution!: Institution
   listMediaPost!: Media[]; // Lista de imagenes o videos del post 
   showComments: boolean = false; // Controla la visibilidad del popup
+  showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
   like = false
   myReaction = {
     class: 'default',

@@ -11,6 +11,7 @@ import { ImagesUploaderComponent } from './components/create-post/images-videos-
 import { DocumentUploaderComponent } from './components/create-post/document-uploader/document-uploader.component';
 
 import { CommentsComponent } from './components/comments/comments.component';
+import { OptionsPostComponent } from './components/options-post/options-post.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { CommentsComponent } from './components/comments/comments.component';
     CreatePostComponent,
     TextEditorComponent,
     ImagesUploaderComponent,
-    DocumentUploaderComponent
+    DocumentUploaderComponent,
+    OptionsPostComponent
 
   ],
   imports: [

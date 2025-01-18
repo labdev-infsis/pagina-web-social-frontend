@@ -7,6 +7,7 @@
     border: 1px solid #e0e0e0;
     width: 100%;
     max-width: 500px;
+    position: relative;
   
     .img-profile{
       width: 55px; 
@@ -15,18 +16,42 @@
       border: 1px solid #ccc; 
     }
   
-    h2 {
-      font-size: 1rem; 
-      font-weight: bold;
-      color: #000000;
-      margin-bottom: 5px;
+    .info-user {
+      h2 {
+        font-size: 1rem; 
+        font-weight: bold;
+        color: #000000;
+        margin-bottom: 5px;
+      }
+    
+      p{
+        font-size: 0.9rem; 
+        font-weight: lighter;
+        color: gray;
+        margin-bottom: 10px;
+      }
     }
-  
-    p{
-      font-size: 0.9rem; 
-      font-weight: lighter;
-      color: gray;
-      margin-bottom: 10px;
+
+    .options-post {
+      height: 30px;
+      width: 40px;
+
+      i{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .bi {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #606367;
+        cursor: pointer;
+      }
+    }
+    .options-post:hover {
+      background-color: #F2F2F2;
+      border-radius: 100%;
     }
   
     .text-post {

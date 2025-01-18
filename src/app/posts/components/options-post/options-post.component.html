@@ -1,0 +1,30 @@
+<div class="menu-options-post" #menuOptions>
+    <div class="option-post">
+        <i class="bi bi-pencil-fill"></i>
+        <p class="fw-medium m-0">Editar publicación</p>
+    </div>
+    <div class="option-post" data-bs-target="#confirmDeletePost" data-bs-toggle="modal">
+        <i class="bi bi-trash-fill"></i>
+        <p class="fw-medium text-danger m-0">Eliminar publicación</p>
+    </div>
+</div>
+
+<!-- Modal confirmar eliminación de publicación -->
+<div class="modal fade" tabindex="-1" id="confirmDeletePost">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">¿Eliminar la publicación?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Esta seguro que desea eliminar la publicación de forma permanente?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn fw-semibold btn-cancel text-primary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary fw-semibold btn-delete" (click)="deletePost(post.uuid)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
