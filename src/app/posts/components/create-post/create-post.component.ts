@@ -90,6 +90,7 @@ export class CreatePostComponent {
   closeAreaMedia(option: boolean){
     this.disableLoadDoc.set(option); //Habilitar el boton de cargar documentos
     this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
+    this.listFile = [];//Limpiar la lista de imagenes
   }
 
   //Deshabilitar el boton de publicar si no hay imagenes
@@ -108,6 +109,7 @@ export class CreatePostComponent {
   closeAreaDoc(option: boolean){
     this.disableLoadImage.set(option);
     this.disabledPublishButton.set(true);
+    this.fileDoc = new File([''],'');//Limpiar el archivo
   }
 
   //Deshabilitar el boton de publicar si no hay archivo
@@ -132,8 +134,8 @@ export class CreatePostComponent {
     }
 
     //Si hay info para postear
-    if(valueFormPost.contentPost != '' || this.listFile || this.fileDoc){
-      if(this.listFile){ //Si hay imagenes-videos se los procesa
+    if(valueFormPost.contentPost != '' || this.listFile.length > 0 || this.fileDoc.size > 0){
+      if(this.listFile && this.listFile.length > 0){ //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
           file.type.includes('image')? formData.append('images', file) : formData.append('videos', file);
@@ -162,7 +164,7 @@ export class CreatePostComponent {
             console.log('Error al crear el post con contenido media (imagenes y/o videos)',error)
           }
         })
-      }else if(this.fileDoc){//Si hay un archivo
+      }else if(this.fileDoc && this.fileDoc.size > 0){//Si hay un archivo
         //Convertir el archivo en form data
         formData.append('file', this.fileDoc);
 

@@ -21,7 +21,6 @@ export class DocumentUploaderComponent {
   changeInputMediaDoc(event: Event){
     if(event.target instanceof HTMLInputElement && event.target.files){
       this.fileDoc = event.target.files[0]
-      // this.disabledPublishButton.set(false);
       this.showPreviewDoc = true;
       this.loadFileDoc.emit(this.fileDoc);
     }
