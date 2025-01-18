@@ -134,7 +134,7 @@ export class CreatePostComponent {
     }
 
     //Si hay info para postear
-    if(valueFormPost.contentPost != '' || this.listFile.length > 0 || this.fileDoc.size > 0){
+    if(valueFormPost.contentPost != '' || this.listFile || this.fileDoc){
       if(this.listFile && this.listFile.length > 0){ //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
@@ -201,7 +201,7 @@ export class CreatePostComponent {
         })
       }
     }else{
-      console.error('No hay datos para postear');
+      console.log('No hay datos para postear');
     }
   }
 }

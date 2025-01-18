@@ -111,7 +111,7 @@ export class PostService {
   //Método para obtener configuraciones de comentarios
   getCommentsConfiguration(): Observable<CommentConfig[]>{
     const commentConfigUrl = 'comment-config'
-    return this.http.get<CommentConfig[]>(`${this.ROOT_URL}/${commentConfigUrl}`);
+    return this.http.get<CommentConfig[]>(`${this.ROOT_URL}/${commentConfigUrl}`, this.reqHeader);
   }
 
   //Método para eliminar un post
