@@ -12,6 +12,7 @@ import { DocumentUploaderComponent } from './components/create-post/document-upl
 
 import { CommentsComponent } from './components/comments/comments.component';
 import { OptionsPostComponent } from './components/options-post/options-post.component';
+import { ModalDeletePostComponent } from './components/modal-delete-post/modal-delete-post.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { OptionsPostComponent } from './components/options-post/options-post.com
     TextEditorComponent,
     ImagesUploaderComponent,
     DocumentUploaderComponent,
-    OptionsPostComponent
+    OptionsPostComponent,
+    ModalDeletePostComponent
 
   ],
   imports: [

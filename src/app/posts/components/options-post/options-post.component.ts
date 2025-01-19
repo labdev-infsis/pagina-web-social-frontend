@@ -34,13 +34,6 @@ export class OptionsPostComponent {
   }
 
   deletePost(postUuid: string) {
-    this.postService.deletePost(postUuid).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.log('Error al eliminar el post',error);
-      }
-    })
+    
   }
 }

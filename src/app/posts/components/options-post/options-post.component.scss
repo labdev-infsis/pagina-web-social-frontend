@@ -31,38 +31,3 @@
         }
     }
 }
-
-// Modal confirmación de eliminación de post
-.modal-header {
-    align-items: center;
-    justify-content: center;
-
-    .btn-close {
-        position: absolute;
-        right: 25px;
-
-        &:hover {
-            border-radius: 100%;
-            background-color: #F2F2F2;
-        }
-    }
-}
-
-.modal-body {
-    p {
-        margin-bottom: 0;
-        color: #000;
-    }
-} 
-
-.modal-footer {
-    border-top: 0;
-
-    .btn-cancel:hover {
-        background-color: #F2F2F2;
-    }
-
-    .btn-delete {
-        padding: 6px 25px;
-    }
-}

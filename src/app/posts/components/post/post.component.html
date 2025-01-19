@@ -18,6 +18,7 @@
   </div>
   <!-- Popup de opciones post Editar/Eliminar -->
   <app-options-post *ngIf="showOptions()" [post]="post" (clickOutside)="showOptions.set(false)"></app-options-post>
+  <app-modal-delete-post (confirmDeletePost)="deletePost($event)"></app-modal-delete-post>
   <!-- Contenido del post -->
   <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
 

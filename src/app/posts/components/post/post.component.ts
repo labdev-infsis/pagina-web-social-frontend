@@ -1,4 +1,4 @@
-import { Component, Input, signal, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
@@ -14,6 +14,7 @@ import { Media } from '../../models/media';
 })
 export class PostComponent {
   @Input() post: any;
+  @Output() requestDeletePost = new EventEmitter<string>();
   institution!: Institution
   listMediaPost!: Media[]; // Lista de imagenes o videos del post 
   showComments: boolean = false; // Controla la visibilidad del popup
@@ -49,6 +50,12 @@ export class PostComponent {
       }
     })
     this.totalReactions.set(this.post.reactions.total_reactions);
+  }
+
+  deletePost(confirm: boolean) {
+    if (confirm) {
+      this.requestDeletePost.emit(this.post.uuid);
+    }
   }
 
   // Mostrar el popup de comentarios

@@ -115,8 +115,8 @@ export class PostService {
   }
 
   //Método para eliminar un post
-  deletePost(postUuid: string): Observable<any>{
+  deletePost(postUuid: string): Observable<Post>{
     const deletePost = 'posts'
-    return this.http.delete<any>(`${this.ROOT_URL}/${deletePost}/${postUuid}`, this.reqHeader);
+    return this.http.delete<Post>(`${this.ROOT_URL}/${deletePost}/${postUuid}`, this.reqHeader);
   }
 }
