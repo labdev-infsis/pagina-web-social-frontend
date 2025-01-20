@@ -13,6 +13,9 @@ import { DocumentUploaderComponent } from './components/create-post/document-upl
 import { CommentsComponent } from './components/comments/comments.component';
 import { OptionsPostComponent } from './components/options-post/options-post.component';
 import { ModalDeletePostComponent } from './components/modal-delete-post/modal-delete-post.component';
+import { ModalEditPostComponent } from './components/modal-edit-post/modal-edit-post.component';
+import { EditTextComponent } from './components/modal-edit-post/edit-text/edit-text.component';
+import { ImageVideoEditorComponent } from './components/modal-edit-post/image-video-editor/image-video-editor.component';
 
 
 @NgModule({
@@ -25,7 +28,10 @@ import { ModalDeletePostComponent } from './components/modal-delete-post/modal-d
     ImagesUploaderComponent,
     DocumentUploaderComponent,
     OptionsPostComponent,
-    ModalDeletePostComponent
+    ModalDeletePostComponent,
+    ModalEditPostComponent,
+    EditTextComponent,
+    ImageVideoEditorComponent
 
   ],
   imports: [

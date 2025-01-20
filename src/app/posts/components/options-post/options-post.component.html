@@ -1,5 +1,5 @@
 <div class="menu-options-post" #menuOptions>
-    <div class="option-post">
+    <div class="option-post" data-bs-target="#modalEditPost" data-bs-toggle="modal">
         <i class="bi bi-pencil-fill"></i>
         <p class="fw-medium m-0">Editar publicación</p>
     </div>
@@ -8,3 +8,5 @@
         <p class="fw-medium text-danger m-0">Eliminar publicación</p>
     </div>
 </div>
+
+<app-modal-edit-post [institution]="institution" [postToEdit]="post"></app-modal-edit-post>

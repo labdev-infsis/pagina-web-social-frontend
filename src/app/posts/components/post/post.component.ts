@@ -58,6 +58,17 @@ export class PostComponent {
     }
   }
 
+  updatePost(confirm: boolean) {
+    if (confirm) {
+      this.requestDeletePost.emit(this.post.uuid);
+    }
+  }
+
+  sendCopyPost(): Post {//Enviar copia del post para editar
+    const copyPost: Post = { ...this.post };
+    return copyPost;
+  }
+
   // Mostrar el popup de comentarios
   openComments() {
     this.showComments = true;

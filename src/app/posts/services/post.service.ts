@@ -119,4 +119,10 @@ export class PostService {
     const deletePost = 'posts'
     return this.http.delete<Post>(`${this.ROOT_URL}/${deletePost}/${postUuid}`, this.reqHeader);
   }
+
+  //Método para actualizar un post
+  updatePost(postUuid: string, dataPost: CreatePost): Observable<Post>{
+    const updatePost = 'posts'
+    return this.http.put<Post>(`${this.ROOT_URL}/${updatePost}/${postUuid}`, dataPost, this.reqHeader);
+  }
 }
