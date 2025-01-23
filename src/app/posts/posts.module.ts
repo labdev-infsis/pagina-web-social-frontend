@@ -16,6 +16,7 @@ import { ModalDeletePostComponent } from './components/modal-delete-post/modal-d
 import { ModalEditPostComponent } from './components/modal-edit-post/modal-edit-post.component';
 import { EditTextComponent } from './components/modal-edit-post/edit-text/edit-text.component';
 import { ImageVideoEditorComponent } from './components/modal-edit-post/image-video-editor/image-video-editor.component';
+import { ModalListReactionsComponent } from './components/modal-list-reactions/modal-list-reactions.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { ImageVideoEditorComponent } from './components/modal-edit-post/image-vi
     ModalDeletePostComponent,
     ModalEditPostComponent,
     EditTextComponent,
-    ImageVideoEditorComponent
+    ImageVideoEditorComponent,
+    ModalListReactionsComponent
 
   ],
   imports: [

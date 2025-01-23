@@ -1,0 +1,53 @@
+.modal-header {
+  .secction-title {
+    border-bottom: 3px solid #0d6efd;
+
+
+    .modal-title {
+      margin: 0 10px;
+      color: #0d6efd;
+      font-size: 1.2rem;
+    }
+  }
+
+  .btn-close {
+    position: absolute;
+    right: 25px;
+  
+    &:hover {
+      border-radius: 100%;
+      background-color: #F2F2F2;
+    }
+  }
+}
+
+.info-users {
+  height: 400px;
+  overflow: auto;
+
+  .reactions-by-user {
+    align-items: center;
+    margin-bottom: 25px;//Ajustar altura entre los usuarios
+    font-size: 12px;
+    color: #000;
+    position: relative;
+    padding-left: 5px;
+  
+    .img-profile{
+      width: 50px; 
+      height: 50px;
+      border-radius: 50%; 
+      border: 1px solid #ccc;
+
+      img {
+        height: inherit;
+      }
+    }
+  
+    .emoji-reaction {
+      position: absolute;
+      right: 20px;
+      font-size: x-large;
+    }
+  }
+}

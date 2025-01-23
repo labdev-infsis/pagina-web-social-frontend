@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 import { CommentConfig } from '../models/comment-config';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EmojiType } from '../models/emoji-type';
 
 @Injectable({
   providedIn: 'root'
@@ -124,5 +125,11 @@ export class PostService {
   updatePost(postUuid: string, dataPost: CreatePost): Observable<Post>{
     const updatePost = 'posts'
     return this.http.put<Post>(`${this.ROOT_URL}/${updatePost}/${postUuid}`, dataPost, this.reqHeader);
+  }
+
+  //Método para obeter los tipos de emojis
+  getEmojisType(): Observable<EmojiType[]>{
+    const getEmojis = 'emoji-type'
+    return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`, this.reqHeader);
   }
 }
