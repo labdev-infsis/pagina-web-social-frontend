@@ -15,8 +15,9 @@ import { Media } from '../../models/media';
 export class PostComponent {
   @Input() post: any;
   @Output() requestDeletePost = new EventEmitter<string>();
+  @Output() requestUpdatePost = new EventEmitter<Post>();
   institution!: Institution
-  listMediaPost!: Media[]; // Lista de imagenes o videos del post 
+  listMediaPost!: Media[]; // Lista de imagenes videos o documento del post 
   showComments: boolean = false; // Controla la visibilidad del popup
   showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
   like = false
@@ -58,10 +59,8 @@ export class PostComponent {
     }
   }
 
-  updatePost(confirm: boolean) {
-    if (confirm) {
-      this.requestDeletePost.emit(this.post.uuid);
-    }
+  updatePost(postUpdated: Post) {
+    this.requestUpdatePost.emit(postUpdated);
   }
 
   sendCopyPost(): Post {//Enviar copia del post para editar

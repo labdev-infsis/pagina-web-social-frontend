@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Post } from '../../../models/post';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-edit-text',
@@ -8,18 +9,20 @@ import { Post } from '../../../models/post';
 })
 export class EditTextComponent {
   @Input() contentText!: string | undefined;
-  @Input() post!: Post;
+  @Input() postUuid!: string;
   @Output() textChangeEvent = new EventEmitter<string>();
   @ViewChild('textareaRef') textarea!: ElementRef<HTMLTextAreaElement>;
 
-  ngOnInit(){
-    // console.log('fuera if', this.textarea, this.contentText);
-    if(this.textarea && this.contentText){  
-      this.textarea.nativeElement.value = this.contentText;
-      // console.log('dentro if', this.textarea.nativeElement.value);
-      //this.adjustTextAreaHeight();
-      this.textarea.nativeElement.style.height = 'auto'; // Restablece la altura
-      this.textarea.nativeElement.style.height = `${this.textarea.nativeElement.scrollHeight}px`; // Ajusta la altura según el contenido
+  ngAfterViewInit(){
+    // Obtén una referencia al modal de Bootstrap
+    const modalElement = document.getElementById(this.postUuid+'-edit');
+    if (modalElement) {
+      // Escucha el evento 'shown.bs.modal'
+      const modal = new Modal(modalElement);
+      modalElement.addEventListener('shown.bs.modal', () => {
+        if(modalElement.style.display == 'block')
+          this.adjustTextAreaHeight();
+      });
     }
   }
 
@@ -34,12 +37,8 @@ export class EditTextComponent {
   }
 
   private adjustTextAreaHeight(): void {
-    // const textareaElement = this.textarea.nativeElement;
-    // textareaElement.style.height = 'auto'; // Restablece la altura
-    // textareaElement.style.height = `${textareaElement.scrollHeight}px`; // Ajusta la altura según el contenido
-    this.textarea.nativeElement.style.height = 'auto'; // Restablece la altura
-    // console.log('dentro ajuste1', this.textarea.nativeElement.style.height);
-    this.textarea.nativeElement.style.height = `${this.textarea.nativeElement.scrollHeight}px`; // Ajusta la altura según el contenido
-    // console.log('dentro ajuste2', this.textarea.nativeElement.style.height);
+    const textareaElement = this.textarea.nativeElement;
+    textareaElement.style.height = 'auto'; // Restablece la altura
+    textareaElement.style.height = `${textareaElement.scrollHeight}px`; // Ajusta la altura según el contenido
   }
 }

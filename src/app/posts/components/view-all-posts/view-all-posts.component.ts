@@ -43,4 +43,11 @@ export class ViewAllPostsComponent {
       }
     });
   }
+
+  updatePost(postUpdated: Post){
+    // Actualizar el post en la lista local
+    this.posts = this.posts.map(post => 
+      post.uuid === postUpdated.uuid ? postUpdated : post
+    );
+  }
 }

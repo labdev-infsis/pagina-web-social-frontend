@@ -1,12 +1,10 @@
 <div class="menu-options-post" #menuOptions>
-    <div class="option-post" data-bs-target="#modalEditPost" data-bs-toggle="modal">
+    <div *ngIf="postReference" class="option-post" [attr.data-bs-target]="'#'+postReference+'-edit'" data-bs-toggle="modal">
         <i class="bi bi-pencil-fill"></i>
         <p class="fw-medium m-0">Editar publicación</p>
     </div>
-    <div class="option-post" data-bs-target="#confirmDeletePost" data-bs-toggle="modal">
+    <div class="option-post" [attr.data-bs-target]="'#'+postReference+'-delete'" data-bs-toggle="modal">
         <i class="bi bi-trash-fill"></i>
         <p class="fw-medium text-danger m-0">Eliminar publicación</p>
     </div>
 </div>
-
-<app-modal-edit-post [institution]="institution" [postToEdit]="post"></app-modal-edit-post>

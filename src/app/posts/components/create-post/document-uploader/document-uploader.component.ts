@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, WritableSignal } from '@angular/core';
+import { Media } from '../../../models/media';
 
 @Component({
   selector: 'app-document-uploader',
@@ -7,6 +8,7 @@ import { Component, EventEmitter, Input, Output, WritableSignal } from '@angular
 })
 export class DocumentUploaderComponent {
   @Input() showAreaDoc!: WritableSignal<boolean>;
+  @Input() mediaDocPost!: Media[] | undefined; //Documento que se recibe del post
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadFileDoc = new EventEmitter<File>(); 
   showPreviewDoc = false;
@@ -16,6 +18,10 @@ export class DocumentUploaderComponent {
     document : ['application/doc','application/docx','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     presentation: ['application/pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'],
     text : 'application/txt' 
+  }
+
+  ngOnInit(){
+    // if()
   }
 
   changeInputMediaDoc(event: Event){

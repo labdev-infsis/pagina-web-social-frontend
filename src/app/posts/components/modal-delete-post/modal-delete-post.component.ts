@@ -8,6 +8,7 @@ import { Post } from '../../models/post';
 })
 export class ModalDeletePostComponent {
   @Output() confirmDeletePost = new EventEmitter<boolean>();
+  @Input() postReference!: string;
 
   constructor() {}
 

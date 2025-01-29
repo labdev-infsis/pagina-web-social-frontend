@@ -1,5 +1,5 @@
 <!-- Modal editar un post -->
-<div class="modal fade" id="modalEditPost" tabindex="-1" aria-labelledby="modalNewPost" aria-hidden="true">
+<div class="modal fade" id="{{postToEdit.uuid+'-edit'}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header p-2">
@@ -25,15 +25,13 @@
           <form [formGroup]="postForm" class="form d-flex flex-column">
             <div class="container">
               <!-- Texto del post -->
-              <!-- <textarea id="text-area" placeholder="¿Qué estás pensando?" rows="4" formControlName="text" #textareaRef></textarea> -->
-              <app-edit-text [contentText]="postToEdit.content.text" [post]="postToEdit"></app-edit-text>
+              <app-edit-text [contentText]="postToEdit.content.text" [postUuid]="postToEdit.uuid" (textChangeEvent)="getTextPost($event)"></app-edit-text>
               
               <!-- Seleccionar imagen (es) -->
-              <!-- <app-images-uploader [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadFilesMediaEvent)="getFilesImagesPost($event)"></app-images-uploader> -->
-              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadFilesMediaEvent)="getFilesImagesPost($event)" [listMediaPost]="postToEdit.content.media"></app-image-video-editor>
+              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadFilesMediaEvent)="getFilesMediaPost($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
               
               <!-- Seleccionar archivo -->
-               <app-document-uploader [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadFileDoc)="getFileDocPost($event)"></app-document-uploader>
+               <app-document-uploader [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadFileDoc)="getFileDocPost($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-uploader>
             </div>
   
             <!-- Añadir a la publicacion -->
@@ -44,7 +42,7 @@
                 <span class="d-flex align-items-center" [ngClass]="{'disabled': disableLoadDoc()}" (click)="!disableLoadDoc() && showAreaDoc()"><i class="bi bi-file-earmark-text-fill fs-5"></i></span>
               </div>
             </div>
-            <button type="button" class="btn btn-primary" [disabled]="disabledPublishButton()" (click)="post()" data-bs-dismiss="modal">Guardar</button>
+            <button type="button" class="btn btn-primary" [disabled]="disabledSaveButton()" (click)="updatePost()" data-bs-dismiss="modal">Guardar</button>
           </form>
         </div>
       </div>

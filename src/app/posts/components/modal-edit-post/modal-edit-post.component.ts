@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { Institution } from '../../models/institution';
 import { Post } from '../../models/post';
 import { CommentConfig } from '../../models/comment-config';
@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../../services/post.service';
 import { Media } from '../../models/media';
 import { CreatePost } from '../../models/create-post';
-import moment from 'moment';
 import { concatMap } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
@@ -19,16 +18,23 @@ import { UploadedDocument } from '../../models/uploaded-document';
 export class ModalEditPostComponent {
   @Input() institution!: Institution;
   @Input() postToEdit!: Post;
+  @Output() postUpdated = new EventEmitter<Post>();
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
   visibleAreaMedia = signal(false); //Mostrar seleccion y prevista de imagenes
   visibleAreaMediaDoc = signal(false); //Mostrar seleccion y prevista de documentos
+
   disableLoadImage = signal(false); //Deshabilitar el boton de cargar imagenes
   disableLoadDoc = signal(false); //Deshabilitar el boton de cargar documentos
-  disabledPublishButton = signal(true); //Deshabilitar el boton de publicar
+
+  disabledSaveButton = signal(true); //Deshabilitar el boton de guardar
   postForm!: FormGroup;
-  listFile: File[] = []; 
-  fileDoc!: File;
+  listFile: File[] = []; //Lista de media editada obtenida de 'image-video-editor' component
+  fileDoc!: File;  //
+  typeMedia = {
+    img_vid : 'images-videos',
+    doc: 'document'
+  }
 
   constructor(
       private postService: PostService,
@@ -47,21 +53,24 @@ export class ModalEditPostComponent {
       }
     })
     this.buildForm()
-    // this.listFile = this.postToEdit.content.media || [];
+    //No deshabilitar boton Guardar si el post viene con info
+    this.disabledSaveButton.set(!(this.postToEdit.content.text != '' || this.postToEdit.content.media.length > 0));
+    if(this.postToEdit.content.media.length > 0)
+      this.postToEdit.content.media[0].type == 'document'? this.disableLoadImage.set(true) : this.disableLoadDoc.set(true);
   }
 
   private buildForm() {
     this.postForm = this.formBuilder.group({
-      contentPost: ['',  [Validators.maxLength(1000)]],
+      contentPost: [''],
       media: [[]],
       mediaDoc: [[]]
     });
   }
 
-  //Deshabilitar el boton de publicar si no hay texto
+  //Obtener texto editado del textarea y Deshabilitar el boton de guardar si no hay texto
   getTextPost(text: string){
     this.postForm.get('contentPost')?.setValue(text);
-    text != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    text != '' ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
   
   //Mostrar area de imagenes y deshabilitar el boton de cargar documentos
@@ -73,14 +82,15 @@ export class ModalEditPostComponent {
   //Ocultar area de imagenes
   closeAreaMedia(option: boolean){
     this.disableLoadDoc.set(option); //Habilitar el boton de cargar documentos
-    this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
+    this.disabledSaveButton.set(true);//Deshabilitar el boton de guardar
     this.listFile = [];//Limpiar la lista de imagenes
   }
   
-  //Deshabilitar el boton de publicar si no hay imagenes
-  getFilesImagesPost(fileMedia: File[]){
+  //Obtener imagenes-videos editados y Deshabilitar el boton de guardar si no hay imagenes
+  getFilesMediaPost(fileMedia: File[]){
     this.listFile = fileMedia;
-    this.listFile ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    console.log(this.listFile);
+    this.listFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
   
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
@@ -92,32 +102,52 @@ export class ModalEditPostComponent {
   //Ocultar area de documentos
   closeAreaDoc(option: boolean){
     this.disableLoadImage.set(option);
-    this.disabledPublishButton.set(true);
+    this.disabledSaveButton.set(true);
     this.fileDoc = new File([''],'');//Limpiar el archivo
   }
   
-  //Deshabilitar el boton de publicar si no hay archivo
+  //Obtener el Doc editado y Deshabilitar el boton de guardar si no hay archivo
   getFileDocPost(doc: File){
     this.fileDoc = doc;
-    this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    this.fileDoc ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+  }
+
+  sendMedia(type: string){
+    if(type == this.typeMedia.img_vid){
+      if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type != 'document')
+        return this.postToEdit.content.media;
+      else
+        return undefined;
+    }else{
+      if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type == 'document')
+        return this.postToEdit.content.media;
+      else
+        return undefined;
+    }
+  }
+
+  disableSaveButton(){
+    if(this.postForm.get('contentPost')?.value && this.listFile || this.fileDoc){
+      this.disabledSaveButton.set(true);
+    }
   }
   
-  post(){
+  updatePost(){
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
     const responseMedia: Media[] = []; //Respuesta de imagenes y videos guardados
     let responseDoc: Media;
     const post: CreatePost = {
       institution_id: this.institution.uuid,
-      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      date: this.postToEdit.date,
       comment_config_id: this.selectedCommentConfig,
       content: {
         text: valueFormPost.contentPost,
         media: []
       }
     }
-
-    //Si hay info para postear
+    this.postUpdated.emit(this.postToEdit); // mandar luego de llamar al servicio revisar--------
+    //Si hay info para postear (texto, imagen o video, documento)
     if(valueFormPost.contentPost != '' || this.listFile || this.fileDoc){
       if(this.listFile && this.listFile.length > 0){ //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente

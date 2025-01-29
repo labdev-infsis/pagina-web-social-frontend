@@ -17,12 +17,10 @@ export class ImageVideoEditorComponent {
   listFileMediaPost: Media[] = []; //Lista de archivos del post
 
   ngOnInit(){
-    if(this.listMediaPost){
+    if(this.listMediaPost && this.listMediaPost.length > 0){
       // Array.from(this.listMediaPost).forEach((media: Media) => {
       //   this.listFileMedia.push(new File([media.path], media.name, { type: media.type }));
       // });
-      // this.showAreaMedia.set(true);
-      // this.showPreviewMedia = true;
       // this.chargeMediaPost();
       this.listFileMediaPost = this.listMediaPost;
       this.showAreaMedia.set(true);
