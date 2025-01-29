@@ -1,24 +1,26 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
 import { Institution } from '../../models/institution';
+import { UploadedDocument } from '../../models/uploaded-document';
+import { ReactionsByType } from '../../models/reactions-by-type';
+import { Media } from '../../models/media';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.scss']
+  styleUrl: './post.component.scss'
 })
 export class PostComponent {
   @Input() post: any;
-  institution: any;
-  images: any;
-  showComments: boolean = false; // Controla la visibilidad del popup
-
-  @Input() post: any
+  @Output() requestDeletePost = new EventEmitter<string>();
+  @Output() requestUpdatePost = new EventEmitter<Post>();
   institution!: Institution
+  listMediaPost!: Media[]; // Lista de imagenes videos o documento del post 
+  showComments: boolean = false; // Controla la visibilidad del popup
+  showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
   like = false
-  images: any;
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -30,14 +32,16 @@ export class PostComponent {
     crying_face: "n1596a78-c73f-475c-80a6-f5a858648af1",
     angry_face: "4c806a78-c73f-475c-80a6-f5a858648af1"
   }
-  typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png']
+  typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png'];
+  typeVideos = ['video', 'video/mp4'];
+  totalReactions = signal(0);
 
 
   constructor(private postService: PostService){}
 
   ngOnInit(){
 
-    this.images = this.loadImagesPost();
+    this.listMediaPost = this.loadMediaPost();
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
         this.institution = institutionData;
@@ -45,41 +49,55 @@ export class PostComponent {
       error: (error) => {
         console.log(error);
       }
-    });
+    })
+    this.totalReactions.set(this.post.reactions.total_reactions);
+  }
+
+  deletePost(confirm: boolean) {
+    if (confirm) {
+      this.requestDeletePost.emit(this.post.uuid);
+    }
+  }
+
+  updatePost(postUpdated: Post) {
+    this.requestUpdatePost.emit(postUpdated);
+  }
+
+  sendCopyPost(): Post {//Enviar copia del post para editar
+    const copyPost: Post = { ...this.post };
+    return copyPost;
   }
 
   // Mostrar el popup de comentarios
   openComments() {
     this.showComments = true;
   }
-
+  
   // Cerrar el popup de comentarios
   closeComments() {
     this.showComments = false;
   }
 
-  
-
-  getGridClass(images: any[]): string {
-    if (images.length === 1) return 'single';
-    if (images.length === 2) return 'two';
-    if (images.length === 3) return 'three';
-    if (images.length === 4) return 'four';
-    return 'more';
+  getGridClass(media: Media[]): string {
+    if (media.length === 1) return 'single';
+    if (media.length === 2) return 'two';
+    if (media.length === 3) return 'three';
+    return 'four';
   }
 
-  loadImagesPost() {
-    let imagesOfPost = [];
-    for (const image of this.post.content.media) {
-      imagesOfPost.push(image.path);
+  // Cargar las imagenes o videos del post
+  loadMediaPost(){
+    let mediaOfPost: Media[] = []
+    for (const media of this.post.content.media) {
+      mediaOfPost.push(media);
     }
-    return imagesOfPost;
+    return mediaOfPost;
   }
 
-  calculateTimePost() {
-    const postDate = new Date(this.post.date);
-    const currentDate = new Date();
-    const diferenciaMs: number = currentDate.getTime() - postDate.getTime();
+  calculateTimePost(){
+    const postDate = new Date(this.post.date)
+    const currentDate = new Date(Date.now());
+    const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
     const unDia = 24 * unaHora;
@@ -124,8 +142,17 @@ export class PostComponent {
 
   }
 
+  getTypeDoc(typeDoc: string){
+    if(typeDoc == 'application/pdf')
+      return 'PDF';
+    else if(typeDoc == 'application/pptx')
+      return 'PRESENTACIÓN';
+    else
+      return 'DOCUMENTO';
+  }
+
   getReactions(index:number){
-    const reactionsByType: [] = this.post.reactions.reactions_by_type;
+    const reactionsByType: ReactionsByType[] = this.post.reactions.reactions_by_type;
     const arrayOrdered:any[] = [...reactionsByType].sort((a:any,b:any)=> b.amount - a.amount )
     const arrayFinal = arrayOrdered.filter((reaction) => reaction.amount >  0)
     // return arrayOrdered[index].emoji_type
@@ -137,7 +164,7 @@ export class PostComponent {
   }
 
   amountReactions(){
-    return this.post.reactions.total_reactions
+    return this.totalReactions();
   }
 
   amountComments(){
@@ -199,10 +226,11 @@ export class PostComponent {
       next: ()=>{
         this.like = !this.like
         console.log('Reaccion exitosa')
+        this.totalReactions.update(valor => valor + 1)
       },
       error:(error)=>{
         console.log('No se pudo reaccionar', error)
       }
     })
   }
-
+}

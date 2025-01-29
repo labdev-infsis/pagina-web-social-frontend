@@ -30,4 +30,24 @@ export class ViewAllPostsComponent {
       }
     });
   }
+
+  deletePost(postUuid: string) {
+    this.postService.deletePost(postUuid).subscribe({
+      next: (response) => {
+        // Actualizar la lista localmente
+        console.log('post eliminado',response);
+        this.posts = this.posts.filter(post => post.uuid !== postUuid);
+      },
+      error: (error) => {
+        console.log('Error al eliminar el post',error);
+      }
+    });
+  }
+
+  updatePost(postUpdated: Post){
+    // Actualizar el post en la lista local
+    this.posts = this.posts.map(post => 
+      post.uuid === postUpdated.uuid ? postUpdated : post
+    );
+  }
 }
