@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './authentication/components/login/login.component';
 import { ViewAllPostsComponent } from './posts/components/view-all-posts/view-all-posts.component';
+import { PhotosGalleryComponent } from './posts/components/photos-gallery/photos-gallery.component';
 
 const routes: Routes = [
   /* { path: 'login', redirectTo: 'login', pathMatch: 'full' }, */
@@ -12,6 +13,9 @@ const routes: Routes = [
       {
         path: 'posts',
         component: ViewAllPostsComponent
+      },
+      { path: 'fotos', 
+        component: PhotosGalleryComponent
       }
     ]
   },

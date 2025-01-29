@@ -132,4 +132,9 @@ export class PostService {
     const getEmojis = 'emoji-type'
     return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`, this.reqHeader);
   }
+   //Obtener todos las fotos de la institucion 
+   getInstitutionPhotos(uuid: string): Observable<any[]> {
+    const url = `${this.ROOT_URL}/institutions/${uuid}/photos`;
+    return this.http.get<any[]>(url);
+  }
 }
