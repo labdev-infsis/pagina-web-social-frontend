@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
@@ -12,6 +12,7 @@ import { CommentConfig } from '../models/comment-config';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
+import { PostComment } from '../models/comment';
 
 @Injectable({
   providedIn: 'root'
@@ -132,4 +133,35 @@ export class PostService {
     const getEmojis = 'emoji-type'
     return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`, this.reqHeader);
   }
+
+
+// Método para obtener los comentarios de un post
+getComments(postUuid: string): Observable<Comment[]> {
+  const endpoint = `post/${postUuid}/comments`;
+  return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`, this.reqHeader);
+}
+
+// Método para agregar un comentario a un post
+// Método para agregar un comentario a un post usando uuid
+addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
+  const endpoint = `post/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error("Error: No hay token de autenticación");
+    return throwError(() => new Error("No autorizado"));
+  }
+
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`  // 🔥 Enviar token en la cabecera
+  });
+
+  const fullUrl = `${this.ROOT_URL}/${endpoint}`;
+
+
+  return this.http.post<PostComment>(fullUrl, commentData, { headers });
+}
+
+
 }
