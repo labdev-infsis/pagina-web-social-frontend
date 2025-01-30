@@ -18,6 +18,7 @@ import { EditTextComponent } from './components/modal-edit-post/edit-text/edit-t
 import { ImageVideoEditorComponent } from './components/modal-edit-post/image-video-editor/image-video-editor.component';
 import { ModalListReactionsComponent } from './components/modal-list-reactions/modal-list-reactions.component';
 import { PhotosGalleryComponent } from './components/photos-gallery/photos-gallery.component';
+import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { PhotosGalleryComponent } from './components/photos-gallery/photos-galle
     EditTextComponent,
     ImageVideoEditorComponent,
     ModalListReactionsComponent,
-    PhotosGalleryComponent
+    PhotosGalleryComponent,
+    VideosGalleryComponent
 
   ],
   imports: [
