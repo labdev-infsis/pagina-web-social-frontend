@@ -69,7 +69,7 @@
   <!-- Cantidad de reacciones y comentarios -->
   <div class="reactions-comments d-flex justify-content-between" 
   *ngIf="amountReactions() > 0 || amountComments() > 0">
-    <div class="likes" *ngIf="amountReactions() > 0" data-bs-target="#modalListReactions" data-bs-toggle="modal">
+    <div class="likes" *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid" data-bs-toggle="modal">
       <i class="fa-solid fa-thumbs-up" *ngIf="getReactions(0) == 'thumbs-up'"></i>
       <i class="fa-solid fa-heart" *ngIf="getReactions(0) == 'red-heart'"></i>
       <img src="../../../../assets/crying-face.png" alt="" class="fa-face-sad-tear" *ngIf="getReactions(0) == 'crying-face'">
@@ -81,7 +81,7 @@
       <img src="../../../../assets/angry-face.png" alt="" class="fa-face-angry" *ngIf="getReactions(1) == 'angry-face'">
       <span>{{ totalReactions() }}</span>
     </div> 
-    <app-modal-list-reactions [reactions]="post.reactions"></app-modal-list-reactions>   
+    <app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>   
     <div class="comments" *ngIf="amountComments() > 0">
       <span>{{ post.commentCounter.totalComments }}</span>
       <i class="bi bi-chat-fill"></i>
