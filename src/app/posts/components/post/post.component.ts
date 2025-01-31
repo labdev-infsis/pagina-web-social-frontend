@@ -14,11 +14,9 @@ export class PostComponent {
   institution: any;
   images: any;
   showComments: boolean = false; // Controla la visibilidad del popup
+  showViewComments: boolean = false;
 
-  @Input() post: any
-  institution!: Institution
-  like = false
-  images: any;
+  like = false;
   myReaction = {
     class: 'default',
     emoji: 'fa-regular fa-thumbs-up',
@@ -49,8 +47,9 @@ export class PostComponent {
   }
 
   // Mostrar el popup de comentarios
-  openComments() {
-    this.showComments = true;
+  openComments(postUuid:string) {
+    //this.showComments = true;
+    this.showViewComments = true;
   }
 
   // Cerrar el popup de comentarios
@@ -59,7 +58,6 @@ export class PostComponent {
   }
 
   
-
   getGridClass(images: any[]): string {
     if (images.length === 1) return 'single';
     if (images.length === 2) return 'two';
@@ -205,4 +203,4 @@ export class PostComponent {
       }
     })
   }
-
+}

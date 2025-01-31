@@ -9,6 +9,7 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { CommentsComponent } from './components/comments/comments.component';
+import { ViewCommentsComponent } from './components/view-comments/view-comments.component';
 
 
 @NgModule({
@@ -16,8 +17,9 @@ import { CommentsComponent } from './components/comments/comments.component';
     ViewAllPostsComponent,
     DepartmentDetailsComponent,
     PostComponent,
-    CreatePostComponent
-    CommentsComponent
+    CreatePostComponent,
+    CommentsComponent,
+    ViewCommentsComponent
   ],
   imports: [
     CommonModule,

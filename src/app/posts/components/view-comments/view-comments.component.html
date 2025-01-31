@@ -1,0 +1,35 @@
+<div class="comments-popup">
+    <button class="close-btn" (click)="closePopup()">X</button>
+    <div class="popup-content">
+        <!-- Lista de comentarios -->
+        <div class="comments-section">
+            <h5>Comentarios</h5>
+            <div class="comment-box">
+                <div class="comment-container">
+                    <div *ngFor="let comment of comments" class="comment">
+
+                        <img src="{{comment.user_photo}}" alt="" class="comment-img">
+                        <div class="comment-text">
+                            <div class="comment-header">
+                                <p><strong>{{ comment.user_name }}</strong></p>
+                            </div>
+                            <p>{{ comment.content }}</p>
+                        </div>
+                        <div class="comment-lks">
+                            <p>
+                                <span>Like</span><span class="dot"> . </span>
+                                <span>Reply</span><span class="dot"> . </span>
+                                <span>Share</span><span class="dot"> . </span>
+                                <span> {{ comment.date }}</span>
+                            </p>
+                        </div>
+                        <br>
+                    </div>
+                    <br>
+                    
+                </div>
+            </div>
+            <!-- Campo para agregar un nuevo comentario -->
+        </div>
+    </div>
+</div>

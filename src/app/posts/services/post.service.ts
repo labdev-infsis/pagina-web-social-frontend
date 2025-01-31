@@ -5,6 +5,7 @@ import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
 import { Post } from '../models/post';
+import { Comment } from '../models/comment';
 import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
@@ -63,6 +64,14 @@ export class PostService {
     const reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+this.authService.getToken() }) };
     const urlReactPost = 'reactions'
     return this.http.post<any>(`${this.baseUrl}/posts/${postUuid}/${urlReactPost}`, body, reqHeader)
+  }
+
+  // Método para obtener los comentarios de un post
+  getPostComments(uuid: string): Observable<Comment[]>{
+    const getPosts = 'posts'
+    const getComments = 'comments'
+    return this.http.get<Comment[]>(`${this.baseUrl}/${getPosts}/${uuid}/${getComments}`);
+
   }
 
   
