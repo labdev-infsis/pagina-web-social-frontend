@@ -15,7 +15,7 @@ export class EditTextComponent {
 
   ngAfterViewInit(){
     // Obtén una referencia al modal de Bootstrap
-    const modalElement = document.getElementById(this.postUuid+'-edit');
+    const modalElement = document.getElementById('edit-'+this.postUuid);
     if (modalElement) {
       // Escucha el evento 'shown.bs.modal'
       const modal = new Modal(modalElement);

@@ -8,7 +8,7 @@ import { Post } from '../../models/post';
 })
 export class ModalDeletePostComponent {
   @Output() confirmDeletePost = new EventEmitter<boolean>();
-  @Input() postReference!: string;
+  @Input() postReference!: string;  //Uuid del post para que sea id del modal
 
   constructor() {}
 
