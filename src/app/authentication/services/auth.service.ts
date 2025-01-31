@@ -10,8 +10,8 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  // public urlBase = 'https://devpws.cs.umss.edu.bo/api/auth/';
-  public urlBase = 'http://localhost:9090/api/auth/';
+  
+  private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV_AUTH}`;
 
   public token : any
   constructor(
@@ -33,11 +33,7 @@ export class AuthService {
       password
     }
 
-
-
-
-    return this.http.post<any>('http://localhost:9090/api/auth/' + 'login', user)
-
+    return this.http.post<any>(this.ROOT_URL + '/login', user)
       .pipe(
         map(user => {
           this.token = user.accessToken;

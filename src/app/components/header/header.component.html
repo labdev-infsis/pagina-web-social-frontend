@@ -1,18 +1,19 @@
 <div class="header-container">
     <div class="header-image">
         <div class="banner-container">
-            <img src="assets/banner-informatica.jpg" alt="Banner Informática y Sistemas" class="banner-image">
+            <img *ngIf="post" [src]="post.background_url" alt="Banner Informática y Sistemas" class="banner-image">
         </div>
         <!--<div class="search-bar">
             <input type="text" class="form-control" placeholder="Buscar">
         </div>-->
         <div class="logo-overlay">
-            <img src="assets/logo-informatica.png" alt="Logo Carrera" class="career-logo">
+            <img *ngIf="post" [src]="post.logo_url" alt="Logo Carrera" class="career-logo">
         </div>
     </div>
     <div class="header-details">
         <p></p>
-        <h3>Informática y Sistemas</h3>
+        <h3> DRIC - UMSS</h3>
+        <br>
         <div class="user-actions">
             <button class="btn btn-secondary">
                 <i class="fa fa-envelope"></i> Mensaje</button>
@@ -26,8 +27,8 @@
         <ul class="tabs">
             <li><a routerLink="/posts">Publicaciones</a></li>
             <li><a href="#">Información</a></li>
-            <li><a href="#">Fotos</a></li>
-            <li><a href="#">Videos</a></li>
+            <li><a routerLink="/fotos" >Fotos</a></li>
+            <li><a routerLink="/videos">Videos</a></li>
             <li><a href="#">Eventos</a></li>
             <li><a href="#">Más</a></li>
         </ul>
