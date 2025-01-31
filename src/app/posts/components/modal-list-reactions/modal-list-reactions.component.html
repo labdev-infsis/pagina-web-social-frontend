@@ -1,0 +1,71 @@
+<div class="modal fade" #modal tabindex="-1" id="{{'reactions-'+postReference}}" aria-labelledby="modalListReactionsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="secction-title">
+          <!-- List-Tabs tipos de emoji del post -->
+          <ul class="nav nav-underline" id="{{'listTabs-'+postReference}}">
+            <li *ngIf="listEmojiTypeExisting.length > 1" class="nav-item">
+              <a class="nav-link active" aria-current="page" data-bs-toggle="tab" [attr.data-bs-target]="'#generalEmoji-tab-pane-'+postReference">Todo</a>
+            </li>
+            <ng-container *ngFor="let reactionType of listEmojiTypeExisting">
+              <li class="nav-item">
+                <a class="nav-link emoji" [ngClass]="{'active': listEmojiTypeExisting.length == 1}" data-bs-toggle="tab" [attr.data-bs-target]="'#'+reactionType.emoji_type+'-tab-pane-'+postReference">{{ getEmojiReactionType(reactionType.emoji_type) }}</a>
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Content-Tab general de reacciones -->
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="{{'generalEmoji-tab-pane-'+postReference}}" role="tabpanel" aria-labelledby="generalEmoji-tab" tabindex="0">
+            <div class="info-users d-flex flex-column">
+              <ng-container *ngFor="let reaction of reactions.reactions_by_user">
+                <div class="reactions-by-user d-flex flex-row gap-3">
+                  <div class="img-profile">
+                    <img
+                      [src]="reaction.user_photo"
+                      [alt]="'Foto de perfil'"
+                    />
+                  </div>
+                  <div class="name-user d-flex align-items-center">
+                    <p class="fw-semibold fs-6 mb-0">{{ reaction.user_name }}</p>
+                  </div>
+                  <div *ngIf="listEmojiType" class="emoji-reaction d-flex align-items-center" >
+                    {{ getEmojiReactionType(reaction.user_reaction) }}
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <!-- Content-Tabs Lista de reacciones por filtro -->
+          <ng-container *ngFor="let reactionType of listEmojiTypeExisting">
+            <div class="tab-pane fade" id="{{reactionType.emoji_type+'-tab-pane-'+postReference}}" role="tabpanel" [attr.aria-labelledby]="reactionType.emoji_type+'-tab'" tabindex="0">
+              <div class="info-users d-flex flex-column">
+                <ng-container *ngFor="let reactionUser of getUsersReactionsType(reactionType.emoji_type)">
+                  <div class="reactions-by-user d-flex flex-row gap-3">
+                    <div class="img-profile">
+                      <img
+                        [src]="reactionUser.user_photo"
+                        [alt]="'Foto de perfil'"
+                      />
+                    </div>
+                    <div class="name-user d-flex align-items-center">
+                      <p class="fw-semibold fs-6 mb-0">{{ reactionUser.user_name }}</p>
+                    </div>
+                    <div *ngIf="listEmojiType" class="emoji-reaction d-flex align-items-center" >
+                      {{ getEmojiReactionType(reactionUser.user_reaction) }}
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>        
+      </div>
+    </div>
+  </div>
+</div>
+  

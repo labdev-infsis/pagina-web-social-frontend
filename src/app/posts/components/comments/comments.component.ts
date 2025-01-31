@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 @Component({  
   selector: 'app-comments',  
   templateUrl: './comments.component.html',  
-  styleUrls: ['./comments.component.scss']  
+  styleUrl: './comments.component.scss'  
 })  
 export class CommentsComponent implements OnInit {  
   @Input() postImage!: string; // Imagen del post  
