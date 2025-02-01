@@ -6,7 +6,6 @@ import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
 import { ReactionsByType } from '../../models/reactions-by-type';
 import { Media } from '../../models/media';
-import { PostComment } from '../../models/comment';
 
 @Component({
   selector: 'app-post',
@@ -15,10 +14,6 @@ import { PostComment } from '../../models/comment';
 })
 export class PostComponent {
   @Input() post: any;
-  comments: PostComment[] = [];
-  newComment: string = '';
-  showCommentInput: boolean = false;
-
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
   institution!: Institution
@@ -44,17 +39,9 @@ export class PostComponent {
 
   constructor(private postService: PostService){}
 
-  ngOnInit() {
-    console.log("this.post en ngOnInit():", this.post);
-  
-    if (!this.post) {
-      console.error("Error: this.post es undefined en ngOnInit()");
-      return;
-    }
-  
-    this.loadComments();
+  ngOnInit(){
+
     this.listMediaPost = this.loadMediaPost();
-  
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
         this.institution = institutionData;
@@ -62,67 +49,9 @@ export class PostComponent {
       error: (error) => {
         console.log(error);
       }
-    });
-  
-    if (this.post.reactions) {
-      this.totalReactions.set(this.post.reactions.total_reactions);
-    } else {
-      console.warn("Advertencia: this.post.reactions es undefined");
-    }
+    })
+    this.totalReactions.set(this.post.reactions.total_reactions);
   }
-  
-
-  loadComments() {
-    this.postService.getComments(this.post.id).subscribe({
-      next: (data: any) => {
-        this.comments = data.map((c: any) => ({
-          postId: c.postId,
-          userId: c.userId,
-          content: c.content,
-          createdAt: c.createdAt || new Date()
-        }));
-      },
-      error: (err) => console.error('Error al cargar comentarios', err)
-    });
-  }
-    // Método para alternar la visibilidad del input de comentarios
-    toggleCommentInput() {
-      this.showCommentInput = !this.showCommentInput;
-    }
-  
-  addComment() {
-    if (!this.newComment.trim()) return;
-  
-    console.log("this.post antes de crear comentario:", this.post);
-  
-    if (!this.post || !this.post.uuid) {
-      console.error("Error: this.post o this.post.uuid es undefined");
-      return;
-    }
-  
-    const commentData = {
-      postId: this.post.uuid,
-      userId: this.post.user_id,  
-      content: this.newComment
-    };
-    
-  
-    console.log("Datos del comentario que se enviarán:", commentData);
-  
-    this.postService.addComment(this.post.uuid, commentData).subscribe({
-      next: (newComment) => {
-        this.comments.push(newComment); // Agregar el comentario a la lista
-        this.newComment = ''; // Limpiar input
-        this.showCommentInput = false; // 🔥 Ocultar input después de comentar
-      },
-      error: (err) => console.error("Error al agregar comentario", err)
-    });
-  }
-  
-  
-  
-  
-
 
   deletePost(confirm: boolean) {
     if (confirm) {

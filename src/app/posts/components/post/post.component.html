@@ -104,23 +104,23 @@
         <img src="../../../../assets/angry-face.png" class="angry-face" (click)="clickReaction(post.uuid, 'angry-face')">
       </div>
     </button>
-  
+    <!-- Boton de Comentar -->
+    <button type="button" class="btn btn-secondary" disabled>
+      <i class="bi bi-chat-left-text"></i>
+      Comentar</button>
     <!-- Boton de Compartir -->
     <button type="button" class="btn btn-secondary" disabled>
       <i class="fa-solid fa-share"></i>
       Compartir</button>
   </div>
   
-    <!-- Boton de Comentar -->
-
-<button type="button" class="btn btn-secondary" (click)="toggleCommentInput()">
-  <i class="bi bi-chat-left-text"></i>
-  Comentar
-</button>
-
-<!-- CAMPO de comentario, solo se muestra si showCommentInput es true -->
-<div *ngIf="showCommentInput" class="comment-box">
-  <input [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
-  <button (click)="addComment()" class="btn btn-primary">Comentar</button>
+  <!-- Popup de comentarios -->
+  <!-- <app-comments  
+  *ngIf="showComments"  
+  [postImage]="post.content.media[0]?.path"  
+  [postAuthor]="institution.name"  
+  [postTime]="calculateTimePost()"  
+  [postDescription]="post.content.text"  
+  (close)="closeComments()"  
+></app-comments>   -->
 </div>
-
