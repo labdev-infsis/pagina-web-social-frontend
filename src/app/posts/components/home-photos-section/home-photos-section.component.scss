@@ -1,0 +1,54 @@
+/* filepath: /c:/Users/Iamfab/Downloads/pagina-web-social-frontend/src/app/posts/components/home-photos-section/home-photos-section.component.scss */
+.photos-container {
+    padding: 20px;
+  }
+  
+  .photos-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .view-all-link {
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .view-all-link:hover {
+    text-decoration: underline;
+  }
+  
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .photo-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 120px; /* Ajusta esta altura según tus necesidades */
+  }
+  
+  .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .photo-card:hover img {
+    transform: scale(1.05);
+  }
+  
+  .loading-message,
+  .no-photos {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+  }

@@ -29,19 +29,7 @@
       </div>
     </div>
 
-    <!-- Sección de Fotos -->
-    <div class="photos-container">
-      <h3 class="photos-title">
-        Fotos <a href="#" class="view-all-link">Ver todas las fotos</a>
-      </h3>
-      <div class="photos-grid">
-        <div class="photo-card">
-          <img [src]="institution.logo_url" alt="Logo de {{ institution.name }}">
-        </div>
-        <div class="photo-card">
-          <img [src]="institution.background_url" alt="Background">
-        </div>
-      </div>
-    </div>
+    <home-photos-section></home-photos-section>
+
   </div>
 </div>
