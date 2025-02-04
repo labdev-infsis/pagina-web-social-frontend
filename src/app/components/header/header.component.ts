@@ -8,13 +8,13 @@ import { PostService } from '../../posts/services/post.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  post!: Institution
+  institution!: Institution
 
   constructor(private postService: PostService){
     const uuidIntitutionDric = '93j203b4-f63b-4c4a-be05-eae84cef0c0c';
     this.postService.getInstitution(uuidIntitutionDric).subscribe({
       next: (dataInstitution:Institution) => {
-        this.post = dataInstitution;
+        this.institution = dataInstitution;
       },
       error(error){
         console.log(error)
