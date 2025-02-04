@@ -11,11 +11,10 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
-
-
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommentsComponent } from './posts/components/comments/comments.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +29,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
     CommonModule,
     PostsModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgbModule
 ],
   providers: [],
   bootstrap: [AppComponent]

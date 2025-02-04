@@ -1,0 +1,416 @@
+
+.container {
+    display: flex;
+    flex-direction: row;
+    /* Optional: Space images evenly */
+  }
+
+.top-s {
+    position: relative;
+}
+
+.top-info {
+    display: flex;
+    height: 45px;
+    margin-bottom: 10px;
+}
+
+.profile-picture {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture img {
+    width: 100%;
+}
+
+.top-title {
+    margin-left: 10px;
+}
+
+.profile-name {
+    font-weight: normal;
+    margin-bottom: 2px;
+}
+
+.profile-name a {
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.post-time {
+    font-size: 14px;
+}
+
+.post-time img {
+    cursor: pointer;
+    width: 12px;
+    color: var(--text-light);
+}
+
+.top-options {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.top-options button {
+    width: 18px;
+    border: none;
+    background: none;
+}
+
+.top-options button:hover {
+    cursor: pointer;
+}
+
+.post-content {
+    margin-bottom: 20px;
+}
+
+.post-content img {
+    width: 100%;
+}
+
+/*Option section*/
+
+#option {
+    position: absolute;
+    top: 50px;
+    z-index: 99;
+    visibility: hidden;
+}
+
+.container {
+    width: 340px;
+    height: 340px;
+    position: relative;
+    padding: 10px 10px;
+    border-radius: 7px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 20px -7px rgba(24, 23, 23, 0.41);
+    box-shadow: 0px 0px 20px -7px rgba(24, 23, 23, 0.41);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    transform: rotate(45deg);
+    -webkit-box-shadow: 0px 0px 20px -7px rgba(24, 23, 23, 0.41);
+    box-shadow: 0px 0px 20px -7px rgba(24, 23, 23, 0.41);
+}
+
+.container ul li {
+    padding: 5px;
+    margin-top: 5px;
+    list-style: none;
+}
+
+.container ul li img {
+    height: 20px;
+    width: 20px;
+}
+
+.container ul li:hover {
+    background: var(--seco-color);
+    cursor: pointer;
+}
+
+.container .icon {
+    position: absolute;
+    left: 18px;
+}
+
+.container .option-title {
+    margin-left: 35px;
+}
+
+.container p {
+    font-size: 13px;
+}
+
+.turn_off_post {
+    display: flex;
+    align-items: center;
+    height: 45px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+
+/*write like section styles here*/
+.like-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.like-section .top-part {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.like-section .top-part .left-part {
+    display: flex;
+}
+
+.like-section .top-part .right-part {
+    padding-right: 10px;
+    display: flex;
+}
+
+.like-section .top-part .right-part * {
+    padding: 0 3px;
+}
+
+.like-section .top-part .id-name {
+    padding-left: 10px;
+}
+
+.like-section .top-part .react img {
+    height: 20px;
+    width: 20px;
+}
+
+.like-section .top-part .react img:nth-child(1) {
+    margin-right: -7px;
+}
+
+.like-section .top-part .react img:nth-child(2) {
+    margin-right: -7px;
+    z-index: 5;
+}
+
+.like-section .top-part .react img:nth-child(3) {
+    margin-right: 0px;
+    z-index: 1;
+}
+
+.like-section .bottom-part {
+    display: flex;
+    margin: 10px 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.bottom-part div {
+    display: flex;
+    align-items: center;
+    padding: 10px 60px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.bottom-part div:hover {
+    background: rgb(245, 245, 245);
+}
+
+.bottom-part span {
+    padding-left: 5px;
+}
+
+.reaction {
+    position: relative;
+    visibility: hidden;
+}
+
+.reaction .row {
+    height: 43px;
+    width: 313px;
+    margin-top: -2.4rem;
+    background: var(--prim-color);
+    border: 1px solid rgb(221, 221, 221);
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+}
+
+.reaction .row:hover {
+    display: block;
+    visibility: visible;
+}
+
+.reaction .row img {
+    height: 40px;
+    padding: 3px;
+    margin: 0 auto;
+    transform: scale(1);
+    cursor: pointer;
+}
+
+.reaction .row img:hover {
+    transform: scale(1.5);
+}
+
+
+/*write comment section styles here*/
+.comment-area {
+    display: flex;
+    padding: 10px;
+    align-content: center;
+}
+
+.comment-profile-pic {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.comment-profile-pic img {
+    border-radius: 50%;
+    width: 34px;
+}
+
+.comment-input-area {
+    display: flex;
+    padding: 10px;
+    flex: 1;
+    background-color: var(--seco-color);
+    color: var(--text-dark);
+    border-radius: 30px;
+}
+
+.comment-input-area input {
+    flex: 1;
+    border: none;
+    text-decoration: none;
+    padding: 10px;
+    font-size: inherit;
+    text-decoration: none;
+    border-radius: 30px;
+    background-color: var(--seco-color);
+}
+
+.comment-input-area input:focus {
+    outline: none;
+}
+
+.comment-input-area input::placeholder {
+    color: #656781;
+}
+
+.comment-input-area input:focus::placeholder {
+    color: #8A8D91;
+}
+
+.comment-icon {
+    display: flex;
+    padding-right: 10px;
+}
+
+.icon-comment {
+    align-self: center;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    color: var(--text-dark);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-comment:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/*comment*/
+.comment-container {
+    padding: 15px;
+}
+
+.comment-img {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-right: 6px;
+}
+
+.all-comments {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.all-comments h4 {
+    color: #1d1f23;
+    float: right;
+    font-size: 50x;
+    font-weight: lighter;
+}
+
+.all-comments-h4-i {
+    color: #1D1F23;
+    position: relative;
+    top: 2px;
+    height: 10px;
+}
+
+.comment {
+    display: flex;
+}
+
+.comment-text {
+    background-color: #F0F2F5;
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    width: fit-content;
+    max-width: 800px;
+}
+
+.comment-header p {
+    font-size: 16px;
+    padding-bottom: 6px;
+}
+
+.comment-lks {
+    font-size: 14px;
+    font-weight: bold;
+    padding-left: 60px;
+    color: rgb(101, 103, 107);
+}
+
+.comment-lks span {
+    cursor: pointer;
+}
+
+.comment-lks span:hover {
+    text-decoration: underline;
+}
+
+.comment-lks .dot {
+    color: rgb(138, 141, 145);
+    position: relative;
+    top: -3px;
+    text-decoration: none;
+    cursor: text;
+}
+
+.comment-lks .dot:hover {
+    text-decoration: none;
+}
+
+.three-dot {
+    display: flex;
+    align-items: center;
+}
+
+.three-dot-img {
+    padding-left: 8px;
+    height: 17px;
+    display: none;
+    cursor: pointer;
+}
+
+.comment:hover .three-dot-img {
+    display: flex;
+}

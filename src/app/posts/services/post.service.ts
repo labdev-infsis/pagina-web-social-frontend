@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
 import { Post } from '../models/post';
+import { Comment } from '../models/comment';
 import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
@@ -12,6 +13,7 @@ import { CommentConfig } from '../models/comment-config';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
+import { PostComment } from '../models/post-comment';
 
 @Injectable({
   providedIn: 'root'
@@ -109,6 +111,15 @@ export class PostService {
     return this.http.post<any>(`${this.ROOT_URL}/posts/${postUuid}/${urlReactPost}`, body, this.reqHeader)
   }
 
+  // Método para obtener los comentarios de un post
+  getPostComments(uuid: string): Observable<Comment[]>{
+    const getPosts = 'posts'
+    const getComments = 'comments'
+    return this.http.get<Comment[]>(`${this.ROOT_URL}/${getPosts}/${uuid}/${getComments}`);
+
+  }
+
+  
   //Método para obtener configuraciones de comentarios
   getCommentsConfiguration(): Observable<CommentConfig[]>{
     const commentConfigUrl = 'comment-config'
@@ -133,6 +144,34 @@ export class PostService {
     return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`, this.reqHeader);
   }
 
+  // Método para obtener los comentarios de un post
+  getComments(postUuid: string): Observable<Comment[]> {
+    const endpoint = `post/${postUuid}/comments`;
+    return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`, this.reqHeader);
+  }
+
+  // Método para agregar un comentario a un post
+  // Método para agregar un comentario a un post usando uuid
+  addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
+    const endpoint = `post/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error("Error: No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+
+    const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`  // 🔥 Enviar token en la cabecera
+    });
+
+    const fullUrl = `${this.ROOT_URL}/${endpoint}`;
+
+
+    return this.http.post<PostComment>(fullUrl, commentData, { headers });
+  }
+
   //Obtener todas las fotos de la institucion 
    getInstitutionPhotos(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/photos`;
@@ -144,4 +183,5 @@ export class PostService {
     const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
     return this.http.get<any[]>(url);
   }
+
 }
