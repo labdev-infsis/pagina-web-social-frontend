@@ -6,6 +6,7 @@ import { Institution } from '../../models/institution';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Post } from '../../models/post';
 import { Media } from '../../models/media';
+import { PostComment } from '../../models/post-comment';
 
 
 @Component({
@@ -24,7 +25,8 @@ export class CommentsComponent implements OnInit {
   @Input() postDescription!: string; // Descripción del post  
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup 
 
-
+  newComments: PostComment[] = [];
+  showCommentInput: boolean = false;
   newComment: string = ''; // Nuevo comentario  
   comments!: Comment[]; // Lista de comentarios  
   authenticated: boolean
@@ -52,11 +54,6 @@ export class CommentsComponent implements OnInit {
         console.error('Error to retrieve comments', error);
       }
     });
-  }
-
-  // Agregar un nuevo comentario  
-  addComment(): void {
-    
   }
 
 
@@ -101,5 +98,39 @@ export class CommentsComponent implements OnInit {
       };
       return postDate.toLocaleDateString('es-ES', opciones);
     }
+  }
+
+  // Método para alternar la visibilidad del input de comentarios
+  toggleCommentInput() {
+    this.showCommentInput = !this.showCommentInput;
+  }
+
+  addComment() {
+    if (!this.newComment.trim()) return;
+
+    console.log("this.post antes de crear comentario:", this.post);
+
+    if (!this.post || !this.post.uuid) {
+      console.error("Error: this.post o this.post.uuid es undefined");
+      return;
+    }
+
+    const commentData = {
+      postId: this.post.uuid,
+      userId: this.post.user_id,
+      content: this.newComment
+    };
+
+
+    console.log("Datos del comentario que se enviarán:", commentData);
+
+    this.postService.addComment(this.post.uuid, commentData).subscribe({
+      next: (newComment) => {
+        this.newComments.push(newComment); // Agregar el comentario a la lista
+        this.newComment = ''; // Limpiar input
+        this.showCommentInput = false; // 🔥 Ocultar input después de comentar
+      },
+      error: (err) => console.error("Error al agregar comentario", err)
+    });
   }
 }  

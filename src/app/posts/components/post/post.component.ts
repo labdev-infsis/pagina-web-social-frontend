@@ -9,6 +9,7 @@ import { ReactionsByType } from '../../models/reactions-by-type';
 import { Media } from '../../models/media';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
+import { PostComment } from '../../models/post-comment';
 
 @Component({
   selector: 'app-post',
@@ -18,6 +19,9 @@ import { CommentsComponent } from './../comments/comments.component';
 export class PostComponent {
   private modalService = inject(NgbModal);
   @Input() post: any;
+  comments: PostComment[] = [];
+  newComment: string = '';
+  showCommentInput: boolean = false;
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
@@ -48,8 +52,8 @@ export class PostComponent {
    }
 
   ngOnInit() {
-
     this.listMediaPost = this.loadMediaPost();
+  
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
         this.institution = institutionData;
@@ -57,10 +61,32 @@ export class PostComponent {
       error: (error) => {
         console.log(error);
       }
-    })
-    this.totalReactions.set(this.post.reactions.total_reactions);
+    });
+  
+    if (this.post.reactions) {
+      this.totalReactions.set(this.post.reactions.total_reactions);
+    } else {
+      console.warn("Advertencia: this.post.reactions es undefined");
+    }
+  }
+  
+
+  loadComments() {
+    this.postService.getComments(this.post.id).subscribe({
+      next: (data: any) => {
+        this.comments = data.map((c: any) => ({
+          postId: c.postId,
+          userId: c.userId,
+          content: c.content,
+          createdAt: c.createdAt || new Date()
+        }));
+      },
+      error: (err) => console.error('Error al cargar comentarios', err)
+    });
   }
 
+  
+  
   deletePost(confirm: boolean) {
     if (confirm) {
       this.requestDeletePost.emit(this.post.uuid);

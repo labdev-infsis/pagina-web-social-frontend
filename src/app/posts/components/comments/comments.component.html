@@ -1,59 +1,71 @@
 <!-- Modal ver detalle de Post -->
 
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100">Publicación de {{postAuthor}}</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div >
-          <div class="post-details">
-            <!-- Información del autor -->
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100">Publicación de {{postAuthor}}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="post-details">
+          <!-- Información del autor -->
 
-            <div class="d-flex flex-column">
-              <div class="d-flex flex-row justify-content-start" *ngIf="institution">
-                <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
-                <div class="info-user">
-                  <h2>{{ institution.name }}</h2>
-                  <p>{{calculateTimePost()}}</p>
-                </div>
-                
+          <div class="d-flex flex-column">
+            <div class="d-flex flex-row justify-content-start" *ngIf="institution">
+              <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+              <div class="info-user">
+                <h2>{{ institution.name }}</h2>
+                <p>{{calculateTimePost()}}</p>
               </div>
+
+            </div>
 
             <!-- Descripción del post -->
             <p class="post-description">{{ postDescription }}</p>
 
-          <!-- Imagen del post a la izquierda -->
-          <div class="object-fit-md-contain border rounded">
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner image-box text-center">
-                <div *ngFor="let image of postImages; let i = index" class="carousel-item {{ i === 0 ? 'active' : '' }}">
-                  <img src="{{ image.path}}" class="object-fit-scale" alt="...">
+            <!-- Imagen del post a la izquierda -->
+            <div class="object-fit-md-contain border rounded">
+              <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner image-box text-center">
+                  <div *ngFor="let image of postImages; let i = index"
+                    class="carousel-item {{ i === 0 ? 'active' : '' }}">
+                    <img src="{{ image.path}}" class="object-fit-scale" alt="...">
+                  </div>
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+
             </div>
-    
-          </div>
-          <hr class="hr" />
+            <hr class="hr" />
             <!-- Lista de comentarios -->
             <div class="comments-section">
-              <app-view-comments
-                [postUuid]="postUuid"
-              ></app-view-comments>
+              <app-view-comments [postUuid]="postUuid"></app-view-comments>
               <!-- Campo para agregar un nuevo comentario -->
-              
+
             </div>
-          
+
+            <button type="button" class="btn btn-secondary" (click)="toggleCommentInput()">
+              <i class="bi bi-chat-left-text"></i>
+              Comentar
+            </button>
+
+            <!-- CAMPO de comentario, solo se muestra si showCommentInput es true -->
+            <div *ngIf="showCommentInput" class="comment-box">
+              <input [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
+              <button (click)="addComment()" class="btn btn-primary">Comentar</button>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
-  </div>
