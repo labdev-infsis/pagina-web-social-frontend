@@ -59,7 +59,7 @@
       color: #333;
       margin-bottom: 15px;
       line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
-      white-space: pre-wrap;
+      // white-space: pre-wrap;
       font-weight: 500;
     }
   
@@ -306,8 +306,7 @@
   }
   
   .post-medias.three {
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
       .three {
         grid-column: 1 / 3;

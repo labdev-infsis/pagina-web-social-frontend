@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
 import { Institution } from '../../models/institution';
 import { Post } from '../../models/post';
 import { CommentConfig } from '../../models/comment-config';
@@ -9,6 +9,7 @@ import { CreatePost } from '../../models/create-post';
 import { concatMap } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-modal-edit-post',
@@ -20,6 +21,7 @@ export class ModalEditPostComponent {
   @Input() postToEdit!: Post;
   @Output() postUpdated = new EventEmitter<Post>();
   commentConfig!: CommentConfig[];
+  @Input() showME!: WritableSignal<boolean>;
   selectedCommentConfig!: string;
   visibleAreaMedia = signal(false); //Mostrar seleccion y prevista de imagenes
   visibleAreaMediaDoc = signal(false); //Mostrar seleccion y prevista de documentos
@@ -89,7 +91,6 @@ export class ModalEditPostComponent {
   //Obtener imagenes-videos editados y Deshabilitar el boton de guardar si no hay imagenes
   getFilesMediaPost(fileMedia: File[]){
     this.listFile = fileMedia;
-    console.log(this.listFile);
     this.listFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
   
@@ -129,6 +130,25 @@ export class ModalEditPostComponent {
   disableSaveButton(){
     if(this.postForm.get('contentPost')?.value && this.listFile || this.fileDoc){
       this.disabledSaveButton.set(true);
+    }
+  }
+
+  closeResetModalEdit(id: string){
+    const modalElement = document.getElementById('edit-'+id);
+    if (modalElement) {
+      let modal = Modal.getInstance(modalElement);
+      modal?.hide();
+      this.selectedCommentConfig = this.postToEdit.comment_config_id;
+      console.log('entro', 'edit-'+id)
+      this.showME.set(false);
+    }
+  }
+
+  openModalConfirmExitEdit(id: string){
+    const modalElement = document.getElementById('confirmExitEditPost-'+id);
+    if (modalElement) {
+      const modal = new Modal(modalElement);
+      modal.show();
     }
   }
   

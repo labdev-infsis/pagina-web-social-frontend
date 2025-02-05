@@ -17,12 +17,12 @@
     </ng-container>
   </div>
   <!-- Popup de opciones post Editar/Eliminar -->
-  <app-options-post *ngIf="showOptions()" (clickOutside)="showOptions.set(false)" [postReference]="post.uuid"></app-options-post>
+  <app-options-post *ngIf="showOptions()" (openEdit)="openModalEdit.set(true)" (clickOutside)="showOptions.set(false)" [postReference]="post.uuid"></app-options-post>
   <!-- Modals de editar y eliminar post -->
-  <app-modal-edit-post [institution]="institution" [postToEdit]="post" (postUpdated)="updatePost($event)"></app-modal-edit-post>
+  <app-modal-edit-post [showME]="openModalEdit" [institution]="institution" [postToEdit]="sendCopyPost()" (postUpdated)="updatePost($event)"></app-modal-edit-post>
   <app-modal-delete-post (confirmDeletePost)="deletePost($event)" [postReference]="post.uuid"></app-modal-delete-post>
   <!-- Contenido del post -->
-  <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
+  <pre *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</pre>
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
   <ng-container *ngIf="listMediaPost.length > 0">

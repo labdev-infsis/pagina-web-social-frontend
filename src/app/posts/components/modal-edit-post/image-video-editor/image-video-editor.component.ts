@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, WritableSignal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal } from '@angular/core';
 import { Media } from '../../../models/media';
 
 @Component({
@@ -11,33 +11,26 @@ export class ImageVideoEditorComponent {
   @Input() listMediaPost!: Media[] | undefined; // Lista de imagenes o videos del post
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
   @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
+  @ViewChild('inputFileEdit') inputFileEdit!: ElementRef<HTMLInputElement> 
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
-  mediaListPreview: string[] = []; //Imagenes videos a mostrar en formato base64
-  listFileMedia: File[] = []; //Lista de archivos seleccionados
-  listFileMediaPost: Media[] = []; //Lista de archivos del post
+  mediaListPreviewAdded: string[] = []; //Imagenes videos a mostrar en formato base64
+  listFileMediaAdded: File[] = []; //Lista de archivos seleccionados
+  listFileMediaPost: Media[] = []; //Lista de archivos del post - not undefined
 
   ngOnInit(){
     if(this.listMediaPost && this.listMediaPost.length > 0){
-      // Array.from(this.listMediaPost).forEach((media: Media) => {
-      //   this.listFileMedia.push(new File([media.path], media.name, { type: media.type }));
-      // });
-      // this.chargeMediaPost();
-      this.listFileMediaPost = this.listMediaPost;
+
+      this.listFileMediaPost = this.listMediaPost; //Asegurarse de trabajar con no undefined
       this.showAreaMedia.set(true);
       this.showPreviewMedia = true;
     }
   }
 
-  async chargeMediaPost(){
-    const mediaPromises = this.listFileMedia.map(file => this.readFileAsDataURL(file));
-      
-    this.mediaListPreview = await Promise.all(mediaPromises);
-  }
-
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){
-    this.mediaListPreview = [];
-    this.listFileMedia = [];
+    this.mediaListPreviewAdded = [];
+    // this.listMediaPost = []; // Borrar la copia del medias del post
+    this.listFileMediaAdded = [];
     this.showPreviewMedia = false;
     this.showAreaMedia.set(false);
     this.closeAreaMediaEvent.emit(this.showAreaMedia());
@@ -45,8 +38,8 @@ export class ImageVideoEditorComponent {
 
   //Abrir el input para seleccionar imagenes videos
   openInputFileMedia(){
-    const inputFile = document.getElementById('input-file-img-vid')
-    inputFile?.click()
+    const inputFile = this.inputFileEdit.nativeElement;
+    inputFile.click();
   }
 
   async changeInputMedia(event: Event | DragEvent){
@@ -64,13 +57,13 @@ export class ImageVideoEditorComponent {
     if(valueMedia?.files && valueMedia.files.length >0 ){
       this.showPreviewMedia = true;
       //Renderizar imagenes videos seleccionados
-      this.listFileMedia = Array.from(valueMedia.files);
+      this.listFileMediaAdded = Array.from(valueMedia.files);
       //Emitir al padre las images precargadas para habilitar el boton de publicar
-      this.loadFilesMediaEvent.emit(this.listFileMedia);
+      this.loadFilesMediaEvent.emit(this.listFileMediaAdded);
 
-      const mediaPromises = this.listFileMedia.map(file => this.readFileAsDataURL(file));
+      const mediaPromises = this.listFileMediaAdded.map(file => this.readFileAsDataURL(file));
       
-      this.mediaListPreview = await Promise.all(mediaPromises);
+      this.mediaListPreviewAdded = await Promise.all(mediaPromises);
     }
   }
 
@@ -93,24 +86,31 @@ export class ImageVideoEditorComponent {
     event.preventDefault();
   }
 
+  //Añadir clase segun media del post y media añadida
   getGridClass(): string {
-    if (this.listFileMediaPost.length === 1) return 'single';
-    if (this.listFileMediaPost.length === 2) return 'two';
-    if (this.listFileMediaPost.length === 3) return 'three';
-    if (this.listFileMediaPost.length === 4) return 'four';
+    const sumMediaPost_MediaAdded = this.listFileMediaPost.length + this.listFileMediaAdded.length;
+    if (sumMediaPost_MediaAdded === 1) return 'single';
+    if (sumMediaPost_MediaAdded === 2) return 'two';
+    if (sumMediaPost_MediaAdded === 3) return 'three';
+    if (sumMediaPost_MediaAdded === 4) return 'four';
     return 'more';
   }
 
-  isImage(mediaBase64: string): boolean{
+  getAmountMedia(){
+    return this.listFileMediaPost.length + this.listFileMediaAdded.length;
+  }
+
+  // Verificar si es imagen para mostrar etiqueta img o video
+  isImage(urlMedia: string): boolean{
     let response = false;
-    mediaBase64.includes('image')? response = true : response = false;
+    urlMedia.includes('image')? response = true : response = false;
     return response;
   }
 
   //Eliminar imagen prevista NO USADA AUN
   deletePreviewMedia(media:string){
-    let index = this.mediaListPreview.indexOf(media);
-    this.mediaListPreview.splice(index,1);
+    let index = this.mediaListPreviewAdded.indexOf(media);
+    this.mediaListPreviewAdded.splice(index,1);
     const fileInput = document.getElementById('input-file') as HTMLInputElement;
     if (fileInput && fileInput.files) {
       const files = Array.from(fileInput.files);
