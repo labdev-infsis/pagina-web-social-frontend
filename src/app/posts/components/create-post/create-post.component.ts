@@ -128,7 +128,7 @@ export class CreatePostComponent {
       date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
       comment_config_id: this.selectedCommentConfig,
       content: {
-        text: valueFormPost.contentPost,
+        text: valueFormPost.contentPost.trim(),
         media: []
       }
     }

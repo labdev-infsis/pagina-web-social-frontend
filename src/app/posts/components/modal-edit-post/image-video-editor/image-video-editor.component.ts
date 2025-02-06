@@ -96,6 +96,7 @@ export class ImageVideoEditorComponent {
     return 'more';
   }
 
+  //Obtener cantidad de media existente y seleccionada
   getAmountMedia(){
     return this.listFileMediaPost.length + this.listFileMediaAdded.length;
   }
@@ -126,5 +127,9 @@ export class ImageVideoEditorComponent {
       // Asigna la nueva lista de archivos al input
       fileInput.files = dataTransfer.files;
     }
+  }
+
+  openEditAll(){
+    
   }
 }

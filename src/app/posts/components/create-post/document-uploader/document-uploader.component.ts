@@ -12,16 +12,25 @@ export class DocumentUploaderComponent {
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadFileDoc = new EventEmitter<File>(); 
   showPreviewDoc = false;
-  fileDoc!: File;
+  fileMediaDoc!: Media; //El doc del post - not undefined
+  fileDoc!: File; //El doc nuevo que se puede añadir
   typesDocs = {
     pdf : 'application/pdf',
     document : ['application/doc','application/docx','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     presentation: ['application/pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'],
     text : 'application/txt' 
   }
+  fileType!: string;
 
   ngOnInit(){
-    // if()
+    if(this.mediaDocPost && this.mediaDocPost.length == 1){
+
+      this.fileMediaDoc = this.mediaDocPost[0];
+      this.fileType = this.getTypeFile(this.fileMediaDoc.type);
+      this.showAreaDoc.set(true);
+      this.showPreviewDoc = true;
+    }
+
   }
 
   changeInputMediaDoc(event: Event){
@@ -40,7 +49,7 @@ export class DocumentUploaderComponent {
     else if(this.typesDocs.presentation.includes(type))
       return 'File PRESENTACION'
     else
-      return 'File DOCUMENTO'
+      return 'File PDF'
   }
 
   openInputFileDoc(){
@@ -49,6 +58,7 @@ export class DocumentUploaderComponent {
   }
 
   closeCleanPreviewDoc(){
+    this.fileDoc = new File([''],'');
     this.showPreviewDoc  = false;
     this.showAreaDoc.set(false);
     this.closeAreaDocEvent.emit(this.showAreaDoc())

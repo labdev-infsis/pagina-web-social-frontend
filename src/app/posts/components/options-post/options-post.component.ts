@@ -23,30 +23,17 @@ export class OptionsPostComponent {
     this.showOptions = true;// Se activa para que el 2° click cierre el menu
   }
 
+  //Abrir modal de edición de post
   openModalEditPost(id: string){
-    console.log('entro 1')
-    this.openEdit.emit(true);
-    // const modalElement = document.getElementById('edit-'+id);
-    // if (modalElement) {
-    //   console.log('entro')
-    //   const modal = new Modal(modalElement);
-    //   modal.show();
-    // }
-    console.log('entro 2')
+    this.openEdit.emit(true); //Activar la renderizacion en el DOM del modal
+    //Esperar que el modal exista en el DOM para mostrarlo
     setTimeout(()=>{
-      this.openActual(id);
-    },500)
-  }
-  
-  
-  openActual(id:string){
-    const modalElement = document.getElementById('edit-'+id);
-    console.log('entro 3')
-    console.log(modalElement)
-    if (modalElement) {
-      console.log('entro 4')
+      const modalElement = document.getElementById('edit-'+id);
+      if (modalElement) {
       const modal = new Modal(modalElement);
       modal.show();
     }
+    },300)
   }
+
 }
