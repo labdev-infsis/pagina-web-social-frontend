@@ -47,23 +47,30 @@
 
             </div>
             <hr class="hr" />
+            
             <!-- Lista de comentarios -->
             <div class="comments-section">
               <app-view-comments [postUuid]="postUuid"></app-view-comments>
-              <!-- Campo para agregar un nuevo comentario -->
+
 
             </div>
+<!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
+<button *ngIf="!showCommentInput" type="button" class="comment-button" (click)="toggleCommentInput()">
+  <i class="bi bi-chat-left-text"></i> Escribe un comentario...
+</button>
 
-            <button type="button" class="btn btn-secondary" (click)="toggleCommentInput()">
-              <i class="bi bi-chat-left-text"></i>
-              Comentar
-            </button>
+<!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
+<div *ngIf="showCommentInput" class="comment-box">
+  <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
+  <button (click)="addComment()" class="send-comment-button">
+    <i class="bi bi-send"></i>
+  </button>
+</div>
 
-            <!-- CAMPO de comentario, solo se muestra si showCommentInput es true -->
-            <div *ngIf="showCommentInput" class="comment-box">
-              <input [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
-              <button (click)="addComment()" class="btn btn-primary">Comentar</button>
-            </div>
+
+
+            
+          
 
           </div>
         </div>
