@@ -28,10 +28,10 @@
               <app-edit-text  [contentText]="postToEdit.content.text" [postUuid]="postToEdit.uuid" (textChangeEvent)="getTextPost($event)"></app-edit-text>
               
               <!-- Seleccionar imagen (es) -->
-              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadFilesMediaEvent)="getFilesMediaPost($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
+              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadOldFilesMediaEvent)="setFilesMediaPostOld($event)" (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
               
               <!-- Seleccionar archivo -->
-               <app-document-uploader [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadFileDoc)="getFileDocPost($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-uploader>
+              <app-document-editor [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadNewFileDoc)="setFileDocPostAdded($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-editor>
             </div>
   
             <!-- Añadir a la publicacion -->

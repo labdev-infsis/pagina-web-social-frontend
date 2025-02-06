@@ -10,7 +10,8 @@ export class ImageVideoEditorComponent {
   @Input() showAreaMedia! : WritableSignal<boolean>; //Mostrar seleccion y prevista de imagenes videos
   @Input() listMediaPost!: Media[] | undefined; // Lista de imagenes o videos del post
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
-  @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
+  @Output() loadNewFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos nuevos seleccionadas
+  @Output() loadOldFilesMediaEvent = new EventEmitter<Media[]>(); //Devolver las imagenes/videos nuevos seleccionadas
   @ViewChild('inputFileEdit') inputFileEdit!: ElementRef<HTMLInputElement> 
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
   mediaListPreviewAdded: string[] = []; //Imagenes videos a mostrar en formato base64
@@ -29,10 +30,13 @@ export class ImageVideoEditorComponent {
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){
     this.mediaListPreviewAdded = [];
-    // this.listMediaPost = []; // Borrar la copia del medias del post
+    this.listMediaPost = []; // Borrar la copia del medias del post
     this.listFileMediaAdded = [];
     this.showPreviewMedia = false;
     this.showAreaMedia.set(false);
+
+    this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar medias existentes "borradas"
+    this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
     this.closeAreaMediaEvent.emit(this.showAreaMedia());
   }
 
@@ -59,7 +63,8 @@ export class ImageVideoEditorComponent {
       //Renderizar imagenes videos seleccionados
       this.listFileMediaAdded = Array.from(valueMedia.files);
       //Emitir al padre las images precargadas para habilitar el boton de publicar
-      this.loadFilesMediaEvent.emit(this.listFileMediaAdded);
+      this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
+      this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar imagenes existentes antiguas
 
       const mediaPromises = this.listFileMediaAdded.map(file => this.readFileAsDataURL(file));
       

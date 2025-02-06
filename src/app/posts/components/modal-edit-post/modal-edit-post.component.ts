@@ -32,7 +32,9 @@ export class ModalEditPostComponent {
   disabledSaveButton = signal(false); //Deshabilitar el boton de guardar
   postForm!: FormGroup;
   listNewMediaFile: File[] = []; //Lista de media editada obtenida de 'image-video-editor' component
-  fileDoc!: File;  //
+  listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
+  fileDoc!: File;  //Doc añadido en edicion
+  fileDocOld!: Media; //Doc existente
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -89,10 +91,16 @@ export class ModalEditPostComponent {
     this.listNewMediaFile = [];//Limpiar la lista de imagenes
   }
   
-  //Obtener imagenes-videos editados y Deshabilitar el boton de guardar si no hay imagenes
-  getFilesMediaPost(fileMedia: File[]){
+  //Establecer imagenes-videos editados y Deshabilitar el boton de guardar si no hay imagenes
+  setFilesMediaPostAdded(fileMedia: File[]){
     this.listNewMediaFile = fileMedia;
     this.listNewMediaFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+  }
+
+  //Establecer imagenes-videos ya existentes y Deshabilitar el boton de guardar si no hay imagenes
+  setFilesMediaPostOld(fileMedia: Media[]){
+    this.listOldMediaFile = fileMedia;
+    this.listOldMediaFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
   
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
@@ -109,8 +117,8 @@ export class ModalEditPostComponent {
     this.fileDoc = new File([''],'');//Limpiar el archivo
   }
   
-  //Obtener el Doc editado y Deshabilitar el boton de guardar si no hay archivo
-  getFileDocPost(doc: File){
+  //Establecer el Doc editado y Deshabilitar el boton de guardar si no hay archivo
+  setFileDocPostAdded(doc: File){
     this.fileDoc = doc;
     this.fileDoc ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
@@ -173,7 +181,7 @@ export class ModalEditPostComponent {
       comment_config_id: this.selectedCommentConfig,
       content: {
         text: valueFormPost.contentPost,
-        media: this.postToEdit.content.media? this.postToEdit.content.media : []
+        media: []
       }
     }
 
@@ -190,6 +198,8 @@ export class ModalEditPostComponent {
 
         const amountImagesPost = this.postToEdit.content.media.length;
 
+        //Borrar lista de media antigua 
+
         //Subir las nuevas imagenes-videos
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
@@ -202,11 +212,15 @@ export class ModalEditPostComponent {
               });
             });
 
+            //Añadir las imagenes que ya habian en el post
+            editedPost.content.media = this.listOldMediaFile;
+
             //Añadir las nuevas medias que se agregaron
             Array.from(responseMedia).forEach((newMedia) => {
               editedPost.content.media.push(newMedia);
             });
 
+            //Actualizar el post
             return this.postService.updatePost(this.postToEdit.uuid, editedPost);
           })
         ).subscribe({
