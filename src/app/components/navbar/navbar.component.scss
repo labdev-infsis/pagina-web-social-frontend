@@ -17,6 +17,7 @@
   }
   .user-image {
     transition: transform 0.3s ease;
+    border-radius: 50%;
 
     &:hover {
       cursor: pointer;
@@ -40,10 +41,11 @@
       font-size: 1rem;
       text-decoration: none;
       color: var(--blue-color);
+      cursor: pointer;
     }
 
-    .dropdown-item:hover {
-    }
+    // .dropdown-item:hover {
+    // }
   }
 
 }
