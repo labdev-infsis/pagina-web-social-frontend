@@ -4,8 +4,8 @@ export interface Comment {
     content: string;
     moderated: boolean;
     state: string;
-    date: Date;
+    date: string;
     user_name:  string;
     user_photo: string;
-    reply_count: BigInt
+    reply_count: number;
 }
