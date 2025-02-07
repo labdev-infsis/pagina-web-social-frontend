@@ -3,6 +3,8 @@ import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
 import { PostComponent } from '../post/post.component';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-view-comments',
@@ -16,28 +18,34 @@ export class ViewCommentsComponent implements OnInit {
   newComment: string = ''; // Nuevo comentario  
   authenticated: boolean
 
-  constructor(private postService: PostService,
-    private authService: AuthService
+  constructor(
+    private postService: PostService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // 👈 Agregar esto
   ) {
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
   }
-
+  
   ngOnInit(): void {
     this.loadComments();
   }
 
   // Cargado de comentarios  
+
   loadComments(): void {
     console.log("Cargando Comentarios....:");
     this.postService.getPostComments(this.postUuid).subscribe({
-      next: (data: Comment[]) => {
-        this.comments = data.reverse();
-      },
-      error: (error) => {
-        console.error('Error to retrieve comments', error);
-      }
+        next: (data: Comment[]) => {
+            this.comments = [...data.reverse()]; // 🔄 Recargar completamente la lista de comentarios
+            console.log("Comentarios recargados:", this.comments);
+        },
+        error: (error) => {
+            console.error('❌ Error al recuperar comentarios', error);
+        }
     });
-  }  
+}
+
+  
 
   calculateTime(comment : Comment) {
     const postDate = new Date(comment.date)

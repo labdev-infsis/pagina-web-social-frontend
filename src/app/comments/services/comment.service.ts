@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,23 @@ export class CommentService {
 
   // Reaccionar a un comentario
   reactToComment(commentUuid: string, reactionData: any): Observable<any> {
-    return this.http.post<any>(`${this.BASE_URL}/comment/${commentUuid}/reactions`, reactionData);
+    const token = localStorage.getItem('token'); // 🔥 Obtener el token desde localStorage
+
+    if (!token) {
+      console.error("🚨 No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // 🔥 Enviar el token en la cabecera
+    });
+
+    return this.http.post<any>(
+      `${this.BASE_URL}/comment/${commentUuid}/reactions`, // 🔥 Usa BASE_URL correctamente
+      reactionData,
+      { headers }
+    );
+    
   }
 }

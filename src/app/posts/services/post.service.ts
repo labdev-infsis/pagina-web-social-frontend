@@ -158,7 +158,7 @@ export class PostService {
 
   // Método para agregar un comentario a un post usando uuid
   addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
-    const endpoint = `posts/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
+    const endpoint = `post/${uuid}/comments`; 
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -167,8 +167,9 @@ export class PostService {
     }
 
     const headers = new HttpHeaders({
+
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`  // 🔥 Enviar token en la cabecera
+      'Authorization': `Bearer ${token}` 
     });
 
     const fullUrl = `${this.ROOT_URL}/${endpoint}`;
