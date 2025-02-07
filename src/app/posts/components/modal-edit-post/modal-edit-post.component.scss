@@ -1,4 +1,10 @@
-// Modal editar un post
+// Estilos ambos modals
+.btn-close {
+  position: absolute;
+  right: 10px;
+  border-radius: 50%;
+}
+
 .modal-title {
   margin: 0 auto;
   font-family: var(--secondary-font-family);
@@ -11,7 +17,10 @@
     height: 42px;
     border-radius: 50%;
     border: 1px solid #ccc;
-  }
+}
+
+// Modal editar un post
+  
 
   p {
     margin: 0;

@@ -1,10 +1,10 @@
 <!-- Modal editar un post -->
-<div class="modal fade" id="{{'edit-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true">
+<div *ngIf="showModalEdit()" class="modal fade" id="{{'edit-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header p-2">
           <h5 class="modal-title fw-bold" id="modalNewPost">Editar publicación</h5>
-          <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close m-0" (click)="openModalConfirmExitEdit(postToEdit.uuid)" aria-label="Close"></button>
         </div>
         <div class="modal-body user-post-container">
           <div class="info-user d-flex gap-3 mb-3">
@@ -27,13 +27,13 @@
           <form [formGroup]="postForm" class="form d-flex flex-column">
             <div class="container">
               <!-- Texto del post -->
-              <app-edit-text [contentText]="postToEdit.content.text" [postUuid]="postToEdit.uuid" (textChangeEvent)="getTextPost($event)"></app-edit-text>
+              <app-edit-text  [contentText]="postToEdit.content.text" [postUuid]="postToEdit.uuid" (textChangeEvent)="getTextPost($event)"></app-edit-text>
               
               <!-- Seleccionar imagen (es) -->
-              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadFilesMediaEvent)="getFilesMediaPost($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
+              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadOldFilesMediaEvent)="setFilesMediaPostOld($event)" (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
               
               <!-- Seleccionar archivo -->
-               <app-document-uploader [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadFileDoc)="getFileDocPost($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-uploader>
+              <app-document-editor [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadNewFileDoc)="setFileDocPostAdded($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-editor>
             </div>
   
             <!-- Añadir a la publicacion -->
@@ -44,9 +44,28 @@
                 <span class="d-flex align-items-center" [ngClass]="{'disabled': disableLoadDoc()}" (click)="!disableLoadDoc() && showAreaDoc()"><i class="bi bi-file-earmark-text-fill fs-5"></i></span>
               </div>
             </div>
-            <button type="button" class="btn btn-primary" [disabled]="disabledSaveButton()" (click)="updatePost()" data-bs-dismiss="modal">Guardar</button>
+            <button type="button" class="btn btn-primary fw-semibold" [disabled]="disabledSaveButton()" data-bs-dismiss="modal" (click)="updatePost()">Guardar</button>
           </form>
         </div>
       </div>
     </div>
+</div>
+
+<!-- Modal confirmacion salir de modal edicion -->
+<div class="modal confirmExit fade" id="{{'confirmExitEditPost-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="confirmExitEditPost" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header p-2">
+        <h5 class="modal-title fw-bold" id="modalConfirmExitPost">Cambios sin guardar</h5>
+        <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cerrar? Se perderán los cambios.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal">Seguir editando</button>
+        <button type="button" class="btn btn-primary fw-semibold" data-bs-dismiss="modal" (click)="closeResetModalEdit(postToEdit.uuid)">Cerrar sin guardar</button>
+      </div>
+    </div>
+  </div>
 </div>

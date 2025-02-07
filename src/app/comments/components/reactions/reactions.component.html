@@ -1,1 +1,20 @@
-<p>reactions works!</p>
+<div class="reaction-container" (mouseleave)="delayedCloseReactions()">
+  <!-- Botón de reacción -->
+  <button class="reaction-btn"
+          (mouseenter)="toggleReactions(true)">
+    {{ selectedReaction || 'Me gusta' }} {{ totalReactions }}
+  </button>
+
+  <!-- Menú de reacciones -->
+  <div class="reaction-popup"
+       *ngIf="showReactions"
+       (mouseenter)="toggleReactions(true)"
+       (mouseleave)="delayedCloseReactions()">
+       <span *ngFor="let emoji of emojis" (click)="reactToComment(commentUuid, emoji)">
+        {{ emoji }}
+      </span>
+    </div>
+
+  <!-- Botón de responder -->
+  <button class="reply-btn">Responder</button>
+</div>

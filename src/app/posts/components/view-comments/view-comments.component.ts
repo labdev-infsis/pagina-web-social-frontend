@@ -3,6 +3,11 @@ import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
 import { PostComponent } from '../post/post.component';
+import { ChangeDetectorRef } from '@angular/core';
+import moment from 'moment';
+//import moment from 'moment-timezone';
+import 'moment/locale/es';
+
 
 @Component({
   selector: 'app-view-comments',
@@ -14,32 +19,44 @@ export class ViewCommentsComponent implements OnInit {
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup  
   comments!: Comment[]; // Lista de comentarios  
   newComment: string = ''; // Nuevo comentario  
-  authenticated: boolean
+  authenticated: boolean;
 
-  constructor(private postService: PostService,
-    private authService: AuthService
+
+  constructor(
+    private postService: PostService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // 👈 Agregar esto
   ) {
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
+    moment.locale();
   }
-
+  
   ngOnInit(): void {
     this.loadComments();
   }
 
   // Cargado de comentarios  
+
   loadComments(): void {
     console.log("Cargando Comentarios....:");
     this.postService.getPostComments(this.postUuid).subscribe({
-      next: (data: Comment[]) => {
-        this.comments = data.reverse();
-      },
-      error: (error) => {
-        console.error('Error to retrieve comments', error);
-      }
+        next: (data: Comment[]) => {
+            this.comments = [...data.reverse()]; // 🔄 Recargar completamente la lista de comentarios
+            console.log("Comentarios recargados:", this.comments);
+        },
+        error: (error) => {
+            console.error('❌ Error al recuperar comentarios', error);
+        }
     });
-  }  
+}
+
+  
 
   calculateTime(comment : Comment) {
+    
+    var dateComment = moment(comment.date).add(4, 'hours');
+    return dateComment.fromNow();
+    /*
     const postDate = new Date(comment.date)
     const currentDate = new Date(Date.now());
     const diferenciaMs: number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
@@ -69,7 +86,8 @@ export class ViewCommentsComponent implements OnInit {
         minute: '2-digit',
       };
       return postDate.toLocaleDateString('es-ES', opciones);
-    }
+    }*/
+
   }
 
 

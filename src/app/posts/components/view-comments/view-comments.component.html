@@ -1,12 +1,12 @@
+
+
 <!-- Lista de comentarios -->
-<div class=" comments-section">
+<div class="comments-section">
     <div class="comment-box fle">
         <div class="d-flex flex-column">
             <div *ngFor="let comment of comments" class="d-flex flex-column">
-
                 <div class="d-flex flex-row">
-                    <img src="{{comment.user_photo}}" alt="" class="comment-img">
-
+                    <img [src]="comment.user_photo" alt="Foto de perfil" class="comment-img">
                     <div class="comment-text">
                         <div class="comment-header">
                             <p><strong>{{ comment.user_name }}</strong></p>
@@ -14,18 +14,16 @@
                         <p>{{ comment.content }}</p>
                     </div>
                 </div>
-               
-                <div  class="comment" class="comment-lks">
-                    <p>
-                        <span> {{ calculateTime(comment) }}</span>
-                    </p>
+                <div class="comment-lks">
+                    <p><span> {{ calculateTime(comment) }}</span></p>
                 </div>
-                
+                <!-- 
+                <div class="comment-reactions">
+                    <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+                </div>
+-->
+                <br>
             </div>
-
-            <br>
-
         </div>
     </div>
-    <!-- Campo para agregar un nuevo comentario -->
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
@@ -7,6 +7,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Post } from '../../models/post';
 import { Media } from '../../models/media';
 import { PostComment } from '../../models/post-comment';
+import { ChangeDetectorRef } from '@angular/core';
+import { ViewCommentsComponent } from '../view-comments/view-comments.component';
+import { UserDetail } from '../../models/user-detail';
+import moment from 'moment';
 
 
 @Component({
@@ -15,7 +19,9 @@ import { PostComment } from '../../models/post-comment';
   styleUrl: './comments.component.scss'
 })
 export class CommentsComponent implements OnInit {
-  private modalService = inject(NgbModal);
+  @ViewChild('commentInput') commentInput!: ElementRef;
+  @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
+
   @Input() institution !: Institution;
   @Input() post !: Post;
   @Input() postUuid!: string;
@@ -24,22 +30,39 @@ export class CommentsComponent implements OnInit {
   @Input() postTime!: string; // Tiempo del post  
   @Input() postDescription!: string; // Descripción del post  
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup 
-
+  @Output() commentAdded = new EventEmitter<void>(); // 🔥 Emitir evento cuando se agrega un comentario
   newComments: PostComment[] = [];
   showCommentInput: boolean = false;
   newComment: string = ''; // Nuevo comentario  
   comments!: Comment[]; // Lista de comentarios  
-  authenticated: boolean
+  authenticated: boolean;
+  currentUser!: UserDetail;
+  currentComment!: Comment;
 
-  constructor(private postService: PostService,
+
+  constructor(
+    private postService: PostService,
+
     public modal: NgbModal,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // ⬅️ Añadir esta línea
+
   ) {
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
   }
+
 
   ngOnInit(): void {
     this.loadComments();
+
+    this.postService.getUser().subscribe({
+      next: (user: UserDetail) => {
+        this.currentUser = user;
+      },
+      error: (error) => {
+        console.error('Error al obtener el usuario actual', error);
+      }
+    });
   }
 
   // Simulación de carga de comentarios  
@@ -48,10 +71,11 @@ export class CommentsComponent implements OnInit {
     console.log("Post: " + this.post);
     this.postService.getPostComments(this.postUuid).subscribe({
       next: (data: Comment[]) => {
-        this.comments = data.reverse();
+        this.comments = data.reverse(); // Asegurarnos de mostrar los más recientes primero
+        this.cdr.detectChanges(); // Forzar la actualización de la vista
       },
       error: (error) => {
-        console.error('Error to retrieve comments', error);
+        console.error('Error al obtener comentarios', error);
       }
     });
   }
@@ -102,35 +126,72 @@ export class CommentsComponent implements OnInit {
 
   // Método para alternar la visibilidad del input de comentarios
   toggleCommentInput() {
-    this.showCommentInput = !this.showCommentInput;
+    this.showCommentInput = true;
+
+    //  Espera un pequeño tiempo y luego pone foco en el input
+    setTimeout(() => {
+      this.commentInput?.nativeElement.focus();
+    }, 100);
   }
+
+
 
   addComment() {
     if (!this.newComment.trim()) return;
 
-    console.log("this.post antes de crear comentario:", this.post);
 
     if (!this.post || !this.post.uuid) {
-      console.error("Error: this.post o this.post.uuid es undefined");
+      
       return;
     }
 
-    const commentData = {
-      postId: this.post.uuid,
-      userId: this.post.user_id,
-      content: this.newComment
-    };
+    this.postService.getUser().subscribe({
+      next: (user: UserDetail) => {
+        this.currentUser = user;
+      
+        const commentToAdd: Comment = {
+          uuid: '',
+          content: this.newComment,
+          date:  moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          user_name: this.currentUser.name + ' ' + this.currentUser.lastName,
+          user_photo: this.currentUser.photo_profile_path,
+          moderated: false,
+          state: '',
+          reply_count: 0
+        };
 
+        this.comments.push(commentToAdd);
+
+        console.log("Date: ", moment());
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al obtener el usuario actual', error);
+      }
+    });
+
+    const commentData = {
+      content: this.newComment,
+      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+    };
 
     console.log("Datos del comentario que se enviarán:", commentData);
 
     this.postService.addComment(this.post.uuid, commentData).subscribe({
       next: (newComment) => {
-        this.newComments.push(newComment); // Agregar el comentario a la lista
-        this.newComment = ''; // Limpiar input
-        this.showCommentInput = false; // 🔥 Ocultar input después de comentar
+        console.log(" Comentario agregado en backend:", newComment);
+
+        this.newComment = ''; //  Limpiar input
+        this.showCommentInput = false; //  Ocultar input
+
+        // 🔥 Llamar explícitamente a loadComments() en ViewCommentsComponent
+        if (this.viewCommentsComponent) {
+          this.viewCommentsComponent.loadComments();
+        }
       },
-      error: (err) => console.error("Error al agregar comentario", err)
+      error: (err) => console.error("❌ Error al agregar comentario", err)
     });
   }
+
 }  

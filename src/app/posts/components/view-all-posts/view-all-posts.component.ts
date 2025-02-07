@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Post } from '../../models/post';
+import { User } from '../../../authentication/models/user';
+import { UserDetail } from '../../models/user-detail';
 
 @Component({
   selector: 'app-view-all-posts',
@@ -10,7 +12,8 @@ import { Post } from '../../models/post';
 })
 export class ViewAllPostsComponent {
   posts!: Post[];
-  authenticated: boolean
+  authenticated: boolean;
+  currentUser!: UserDetail;
   
 
   constructor(private postService: PostService,
@@ -27,6 +30,16 @@ export class ViewAllPostsComponent {
       },
       error:(error) => {
         console.error('Error al obtener los posts', error);
+      }
+    });
+
+    this.postService.getUser().subscribe({
+      next:(user: UserDetail) => {
+        this.currentUser = user;
+        console.log('Obteniendo el usuario actual', this.currentUser);
+      },
+      error:(error) => {
+        console.error('Error al obtener el usuario actual', error);
       }
     });
   }

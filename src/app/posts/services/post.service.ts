@@ -21,10 +21,10 @@ import { PostComment } from '../models/post-comment';
 export class PostService {
 
   private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV}`;
-  private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+ this.authService.getToken() }) };
+  private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }) };
 
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   // Método para obtener los datos de una institución
 
@@ -34,38 +34,44 @@ export class PostService {
   }
 
   //Método para obtener un user
-  getUser(): Observable<any>{
+  getUser(): Observable<any> {
     const getUser = 'users/me'
     return this.http.get<any>(`${this.ROOT_URL}/${getUser}`, this.reqHeader)
   }
 
-  // Método para obtener los posts
-  getPosts(): Observable<Post[]>{
-    const getPosts = 'posts'
-    return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`);
-
+  // Método para obtener un post por uuid
+  getPost(postUuid: string): Observable<Post> {
+    return this.http.get<Post>(`${this.ROOT_URL}/posts/${postUuid}`);
   }
 
+    // Método para obtener los posts
+    getPosts(): Observable<Post[]>{
+      const getPosts = 'posts'
+      const token = this.authService.getToken();
+      const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
+      return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
+    }
+
   //Método para crear un post
-  createPost(dataPost: CreatePost): Observable<CreatePost>{
+  createPost(dataPost: CreatePost): Observable<CreatePost> {
     const createPost = 'posts'
     return this.http.post<CreatePost>(`${this.ROOT_URL}/${createPost}`, dataPost, this.reqHeader)
   }
 
   //Método para subir imagenes
-  uploadImages(formData: FormData): Observable<UploadedMedia[]>{
+  uploadImages(formData: FormData): Observable<UploadedMedia[]> {
     const uploadImgs = 'images/posts'
     return this.http.post<UploadedMedia[]>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
   }
 
   //Métedo para subir videos
-  uploadVideos(formData: FormData): Observable<UploadedMedia[]>{
+  uploadVideos(formData: FormData): Observable<UploadedMedia[]> {
     const uploadImgs = 'videos/posts'
     return this.http.post<UploadedMedia[]>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
   }
 
   //Método para subir media (imagenes y videos)
-  uploadMedia(formData: FormData): Observable<UploadedMedia[]>{
+  uploadMedia(formData: FormData): Observable<UploadedMedia[]> {
     const imagesFormData = new FormData();
     const videosFormData = new FormData();
 
@@ -100,86 +106,77 @@ export class PostService {
   }
 
   //Método para subir un archivo
-  uploadDocument(formData: FormData): Observable<any>{
+  uploadDocument(formData: FormData): Observable<any> {
     const uploadImgs = 'documents/posts'
     return this.http.post<any>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
   }
 
   //Método para reaccionar a una publicacion
-  postReaction(postUuid: string, body: CreateReaction): Observable<any>{
+  postReaction(postUuid: string, body: CreateReaction): Observable<any> {
     const urlReactPost = 'reactions'
     return this.http.post<any>(`${this.ROOT_URL}/posts/${postUuid}/${urlReactPost}`, body, this.reqHeader)
   }
 
   // Método para obtener los comentarios de un post
-  getPostComments(uuid: string): Observable<Comment[]>{
+  getPostComments(uuid: string): Observable<Comment[]> {
     const getPosts = 'posts'
     const getComments = 'comments'
     return this.http.get<Comment[]>(`${this.ROOT_URL}/${getPosts}/${uuid}/${getComments}`);
 
   }
 
-  
+
   //Método para obtener configuraciones de comentarios
-  getCommentsConfiguration(): Observable<CommentConfig[]>{
+  getCommentsConfiguration(): Observable<CommentConfig[]> {
     const commentConfigUrl = 'comment-config'
     return this.http.get<CommentConfig[]>(`${this.ROOT_URL}/${commentConfigUrl}`, this.reqHeader);
   }
 
   //Método para eliminar un post
-  deletePost(postUuid: string): Observable<Post>{
+  deletePost(postUuid: string): Observable<Post> {
     const deletePost = 'posts'
     return this.http.delete<Post>(`${this.ROOT_URL}/${deletePost}/${postUuid}`, this.reqHeader);
   }
 
   //Método para actualizar un post
-  updatePost(postUuid: string, dataPost: CreatePost): Observable<Post>{
+  updatePost(postUuid: string, dataPost: CreatePost): Observable<Post> {
     const updatePost = 'posts'
     return this.http.put<Post>(`${this.ROOT_URL}/${updatePost}/${postUuid}`, dataPost, this.reqHeader);
   }
 
   //Método para obeter los tipos de emojis
-  getEmojisType(): Observable<EmojiType[]>{
+  getEmojisType(): Observable<EmojiType[]> {
     const getEmojis = 'emoji-type'
-    return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`, this.reqHeader);
+    return this.http.get<EmojiType[]>(`${this.ROOT_URL}/${getEmojis}`);
   }
 
   // Método para obtener los comentarios de un post
   getComments(postUuid: string): Observable<Comment[]> {
-    const endpoint = `post/${postUuid}/comments`;
-    return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`, this.reqHeader);
+    const endpoint = `posts/${postUuid}/comments`;
+    return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`);
   }
 
-  // Método para agregar un comentario a un post
   // Método para agregar un comentario a un post usando uuid
-  addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
-    const endpoint = `post/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      console.error("Error: No hay token de autenticación");
-      return throwError(() => new Error("No autorizado"));
-    }
-
-    const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`  // 🔥 Enviar token en la cabecera
-    });
-
-    const fullUrl = `${this.ROOT_URL}/${endpoint}`;
-
-
-    return this.http.post<PostComment>(fullUrl, commentData, { headers });
+  addComment(postUuid: string, commentData: PostComment): Observable<PostComment> {
+    
+    return this.http.post<PostComment>(`${this.ROOT_URL}/posts/${postUuid}/comments`, commentData, this.reqHeader);
   }
 
   //Obtener todas las fotos de la institucion 
-   getInstitutionPhotos(uuid: string): Observable<any[]> {
+  getInstitutionPhotos(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/photos`;
     return this.http.get<any[]>(url);
   }
 
   //Obtener todos los videos de la institucion 
   getInstitutionVideos(uuid: string): Observable<any[]> {
+    const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
+    return this.http.get<any[]>(url);
+  }
+
+  
+  //Obtener todos los videos de la institucion 
+  getCommentReactions(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
     return this.http.get<any[]>(url);
   }
