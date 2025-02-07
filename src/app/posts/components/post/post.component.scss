@@ -104,8 +104,16 @@
       margin-bottom: 15px;
       line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
       white-space: pre-wrap;
-      color: #003770;
       font-weight: 400;
+      color: #003770;
+      
+      .see-more {
+        cursor: pointer;
+      }
+
+      .see-more:hover {
+        text-decoration: underline;
+      }
     }
   
     hr {

@@ -21,8 +21,12 @@
   <app-modal-edit-post [institution]="institution" [postToEdit]="post"
     (postUpdated)="updatePost($event)"></app-modal-edit-post>
   <app-modal-delete-post (confirmDeletePost)="deletePost($event)" [postReference]="post.uuid"></app-modal-delete-post>
-  <!-- Contenido del post -->
-  <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
+  
+  <!-- Contenido de texto del post -->
+  <p *ngIf="post.content.text != '' && allowedTextLength(); else reduceText" class="text-post">{{post.content.text}}</p>
+  <ng-template #reduceText>
+    <p id="{{'text-post-'+post.uuid}}" *ngIf="post.content.text != ''" class="text-post">{{adjustedTextLength()}}<span class="see-more fw-bold" (click)="showAllText(post.uuid)">Ver más</span></p>
+  </ng-template>
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
   <ng-container *ngIf="listMediaPost.length > 0">
