@@ -80,8 +80,6 @@ export class PhotosGalleryComponent implements OnInit {
   openModal() {
     const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
    
-    console.log("Post Gallery Modal: "  + JSON.stringify(this.currentPost));
-    console.log("Instituion Modal: " + JSON.stringify(this.institution));
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = this.currentPost;
     modalRef.componentInstance.postUuid = this.currentPost.uuid;
