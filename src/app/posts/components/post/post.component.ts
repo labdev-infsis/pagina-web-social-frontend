@@ -268,4 +268,21 @@ export class PostComponent {
       }
     })
   }
+
+  allowedTextLength(){
+    return this.post.content.text.length <= 480;
+  }
+
+  adjustedTextLength(){
+    return this.post.content.text.slice(0, 480)+'... ';
+  }
+
+  showAllText(id: string){
+    const textPost = document.getElementById('text-post-'+id) as HTMLParagraphElement;
+    if(textPost){
+      textPost.innerHTML = `<p id="text-post" *ngIf="post.content.text != ''" class="text-post">${this.post.content.text}</p>`;
+      console.log(textPost)
+    }
+    return textPost || '';
+  }
 }

@@ -61,6 +61,14 @@
       line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
       white-space: pre-wrap;
       font-weight: 500;
+
+      .see-more {
+        cursor: pointer;
+      }
+
+      .see-more:hover {
+        text-decoration: underline;
+      }
     }
   
     hr {
