@@ -81,6 +81,8 @@ export class PostComponent {
   
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
+      console.log(this.post.reactions)
+      this.recuperarReaccion(); 
     } else {
       console.warn("Advertencia: this.post.reactions es undefined");
     }
@@ -223,15 +225,38 @@ export class PostComponent {
   }
 
   recuperarReaccion() {
-    let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
+    let reaccionUser = this.post.reactions.my_reaction_emoji;
+    //let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
+    console.log(reaccionUser)
     if (reaccionUser) {
-      if (reaccionUser == 'thumbs-up') {
-        this.like = true
-      } else {
-        this.like = false
+      this.like = true;
+      if (reaccionUser === 'thumbs-up') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-thumbs-up',
+          name: 'Me gusta'
+        };
+      } else if (reaccionUser === 'red-heart') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-heart',
+          name: 'Me encanta'
+        };
+      } else if (reaccionUser === 'crying-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me entristece'
+        };
+      } else if (reaccionUser === 'angry-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me enfada'
+        };
       }
     } else {
-      this.like = false
+      this.like = false;
     }
   }
 

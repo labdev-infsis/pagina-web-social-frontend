@@ -146,7 +146,7 @@ export class CreatePostComponent {
             uploadResponse.forEach((media, index) => {
               responseMedia.push({
                 number: index + 1,
-                type: media.type,
+                type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
                 name: media.name,
                 path: media.urlResource
               });

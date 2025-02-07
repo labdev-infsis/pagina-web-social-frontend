@@ -44,12 +44,13 @@ export class PostService {
     return this.http.get<Post>(`${this.ROOT_URL}/posts/${postUuid}`);
   }
 
-  // Método para obtener los posts
-  getPosts(): Observable<Post[]> {
-    const getPosts = 'posts'
-    return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`);
-
-  }
+    // Método para obtener los posts
+    getPosts(): Observable<Post[]>{
+      const getPosts = 'posts'
+      const token = this.authService.getToken();
+      const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
+      return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
+    }
 
   //Método para crear un post
   createPost(dataPost: CreatePost): Observable<CreatePost> {
