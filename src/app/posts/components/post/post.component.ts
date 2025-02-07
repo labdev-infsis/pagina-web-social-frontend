@@ -10,6 +10,9 @@ import { Media } from '../../models/media';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import { PostComment } from '../../models/post-comment';
+import { User } from '../../../authentication/models/user';
+import { UserDetail } from '../../models/user-detail';
+import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -22,6 +25,8 @@ export class PostComponent {
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
+  currentUser !: UserDetail;
+  authenticated: boolean;
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
@@ -46,10 +51,11 @@ export class PostComponent {
 
 
   constructor(
-    private postService: PostService
+    private postService: PostService,
+    private authService: AuthService
   ) {
-    
-   }
+    this.authenticated = authService.isAuthenticated()
+  }
 
   ngOnInit() {
     this.listMediaPost = this.loadMediaPost();
@@ -62,6 +68,16 @@ export class PostComponent {
         console.log(error);
       }
     });
+
+        this.postService.getUser().subscribe({
+          next:(user: UserDetail) => {
+            this.currentUser = user;
+            console.log('Obteniendo el usuario actual', this.currentUser);
+          },
+          error:(error) => {
+            console.error('Error al obtener el usuario actual', error);
+          }
+        });
   
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
