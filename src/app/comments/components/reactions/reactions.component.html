@@ -10,10 +10,10 @@
        *ngIf="showReactions"
        (mouseenter)="toggleReactions(true)"
        (mouseleave)="delayedCloseReactions()">
-    <span *ngFor="let emoji of emojis" (click)="reactToComment(commentUuid, emoji)">
-      {{ emoji }}
-    </span>
-  </div>
+       <span *ngFor="let emoji of emojis" (click)="reactToComment(commentUuid, emoji)">
+        {{ emoji }}
+      </span>
+    </div>
 
   <!-- Botón de responder -->
   <button class="reply-btn">Responder</button>

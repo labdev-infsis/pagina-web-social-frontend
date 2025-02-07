@@ -7,6 +7,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Post } from '../../models/post';
 import { Media } from '../../models/media';
 import { PostComment } from '../../models/post-comment';
+import { ChangeDetectorRef } from '@angular/core';
+import { ViewCommentsComponent } from '../view-comments/view-comments.component';
+
 
 
 
@@ -17,6 +20,7 @@ import { PostComment } from '../../models/post-comment';
 })
 export class CommentsComponent implements OnInit {
   @ViewChild('commentInput') commentInput!: ElementRef;
+  @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
 
   private modalService = inject(NgbModal);
   @Input() institution !: Institution;
@@ -27,19 +31,25 @@ export class CommentsComponent implements OnInit {
   @Input() postTime!: string; // Tiempo del post  
   @Input() postDescription!: string; // Descripción del post  
   @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup 
-
+  @Output() commentAdded = new EventEmitter<void>(); // 🔥 Emitir evento cuando se agrega un comentario
   newComments: PostComment[] = [];
   showCommentInput: boolean = false;
   newComment: string = ''; // Nuevo comentario  
   comments!: Comment[]; // Lista de comentarios  
   authenticated: boolean
 
-  constructor(private postService: PostService,
+
+  constructor(
+    private postService: PostService,
+
     public modal: NgbModal,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // ⬅️ Añadir esta línea
+  
   ) {
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
   }
+  
 
   ngOnInit(): void {
     this.loadComments();
@@ -51,13 +61,14 @@ export class CommentsComponent implements OnInit {
     console.log("Post: " + this.post);
     this.postService.getPostComments(this.postUuid).subscribe({
       next: (data: Comment[]) => {
-        this.comments = data.reverse();
+        this.comments = data.reverse(); // Asegurarnos de mostrar los más recientes primero
+        this.cdr.detectChanges(); // Forzar la actualización de la vista
       },
       error: (error) => {
-        console.error('Error to retrieve comments', error);
+        console.error('Error al obtener comentarios', error);
       }
     });
-  }
+}
 
 
   // Simulación de "Me gusta"  
@@ -114,36 +125,39 @@ export class CommentsComponent implements OnInit {
   }
   
 
-
+  
   addComment() {
     if (!this.newComment.trim()) return;
-  
-    console.log('Comentario agregado:', this.newComment);
-  
-    if (!this.post || !this.post.uuid) {
-      console.error("Error: this.post o this.post.uuid es undefined");
-      return;
-    }
-  
 
-    const commentContent = this.newComment; 
-  
+    console.log('Comentario agregado:', this.newComment);
+
+    if (!this.post || !this.post.uuid) {
+        console.error("Error: this.post o this.post.uuid es undefined");
+        return;
+    }
+
     const commentData = {
-      postId: this.post.uuid,
-      userId: this.post.user_id,
-      content: commentContent //  Aquí usamos la variable guardada
+        postId: this.post.uuid,
+        userId: this.post.user_id,
+        content: this.newComment
     };
-  
+
     console.log("Datos del comentario que se enviarán:", commentData);
-  
+
     this.postService.addComment(this.post.uuid, commentData).subscribe({
-      next: (newComment) => {
-        this.newComments.push(newComment); // Agregar el comentario a la lista
-        this.newComment = ''; 
-        this.showCommentInput = false; 
-      },
-      error: (err) => console.error("Error al agregar comentario", err)
+        next: (newComment) => {
+            console.log(" Comentario agregado en backend:", newComment);
+
+            this.newComment = ''; //  Limpiar input
+            this.showCommentInput = false; //  Ocultar input
+
+            // 🔥 Llamar explícitamente a loadComments() en ViewCommentsComponent
+            if (this.viewCommentsComponent) {
+                this.viewCommentsComponent.loadComments();
+            }
+        },
+        error: (err) => console.error("❌ Error al agregar comentario", err)
     });
-  }
-  
+}
+
 }  
