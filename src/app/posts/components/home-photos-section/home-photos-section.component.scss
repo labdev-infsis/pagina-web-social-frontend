@@ -1,54 +1,58 @@
-/* filepath: /c:/Users/Iamfab/Downloads/pagina-web-social-frontend/src/app/posts/components/home-photos-section/home-photos-section.component.scss */
 .photos-container {
-    padding: 20px;
-  }
-  
-  .photos-title {
-    font-size: 24px;
-    margin-bottom: 10px;
+  margin: 0;
+  padding: 40px 0 20px;
+  padding-right: 56px;
+  width: 396px;
+  border-bottom: 1px solid var(--red-color);
+
+  .section-title {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-  }
+    padding-bottom: 20px;
+    width: 340px;
   
-  .view-all-link {
-    font-size: 14px;
-    color: #007bff;
-    text-decoration: none;
-  }
+    h3 {
+      font-family: var(--secondary-font-family);
+      font-optical-sizing: auto;
+      font-size: 20px;
+      font-weight: bold;
+    }
   
-  .view-all-link:hover {
-    text-decoration: underline;
+    a {
+      font-family: var(--primary-font-family);
+      font-size: 14px;
+      color: var(--blue-color);
+      text-decoration: none;
+    }
+
   }
-  
-  .photos-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  
-  .photo-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 120px; /* Ajusta esta altura según tus necesidades */
-  }
-  
-  .photo-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+
+	.grid-container {
+		display: grid;
+		gap: 20px;
+		grid-template-columns: 1fr 1fr;
+		width: 340px;
+	}
+
+	.grid-container img {
+		width: 160px;
+		height: 160px;
+		object-fit: cover;
+		-o-object-fit: cover;
+		aspect-ratio: 1;
     transition: transform 0.3s ease;
-  }
-  
-  .photo-card:hover img {
-    transform: scale(1.05);
-  }
-  
-  .loading-message,
-  .no-photos {
-    text-align: center;
-    font-size: 16px;
-    color: #666;
-  }
+    border: 1px solid var(--blue-color-25);
+
+    &:hover {
+        transform: scale(1.05);
+    }
+	}
+}
+
+.loading-message,
+.no-photos {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  text-align: center;
+  color: var(--blue-color);
+}

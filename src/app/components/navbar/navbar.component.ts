@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../authentication/services/auth.service';
 import { PostService } from '../../posts/services/post.service';
+import { Institution } from '../../posts/models/institution';
 
 @Component({
   selector: 'app-navbar',
@@ -9,7 +10,7 @@ import { PostService } from '../../posts/services/post.service';
 })
 export class NavbarComponent {
   authenticated: boolean
-  institution: any
+  institution!: Institution
   isMenuOpen = false;
   user: any
 

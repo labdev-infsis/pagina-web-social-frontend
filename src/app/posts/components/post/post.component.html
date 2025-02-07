@@ -1,5 +1,6 @@
 <div class="post-container">
   <!-- Parte superior del post -->
+  <!--
   <div class="d-flex gap-3 mb-2">
     <ng-container *ngIf="institution">
       <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
@@ -14,6 +15,24 @@
       </div>
     </ng-container>
   </div>
+  -->
+
+  <div class="header-post">
+    @if (institution) {
+      <div class="data-user">
+        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+        <div class="info-user">
+          <h2>{{ institution.name }}</h2>
+          <p>{{ calculateTimePost() }}</p>
+        </div>
+      </div>
+      <div class="options-post d-flex justify-content-center align-items-center"
+        (click)="showOptions.set(!showOptions())">
+        <i class="bi bi-three-dots"></i>
+      </div>
+    }
+  </div>
+
   <!-- Popup de opciones post Editar/Eliminar -->
   <app-options-post *ngIf="showOptions() && authenticated === true && currentUser.role === 'ADMIN'" (clickOutside)="showOptions.set(false)"
     [postReference]="post.uuid"></app-options-post>
@@ -29,6 +48,7 @@
   </ng-template>
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
+  <!--@if (listMediaPost.length > 0) {-->
   <ng-container *ngIf="listMediaPost.length > 0">
 
     <!-- Visualizar posts con imagenes y/o videos -->
@@ -76,6 +96,7 @@
       </a>
     </ng-container>
   </ng-container>
+  <!--}-->
   <hr>
     <!-- Cantidad de reacciones y comentarios -->
   <div class="interactions-quantity " *ngIf="amountReactions() > 0 || amountComments() > 0">
@@ -151,8 +172,6 @@
       <i class="fa-solid fa-share"></i>
       Compartir</button>
   </div>
-  
-    <!-- Boton de Comentar -->
 
-
-
+  <!-- Boton de Comentar -->
+</div>

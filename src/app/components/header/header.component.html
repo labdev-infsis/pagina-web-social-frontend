@@ -3,34 +3,25 @@
         <div class="banner-container">
             <img *ngIf="institution" [src]="institution.background_url" alt="Banner Informática y Sistemas" class="banner-image">
         </div>
-        <!--<div class="search-bar">
-            <input type="text" class="form-control" placeholder="Buscar">
-        </div>-->
+
         <div class="logo-overlay">
             <img *ngIf="institution" [src]="institution.logo_url" alt="Logo Carrera" class="career-logo">
         </div>
     </div>
+
     <div class="header-details">
-        <p></p>
-        <h3> {{ institution.name }} </h3>
-        <br>
-        <div class="user-actions">
-            <button class="btn btn-secondary">
-                <i class="fa fa-envelope"></i> Mensaje</button>
-            <button class="btn btn-secondary">
-                <i class="fas fa-thumbs-up"></i> Me Gusta</button>
-            <button class="btn btn-secondary">
-                <i class="fas fa-search"></i> Buscar</button>
-        </div>
+        <h3>{{ institution.name }}</h3>
+        <p>100 seguidores - 100 me gusta</p>
     </div>
-    <nav class="tabs-container">
-        <ul class="tabs">
-            <li><a routerLink="/posts">Publicaciones</a></li>
-            <li><a >Información</a></li>
-            <li><a routerLink="/fotos" >Fotos</a></li>
-            <li><a routerLink="/videos">Videos</a></li>
-            <li><a >Eventos</a></li>
-            <li><a >Más</a></li>
-        </ul>
-    </nav>
 </div>
+
+<nav>
+    <ul>
+        <li><a routerLink="/posts" active>Publicaciones</a></li>
+        <li><a href="#">Información</a></li>
+        <li><a routerLink="/fotos">Fotos</a></li>
+        <li><a routerLink="/videos">Vídeos</a></li>
+        <li><a href="#">Eventos</a></li>
+        <li><a href="#">Más</a></li>
+    </ul>
+</nav>

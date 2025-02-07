@@ -1,35 +1,35 @@
-<!-- src/app/components/department-details/department-details.component.html -->
 <div class="main-container">
-  <div *ngIf="institution">
-    <div class="details-container">
-      <h3>Detalle</h3>
-      <p class="subtitle">
-        {{ institution.description }}
-      </p>
 
-      <!-- Información de contacto -->
+  @if (institution) {
+
+    <div class="details-container">
+
+      <div class="section-title">
+        <h3>Detalle</h3>
+      </div>
+
       <div class="info-item">
-        <i class="bi bi-geo-alt-fill"></i>
+        <img src="assets/info.png" alt="" class="icon-detail">
+        <span>{{ institution.description }}</span>
+      </div>
+
+      <div class="info-item">
+        <img src="assets/address.png" alt="" class="icon-detail">
         <span>{{ institution.location }}</span>
       </div>
 
       <div class="info-item">
-        <i class="bi bi-info-circle-fill"></i>
-        <span>{{ institution.category }}</span>
-      </div>
-
-      <div class="info-item">
-        <i class="bi bi-envelope-fill"></i>
+        <img src="assets/email.png" alt="" class="icon-detail">
         <a href="mailto:{{ institution.email }}">{{ institution.email }}</a>
       </div>
 
       <div class="info-item">
-        <i class="bi bi-globe"></i>
+        <img src="assets/web.png" alt="" class="icon-detail">
         <a href="http://{{ institution.url }}" target="_blank">{{ institution.url }}</a>
       </div>
     </div>
 
     <home-photos-section></home-photos-section>
+  }
 
-  </div>
 </div>

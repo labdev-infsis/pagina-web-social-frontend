@@ -1,14 +1,14 @@
 <div class="photo-gallery">
-    <h2 class="gallery-title">Fotos</h2>
-    <div *ngIf="isLoading" class="loading-message">
-      Cargando fotos...
-    </div>
-    <div class="gallery-container" *ngIf="!isLoading && photos.length > 0">
-      <div *ngFor="let photo of photos" class="photo-container">
-        <img [src]="photo.url" (click)="openViewPost(photo.postUuid)" alt="Institution Photo" class="photo" />
-      </div>
-    </div>
-    <div class="no-photos" *ngIf="!isLoading && photos.length === 0">
-      No hay Fotos.
-    </div>
+  <h2 class="gallery-title">Fotos</h2>
+  <div *ngIf="isLoading" class="loading-message">
+    Cargando fotos...
+  </div>
+  <div class="gallery-container" *ngIf="!isLoading && photos.length > 0">
+    @for (photo of photos; track photo.url) {
+    <img [src]="photo.url" alt="Institution Photo" class="photo" />
+    }
+  </div>
+  <div class="no-photos" *ngIf="!isLoading && photos.length === 0">
+    No hay Fotos.
+  </div>
 </div>

@@ -1,26 +1,30 @@
 .menu-options-post {
+    padding: 5px;
     position: absolute;
     top: 50px;
     right: 30px;
-    width: 250px;
+    /*width: 250px;*/
     height: fit-content;
+    font-family: var(--primary-font-family);
+    font-size: 14px;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    padding: 5px;
+    /*border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);*/
+    border: 1px solid var(--blue-color);
     z-index: 1;
 
     .option-post {
-        padding: 10px 15px;
-        gap: 10px;
+        /*padding: 10px 15px;*/
+        padding: 5px 10px;
         display: flex;
+        gap: 10px;
         align-items: center;
         cursor: pointer;
 
         &:hover {
             background-color: #f2f2f2;
         }
-
+        /*
         .bi {
             font-size: 18px;
             color: #1C1C22;
@@ -29,5 +33,6 @@
         .bi-trash-fill {
             color: #DC3545;
         }
+        */
     }
 }
