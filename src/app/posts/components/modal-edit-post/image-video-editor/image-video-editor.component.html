@@ -11,10 +11,10 @@
     <div class="images-videos" *ngIf="showPreviewMedia" [ngClass]="getGridClass()">
       <div *ngIf="listFileMediaPost[0].type.includes('image')" class="buttons-edit">
         <!-- Boton para editar toda la media -->
-        <button class="btn fw-semibold" type="button" (click)="openEditAll()">
+        <!-- <button class="btn fw-semibold" type="button" (click)="openEditAll()">
           <i class="bi bi-pencil-fill"></i>
           Editar todo
-        </button>
+        </button> -->
         <!-- Boton añadir imagenes-videos -->
         <button class="btn fw-semibold" type="button" (click)="openInputFileMedia()">
           <i class="bi bi-file-earmark-plus-fill"></i>

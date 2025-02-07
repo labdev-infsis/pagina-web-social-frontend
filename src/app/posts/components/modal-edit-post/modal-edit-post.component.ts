@@ -34,7 +34,6 @@ export class ModalEditPostComponent {
   listNewMediaFile: File[] = []; //Lista de media editada obtenida de 'image-video-editor' component
   listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
   fileDoc!: File;  //Doc añadido en edicion
-  fileDocOld!: Media; //Doc existente
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -188,6 +187,12 @@ export class ModalEditPostComponent {
     //Si hay info para postear (texto, imagen o video, documento)
     if(valueFormPost.contentPost != '' || this.listNewMediaFile || this.fileDoc){
 
+      //Pseudo eliminacion, actualiza solo texto de post con media img video
+      if(this.listOldMediaFile == undefined){
+        if(this.postToEdit.content.media.length>0 && this.postToEdit.content.media[0].type != 'document')
+          editedPost.content.media = this.postToEdit.content.media;
+      }
+
       //Si hay nuevas imagenes-videos se los procesa
       if(this.listNewMediaFile && this.listNewMediaFile.length > 0){ 
 
@@ -225,9 +230,9 @@ export class ModalEditPostComponent {
           })
         ).subscribe({
           next: (responseUpdatedPost)=> {
-            console.log('post actualizado',responseUpdatedPost);
-            // window.location.reload();
-            this.postUpdatedEvent.emit(responseUpdatedPost);
+            console.log('post con nuevas imagenes videos actualizado',responseUpdatedPost);
+            window.location.reload();
+            // this.postUpdatedEvent.emit(responseUpdatedPost);
           },
           error: (error) => {
             console.log('Error al actualizar el post con contenido media (imagenes y/o videos)', error)
@@ -236,7 +241,7 @@ export class ModalEditPostComponent {
       }else if(this.fileDoc && this.fileDoc.size > 0){//Si hay un archivo
         //Convertir el archivo en form data
         formData.append('file', this.fileDoc);
-
+        console.log('dentro', this.fileDoc)
         this.postService.uploadDocument(formData).pipe(
           concatMap((uploadResponse: UploadedDocument) => {
             responseDoc = {
@@ -252,9 +257,9 @@ export class ModalEditPostComponent {
           })
         ).subscribe({
           next: (responseUpdatedPost)=> {
-            console.log('post actualizado',responseUpdatedPost);
-            // window.location.reload();
-            this.postUpdatedEvent.emit(responseUpdatedPost);
+            console.log('post con archivo actualizado',responseUpdatedPost);
+            window.location.reload();
+            // this.postUpdatedEvent.emit(responseUpdatedPost);
           },
           error: (error) => {
             console.log('Error al actualizar el post con archivo',error)
@@ -264,9 +269,9 @@ export class ModalEditPostComponent {
 
         this.postService.updatePost(this.postToEdit.uuid, editedPost).subscribe({
           next: (responseUpdatedPost) => {
-            console.log('post actualizado',responseUpdatedPost);
-            // window.location.reload();
-            this.postUpdatedEvent.emit(responseUpdatedPost);
+            console.log('post de solo texto actualizado',responseUpdatedPost);
+            window.location.reload();
+            // this.postUpdatedEvent.emit(responseUpdatedPost);
           },
           error: (error) => {
             console.log('Error al actualizar post solo texto', error)
