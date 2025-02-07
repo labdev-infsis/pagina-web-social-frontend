@@ -153,29 +153,13 @@ export class PostService {
   // Método para obtener los comentarios de un post
   getComments(postUuid: string): Observable<Comment[]> {
     const endpoint = `posts/${postUuid}/comments`;
-    return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`, this.reqHeader);
+    return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`);
   }
 
   // Método para agregar un comentario a un post usando uuid
-  addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
-    const endpoint = `post/${uuid}/comments`; 
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      console.error("Error: No hay token de autenticación");
-      return throwError(() => new Error("No autorizado"));
-    }
-
-    const headers = new HttpHeaders({
-
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` 
-    });
-
-    const fullUrl = `${this.ROOT_URL}/${endpoint}`;
-
-
-    return this.http.post<PostComment>(fullUrl, commentData, { headers });
+  addComment(postUuid: string, commentData: PostComment): Observable<PostComment> {
+    
+    return this.http.post<PostComment>(`${this.ROOT_URL}/posts/${postUuid}/comments`, commentData, this.reqHeader);
   }
 
   //Obtener todas las fotos de la institucion 
@@ -186,6 +170,13 @@ export class PostService {
 
   //Obtener todos los videos de la institucion 
   getInstitutionVideos(uuid: string): Observable<any[]> {
+    const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
+    return this.http.get<any[]>(url);
+  }
+
+  
+  //Obtener todos los videos de la institucion 
+  getCommentReactions(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
     return this.http.get<any[]>(url);
   }

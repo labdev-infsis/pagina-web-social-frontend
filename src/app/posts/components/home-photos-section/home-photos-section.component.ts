@@ -20,8 +20,14 @@ export class HomePhotosSectionComponent implements OnInit {
   currentPost !: Post;
 
   constructor(private postService: PostService) {
+   
+
+  }
+
+  ngOnInit(){
     const uuidIntitutionDric = '93j203b4-f63b-4c4a-be05-eae84cef0c0c';
     this.postService.getInstitution(uuidIntitutionDric).subscribe({
+      
       next: (dataInstitution: Institution) => {
         this.institution = dataInstitution;
         this.loadPhotos(); // Llama a loadPhotos después de obtener la institución
@@ -31,9 +37,6 @@ export class HomePhotosSectionComponent implements OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  ngOnInit(){
 
   }
 
@@ -58,11 +61,26 @@ export class HomePhotosSectionComponent implements OnInit {
   }
 
     openViewPost(postUuid: string) {
+
+      this.postService.getPost(postUuid).subscribe({
+        next: (dataPost: Post) => {
+          this.currentPost = dataPost;
+          this.openModal();
+        },
+        error: (error) => {
+          console.log(error);
+          this.isLoading = false;
+        }
+      });
+      
+    }
+
+    openModal() {
       const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
-      this.getPost(postUuid);
+      
       modalRef.componentInstance.institution = this.institution;
       modalRef.componentInstance.post = this.currentPost;
-      modalRef.componentInstance.postUuid = postUuid;
+      modalRef.componentInstance.postUuid = this.currentPost.uuid;
       modalRef.componentInstance.postImages = this.currentPost.content.media;
       modalRef.componentInstance.postAuthor = this.institution.name;
       modalRef.componentInstance.postDate = this.calculateTimePost;
