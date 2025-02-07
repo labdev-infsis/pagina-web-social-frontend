@@ -107,39 +107,43 @@ export class CommentsComponent implements OnInit {
   toggleCommentInput() {
     this.showCommentInput = true;
     
-    // 🖱 Espera un pequeño tiempo y luego pone foco en el input
+    //  Espera un pequeño tiempo y luego pone foco en el input
     setTimeout(() => {
       this.commentInput?.nativeElement.focus();
     }, 100);
   }
+  
+
+
   addComment() {
     if (!this.newComment.trim()) return;
-
+  
     console.log('Comentario agregado:', this.newComment);
-    this.newComment = '';
-    this.showCommentInput = false; // 🔄 Oculta el input después de comentar
   
     if (!this.post || !this.post.uuid) {
       console.error("Error: this.post o this.post.uuid es undefined");
       return;
     }
+  
 
+    const commentContent = this.newComment; 
+  
     const commentData = {
       postId: this.post.uuid,
       userId: this.post.user_id,
-      content: this.newComment
+      content: commentContent //  Aquí usamos la variable guardada
     };
-
-
+  
     console.log("Datos del comentario que se enviarán:", commentData);
-
+  
     this.postService.addComment(this.post.uuid, commentData).subscribe({
       next: (newComment) => {
         this.newComments.push(newComment); // Agregar el comentario a la lista
-        this.newComment = ''; // Limpiar input
-        this.showCommentInput = false; // 🔥 Ocultar input después de comentar
+        this.newComment = ''; 
+        this.showCommentInput = false; 
       },
       error: (err) => console.error("Error al agregar comentario", err)
     });
   }
+  
 }  

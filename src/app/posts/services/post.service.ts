@@ -146,13 +146,13 @@ export class PostService {
 
   // Método para obtener los comentarios de un post
   getComments(postUuid: string): Observable<Comment[]> {
-    const endpoint = `posts/${postUuid}/comments`;
+    const endpoint = `post/${postUuid}/comments`;
     return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`, this.reqHeader);
   }
 
   // Método para agregar un comentario a un post usando uuid
   addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
-    const endpoint = `posts/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
+    const endpoint = `post/${uuid}/comments`; // 🔥 Corrección: Ahora usamos uuid en la URL
     const token = localStorage.getItem('token');
 
     if (!token) {
