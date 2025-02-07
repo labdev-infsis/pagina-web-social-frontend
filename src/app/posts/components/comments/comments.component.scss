@@ -375,4 +375,139 @@ span:hover {
   background-color: #F2F2F2;
   
 }
+
+
+}
+
+.comment-button {
+  display: flex;
+  align-items: center;
+  background: #f0f2f5; /* Color similar a Facebook */
+  border: none;
+  border-radius: 20px;
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #65676b;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    background: #e4e6eb;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  i {
+    margin-right: 8px;
+    font-size: 16px;
+    color: #65676b;
+  }
+}
+
+.comment-box {
+  display: flex;
+  align-items: center;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.comment-input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  background: #e4e6eb;
+}
+
+.send-comment-button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #65676b;
+  margin-left: 8px;
+
+  &:hover {
+    color: #1877f2; /* Color azul de Facebook */
+  }
+}
+
+
+.comment-container {
+  background-color: #f0f2f5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.comment-content {
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre "Me gusta", "Responder" y las reacciones */
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.action-btn {
+  cursor: pointer;
+  color: #65676b;
+  transition: color 0.2s;
+  &:hover {
+    color: #1877f2; /* Azul de Facebook */
+  }
+}
+
+.reaction-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.reaction-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.2);
+}
+
+.reaction-popup {
+  display: none;
+  position: absolute;
+  background: white;
+  padding: 5px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.reaction-container:hover .reaction-popup {
+  display: flex;
+  gap: 5px;
+}
+
+.reaction-popup span {
+  cursor: pointer;
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.reaction-popup span:hover {
+  transform: scale(1.3);
 }

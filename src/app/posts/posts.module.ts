@@ -22,7 +22,7 @@ import { ViewPostDetailComponent } from './components/view-post-detail/view-post
 import { PhotosGalleryComponent } from './components/photos-gallery/photos-gallery.component';
 import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
 import { HomePhotosSectionComponent} from './components/home-photos-section/home-photos-section.component';
-
+import { CommentsModule } from '../comments/comments.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +50,8 @@ import { HomePhotosSectionComponent} from './components/home-photos-section/home
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    CommentsModule
   ],
   exports: [
     ViewAllPostsComponent,
