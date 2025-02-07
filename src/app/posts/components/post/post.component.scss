@@ -1,3 +1,47 @@
+.interactions-quantity {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border: none;
+  padding: 10px;
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.divisor {
+  width: 1px;
+  height: 20px;
+  background-color: #003770;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.quantity {
+  margin-right: 5px;
+  color: #003770;
+}
+
+.icon {
+  /* Estilos para los iconos */
+  width: 20px;
+  height: 20px;
+  color: #003770;
+  background-size: cover;
+}
+
+.icon-btn {
+  /* Estilos para los iconos */
+  color: #003770;
+}
+
+
+
+
 .post-container {
     background-color: #ffffff; 
     padding: 20px 20px 5px 20px;
@@ -20,14 +64,14 @@
       h2 {
         font-size: 1rem; 
         font-weight: bold;
-        color: #000000;
+        color: #003770;
         margin-bottom: 5px;
       }
     
       p{
         font-size: 0.9rem; 
         font-weight: lighter;
-        color: gray;
+        color: #003770;
         margin-bottom: 10px;
       }
     }
@@ -60,7 +104,16 @@
       margin-bottom: 15px;
       line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
       white-space: pre-wrap;
-      font-weight: 500;
+      font-weight: 400;
+      color: #003770;
+      
+      .see-more {
+        cursor: pointer;
+      }
+
+      .see-more:hover {
+        text-decoration: underline;
+      }
     }
   
     hr {
@@ -74,11 +127,43 @@
       min-width: 496px;
     }
 
+    .btn-comment {
+      background-color: #4267B2; 
+      color: white;
+      border: none;
+      outline: none;
+      background: none;
+      border-color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      outline:  none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-share {
+      background-color: #4267B2; 
+      color: white;
+      border: none;
+      border-color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      outline:  none;
+      background: none;
+      transition: background-color 0.3s ease;
+    }
+
+
+
+
     .bottuns {
       #btn-like {
         background-color: #fff;
         border: none;
-        font-weight: 600;
+        font-weight: 400;
         width: 124px;
         padding: 0;
         display: flex;
@@ -173,14 +258,14 @@
       }
 
       .btn.default {
-        color: #606367;
+        color: #003770;
         i {
           font-size: 20px;
         }
       }
 
       .btn.thumbs-up {
-        color: #005FF2;
+        color: #003770;
         i {
           font-size: 20px;
         }
@@ -306,8 +391,7 @@
   }
   
   .post-medias.three {
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
       .three {
         grid-column: 1 / 3;

@@ -10,6 +10,9 @@ import { Media } from '../../models/media';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import { PostComment } from '../../models/post-comment';
+import { User } from '../../../authentication/models/user';
+import { UserDetail } from '../../models/user-detail';
+import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -22,12 +25,15 @@ export class PostComponent {
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
+  currentUser !: UserDetail;
+  authenticated: boolean;
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
   institution!: Institution;
   listMediaPost!: Media[]; // Lista de imagenes videos o documento del post 
   showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
+  openModalEdit: WritableSignal<boolean> = signal(false);
   like = false
   myReaction = {
     class: 'default',
@@ -46,10 +52,11 @@ export class PostComponent {
 
 
   constructor(
-    private postService: PostService
+    private postService: PostService,
+    private authService: AuthService
   ) {
-    
-   }
+    this.authenticated = authService.isAuthenticated()
+  }
 
   ngOnInit() {
     this.listMediaPost = this.loadMediaPost();
@@ -62,9 +69,21 @@ export class PostComponent {
         console.log(error);
       }
     });
+
+        this.postService.getUser().subscribe({
+          next:(user: UserDetail) => {
+            this.currentUser = user;
+            console.log('Obteniendo el usuario actual', this.currentUser);
+          },
+          error:(error) => {
+            console.error('Error al obtener el usuario actual', error);
+          }
+        });
   
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
+      console.log(this.post.reactions)
+      this.recuperarReaccion(); 
     } else {
       console.warn("Advertencia: this.post.reactions es undefined");
     }
@@ -97,7 +116,8 @@ export class PostComponent {
     this.requestUpdatePost.emit(postUpdated);
   }
 
-  sendCopyPost(): Post {//Enviar copia del post para editar
+  //Enviar copia del post para editar
+  sendCopyPost(): Post {
     const copyPost: Post = { ...this.post };
     return copyPost;
   }
@@ -207,15 +227,38 @@ export class PostComponent {
   }
 
   recuperarReaccion() {
-    let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
+    let reaccionUser = this.post.reactions.my_reaction_emoji;
+    //let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
+    console.log(reaccionUser)
     if (reaccionUser) {
-      if (reaccionUser == 'thumbs-up') {
-        this.like = true
-      } else {
-        this.like = false
+      this.like = true;
+      if (reaccionUser === 'thumbs-up') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-thumbs-up',
+          name: 'Me gusta'
+        };
+      } else if (reaccionUser === 'red-heart') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-heart',
+          name: 'Me encanta'
+        };
+      } else if (reaccionUser === 'crying-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me entristece'
+        };
+      } else if (reaccionUser === 'angry-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me enfada'
+        };
       }
     } else {
-      this.like = false
+      this.like = false;
     }
   }
 
@@ -267,5 +310,22 @@ export class PostComponent {
         console.log('No se pudo reaccionar', error)
       }
     })
+  }
+
+  allowedTextLength(){
+    return this.post.content.text.length <= 480;
+  }
+
+  adjustedTextLength(){
+    return this.post.content.text.slice(0, 480)+'... ';
+  }
+
+  showAllText(id: string){
+    const textPost = document.getElementById('text-post-'+id) as HTMLParagraphElement;
+    if(textPost){
+      textPost.innerHTML = `<p id="text-post" *ngIf="post.content.text != ''" class="text-post">${this.post.content.text}</p>`;
+      console.log(textPost)
+    }
+    return textPost || '';
   }
 }
