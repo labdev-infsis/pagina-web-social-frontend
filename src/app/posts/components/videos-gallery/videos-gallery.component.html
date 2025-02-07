@@ -1,0 +1,14 @@
+<div class="video-gallery">
+  <h2 class="gallery-title">Videos</h2>
+  <div *ngIf="isLoading" class="loading-message">
+    Cargando videos...
+  </div>
+  <div class="gallery-container" *ngIf="!isLoading && videos.length > 0">
+    <div *ngFor="let video of videos" class="video-container">
+      <video [src]="video.url" controls class="video"></video>
+    </div>
+  </div>
+  <div class="no-videos" *ngIf="!isLoading && videos.length === 0">
+    No hay Videos.
+  </div>
+</div>

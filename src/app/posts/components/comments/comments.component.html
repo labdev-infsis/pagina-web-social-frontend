@@ -1,45 +1,78 @@
-<div class="comments-popup">  
-  <button class="close-btn" (click)="closePopup()">X</button>  
-  <div class="popup-content">  
-    <!-- Imagen del post a la izquierda -->  
-    <div class="post-image">  
-      <img [src]="postImage" alt="Imagen del post" />  
-    </div>  
+<!-- Modal ver detalle de Post -->
 
-    <!-- Información del post y comentarios a la derecha -->  
-    <div class="post-details">  
-      <!-- Información del autor -->  
-      <div class="post-header">  
-        <h3>{{ postAuthor }}</h3>  
-        <p class="post-time">{{ postTime }}</p>  
-      </div>  
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100">Publicación de {{postAuthor}}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="post-details">
+          <!-- Información del autor -->
 
-      <!-- Descripción del post -->  
-      <p class="post-description">{{ postDescription }}</p>  
+          <div class="d-flex flex-column">
+            <div class="d-flex flex-row justify-content-start" *ngIf="institution">
+              <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+              <div class="info-user">
+                <h2>{{ institution.name }}</h2>
+                <p>{{calculateTimePost()}}</p>
+              </div>
 
-      <!-- Lista de comentarios -->  
-      <div class="comments-section">  
-        <h4>Comentarios</h4>  
-        <div class="comments-list">  
-          <div *ngFor="let comment of comments" class="comment">  
-            <strong>{{ comment.user }}</strong>  
-            <p>{{ comment.content }}</p>  
-            <div class="comment-actions">  
-              <button (click)="likeComment(comment)">Me gusta</button>  
-              <button (click)="replyToComment(comment)">Responder</button>  
-            </div>  
-          </div>  
-        </div>  
-        <!-- Campo para agregar un nuevo comentario -->  
-        <div class="add-comment">  
-          <!-- <input  
-            type="text"  
-            [(ngModel)]="newComment"  
-            placeholder="Escribe un comentario..."  
-          />   -->
-          <button (click)="addComment()">Enviar</button>  
-        </div>  
-      </div>  
-    </div>  
-  </div>  
-</div>  
+            </div>
+
+            <!-- Descripción del post -->
+            <p class="post-description">{{ postDescription }}</p>
+
+            <!-- Imagen del post a la izquierda -->
+            <div class="object-fit-md-contain border rounded">
+              <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner image-box text-center">
+                  <div *ngFor="let image of postImages; let i = index"
+                    class="carousel-item {{ i === 0 ? 'active' : '' }}">
+                    <img src="{{ image.path}}" class="object-fit-scale" alt="...">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+
+            </div>
+            <hr class="hr" />
+            
+            <!-- Lista de comentarios -->
+            <div class="comments-section">
+              <app-view-comments [postUuid]="postUuid"></app-view-comments>
+
+
+            </div>
+<!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
+<button *ngIf="!showCommentInput" type="button" class="comment-button" (click)="toggleCommentInput()">
+  <i class="bi bi-chat-left-text"></i> Escribe un comentario...
+</button>
+
+<!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
+<div *ngIf="showCommentInput" class="comment-box">
+  <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
+  <button (click)="addComment()" class="send-comment-button">
+    <i class="bi bi-send"></i>
+  </button>
+</div>
+
+
+
+            
+          
+
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,16 @@
+<div class="photos-container">
+    <h3 class="photos-title">
+      Fotos <a href="/fotos" class="view-all-link">Ver todas las fotos</a>
+    </h3>
+    <div *ngIf="isLoading" class="loading-message">
+      Cargando fotos...
+    </div>
+    <div class="photos-grid" *ngIf="!isLoading && photos.length > 0">
+      <div class="photo-card" *ngFor="let photo of photos" >
+        <img [src]="photo.url" (click)="openViewPost(photo.postUuid)" alt="Foto de {{ institution.name }}">
+      </div>
+    </div>
+    <div class="no-photos" *ngIf="!isLoading && photos.length === 0">
+      No hay Fotos.
+    </div>
+  </div>

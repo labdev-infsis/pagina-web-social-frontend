@@ -1,18 +1,18 @@
 <div class="header-container">
     <div class="header-image">
         <div class="banner-container">
-            <img *ngIf="post" [src]="post.background_url" alt="Banner Informática y Sistemas" class="banner-image">
+            <img *ngIf="institution" [src]="institution.background_url" alt="Banner Informática y Sistemas" class="banner-image">
         </div>
         <!--<div class="search-bar">
             <input type="text" class="form-control" placeholder="Buscar">
         </div>-->
         <div class="logo-overlay">
-            <img *ngIf="post" [src]="post.logo_url" alt="Logo Carrera" class="career-logo">
+            <img *ngIf="institution" [src]="institution.logo_url" alt="Logo Carrera" class="career-logo">
         </div>
     </div>
     <div class="header-details">
         <p></p>
-        <h3> DRIC - UMSS</h3>
+        <h3> {{ institution.name }} </h3>
         <br>
         <div class="user-actions">
             <button class="btn btn-secondary">
@@ -26,11 +26,11 @@
     <nav class="tabs-container">
         <ul class="tabs">
             <li><a routerLink="/posts">Publicaciones</a></li>
-            <li><a href="#">Información</a></li>
-            <li><a href="#">Fotos</a></li>
-            <li><a href="#">Videos</a></li>
-            <li><a href="#">Eventos</a></li>
-            <li><a href="#">Más</a></li>
+            <li><a >Información</a></li>
+            <li><a routerLink="/fotos" >Fotos</a></li>
+            <li><a routerLink="/videos">Videos</a></li>
+            <li><a >Eventos</a></li>
+            <li><a >Más</a></li>
         </ul>
     </nav>
 </div>

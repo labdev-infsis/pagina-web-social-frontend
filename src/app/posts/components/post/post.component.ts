@@ -1,11 +1,18 @@
-import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal, inject, TemplateRef, ViewEncapsulation} from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
+import { Modal } from 'bootstrap';
 import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
 import { ReactionsByType } from '../../models/reactions-by-type';
 import { Media } from '../../models/media';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommentsComponent } from './../comments/comments.component';
+import { PostComment } from '../../models/post-comment';
+import { User } from '../../../authentication/models/user';
+import { UserDetail } from '../../models/user-detail';
+import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -13,12 +20,18 @@ import { Media } from '../../models/media';
   styleUrl: './post.component.scss'
 })
 export class PostComponent {
+  private modalService = inject(NgbModal);
   @Input() post: any;
+  comments: PostComment[] = [];
+  newComment: string = '';
+  showCommentInput: boolean = false;
+  currentUser !: UserDetail;
+  authenticated: boolean;
+
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
-  institution!: Institution
+  institution!: Institution;
   listMediaPost!: Media[]; // Lista de imagenes videos o documento del post 
-  showComments: boolean = false; // Controla la visibilidad del popup
   showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
   openModalEdit: WritableSignal<boolean> = signal(false);
   like = false
@@ -38,11 +51,16 @@ export class PostComponent {
   totalReactions = signal(0);
 
 
-  constructor(private postService: PostService){}
+  constructor(
+    private postService: PostService,
+    private authService: AuthService
+  ) {
+    this.authenticated = authService.isAuthenticated()
+  }
 
-  ngOnInit(){
-
+  ngOnInit() {
     this.listMediaPost = this.loadMediaPost();
+  
     this.postService.getInstitution(this.post.institution_id).subscribe({
       next: (institutionData) => {
         this.institution = institutionData;
@@ -50,10 +68,44 @@ export class PostComponent {
       error: (error) => {
         console.log(error);
       }
-    })
-    this.totalReactions.set(this.post.reactions.total_reactions);
+    });
+
+        this.postService.getUser().subscribe({
+          next:(user: UserDetail) => {
+            this.currentUser = user;
+            console.log('Obteniendo el usuario actual', this.currentUser);
+          },
+          error:(error) => {
+            console.error('Error al obtener el usuario actual', error);
+          }
+        });
+  
+    if (this.post.reactions) {
+      this.totalReactions.set(this.post.reactions.total_reactions);
+      console.log(this.post.reactions)
+      this.recuperarReaccion(); 
+    } else {
+      console.warn("Advertencia: this.post.reactions es undefined");
+    }
+  }
+  
+
+  loadComments() {
+    this.postService.getComments(this.post.id).subscribe({
+      next: (data: any) => {
+        this.comments = data.map((c: any) => ({
+          postId: c.postId,
+          userId: c.userId,
+          content: c.content,
+          createdAt: c.createdAt || new Date()
+        }));
+      },
+      error: (err) => console.error('Error al cargar comentarios', err)
+    });
   }
 
+  
+  
   deletePost(confirm: boolean) {
     if (confirm) {
       this.requestDeletePost.emit(this.post.uuid);
@@ -70,15 +122,16 @@ export class PostComponent {
     return copyPost;
   }
 
-  // Mostrar el popup de comentarios
-  openComments() {
-    this.showComments = true;
-  }
-  
-  // Cerrar el popup de comentarios
-  closeComments() {
-    this.showComments = false;
-  }
+  openViewPostComments(post: Post) {
+		const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
+    modalRef.componentInstance.institution = this.institution;
+    modalRef.componentInstance.post = post;
+    modalRef.componentInstance.postUuid = post.uuid;
+    modalRef.componentInstance.postImages = post.content.media;
+    modalRef.componentInstance.postAuthor = this.institution.name;
+    modalRef.componentInstance.postDate = this.calculateTimePost;
+    modalRef.componentInstance.postDescription = post.content.text;
+	}
 
   getGridClass(media: Media[]): string {
     if (media.length === 1) return 'single';
@@ -88,7 +141,7 @@ export class PostComponent {
   }
 
   // Cargar las imagenes o videos del post
-  loadMediaPost(){
+  loadMediaPost() {
     let mediaOfPost: Media[] = []
     for (const media of this.post.content.media) {
       mediaOfPost.push(media);
@@ -96,10 +149,10 @@ export class PostComponent {
     return mediaOfPost;
   }
 
-  calculateTimePost(){
+  calculateTimePost() {
     const postDate = new Date(this.post.date)
     const currentDate = new Date(Date.now());
-    const diferenciaMs:number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
+    const diferenciaMs: number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
     const unDia = 24 * unaHora;
@@ -108,14 +161,14 @@ export class PostComponent {
     if (diferenciaMs < unMinuto) {
       return 'Hace un momento';
     } else if (diferenciaMs < unaHora) {
-        const minutos = Math.floor(diferenciaMs / unMinuto);
-        return `Hace ${minutos} min`;
+      const minutos = Math.floor(diferenciaMs / unMinuto);
+      return `Hace ${minutos} min`;
     } else if (diferenciaMs < unDia) {
-        const horas = Math.floor(diferenciaMs / unaHora);
-        return `Hace ${horas} h`;
+      const horas = Math.floor(diferenciaMs / unaHora);
+      return `Hace ${horas} h`;
     } else if (diferenciaMs < sieteDias) {
-        const dias = Math.floor(diferenciaMs / unDia);
-        return `Hace ${dias} d`;
+      const dias = Math.floor(diferenciaMs / unDia);
+      return `Hace ${dias} d`;
 
     } else {
       const opciones: Intl.DateTimeFormatOptions = {
@@ -130,10 +183,10 @@ export class PostComponent {
   }
 
 
-  reactUserBoton(postUuid:any){
-    if(!this.like){ //No seleccionaron ningun emoji por default Me gusta
+  reactUserBoton(postUuid: any) {
+    if (!this.like) { //No seleccionaron ningun emoji por default Me gusta
       this.react(postUuid, this.emoji_type_id.thumbs_up)
-    }else{
+    } else {
       //Si reaccionaron y hacen click en el boton quitar la reaccion
     }
     //Info reactions
@@ -144,72 +197,95 @@ export class PostComponent {
 
   }
 
-  getTypeDoc(typeDoc: string){
-    if(typeDoc == 'application/pdf')
+  getTypeDoc(typeDoc: string) {
+    if (typeDoc == 'application/pdf')
       return 'PDF';
-    else if(typeDoc == 'application/pptx')
+    else if (typeDoc == 'application/pptx')
       return 'PRESENTACIÓN';
     else
       return 'DOCUMENTO';
   }
 
-  getReactions(index:number){
+  getReactions(index: number) {
     const reactionsByType: ReactionsByType[] = this.post.reactions.reactions_by_type;
-    const arrayOrdered:any[] = [...reactionsByType].sort((a:any,b:any)=> b.amount - a.amount )
-    const arrayFinal = arrayOrdered.filter((reaction) => reaction.amount >  0)
+    const arrayOrdered: any[] = [...reactionsByType].sort((a: any, b: any) => b.amount - a.amount)
+    const arrayFinal = arrayOrdered.filter((reaction) => reaction.amount > 0)
     // return arrayOrdered[index].emoji_type
-    if(arrayFinal[index]){
+    if (arrayFinal[index]) {
       return arrayFinal[index].emoji_type
-    }else{
+    } else {
       return 'no hay mas reacciones'
     }
   }
 
-  amountReactions(){
+  amountReactions() {
     return this.totalReactions();
   }
 
-  amountComments(){
+  amountComments() {
     return this.post.commentCounter.totalComments
   }
 
-  recuperarReaccion(){
-    let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
-    if(reaccionUser){
-      if(reaccionUser == 'thumbs-up'){
-        this.like = true
-      }else{
-        this.like = false
+  recuperarReaccion() {
+    let reaccionUser = this.post.reactions.my_reaction_emoji;
+    //let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
+    console.log(reaccionUser)
+    if (reaccionUser) {
+      this.like = true;
+      if (reaccionUser === 'thumbs-up') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-thumbs-up',
+          name: 'Me gusta'
+        };
+      } else if (reaccionUser === 'red-heart') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: 'fa-solid fa-heart',
+          name: 'Me encanta'
+        };
+      } else if (reaccionUser === 'crying-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me entristece'
+        };
+      } else if (reaccionUser === 'angry-face') {
+        this.myReaction = {
+          class: reaccionUser,
+          emoji: '',
+          name: 'Me enfada'
+        };
       }
-    }else{
-      this.like = false
+    } else {
+      this.like = false;
     }
   }
 
-  clickReaction(postUuid:string, typeReaction: string){
+  clickReaction(postUuid: string, typeReaction: string) {
     this.like = true;
-    if(typeReaction === 'thumbs-up'){
+    if (typeReaction === 'thumbs-up') {
       this.myReaction = {
         class: typeReaction,
         emoji: 'fa-solid fa-thumbs-up',
         name: 'Me gusta'
       }
       this.react(postUuid, this.emoji_type_id.thumbs_up)
-    }else if(typeReaction === 'red-heart'){
+    } else if (typeReaction === 'red-heart') {
       this.myReaction = {
         class: typeReaction,
         emoji: 'fa-solid fa-heart',
         name: 'Me encanta'
       }
       this.react(postUuid, this.emoji_type_id.red_heart)
-    }else if(typeReaction === 'crying-face'){
+    } else if (typeReaction === 'crying-face') {
       this.myReaction = {
         class: typeReaction,
         emoji: '',
         name: 'Me entristece'
       }
       this.react(postUuid, this.emoji_type_id.crying_face)
-    }else if(typeReaction === 'angry-face'){
+    } else if (typeReaction === 'angry-face') {
       this.myReaction = {
         class: typeReaction,
         emoji: '',
@@ -219,20 +295,37 @@ export class PostComponent {
     }
   }
 
-  react(postUuid:string, emoji_id:string){
+  react(postUuid: string, emoji_id: string) {
     const newReaction: CreateReaction = {
-      "emoji_type_id" : emoji_id,
-      "reaction_date" : new Date()
+      "emoji_type_id": emoji_id,
+      "reaction_date": new Date()
     }
     this.postService.postReaction(postUuid, newReaction).subscribe({
-      next: ()=>{
+      next: () => {
         this.like = !this.like
         console.log('Reaccion exitosa')
         this.totalReactions.update(valor => valor + 1)
       },
-      error:(error)=>{
+      error: (error) => {
         console.log('No se pudo reaccionar', error)
       }
     })
+  }
+
+  allowedTextLength(){
+    return this.post.content.text.length <= 480;
+  }
+
+  adjustedTextLength(){
+    return this.post.content.text.slice(0, 480)+'... ';
+  }
+
+  showAllText(id: string){
+    const textPost = document.getElementById('text-post-'+id) as HTMLParagraphElement;
+    if(textPost){
+      textPost.innerHTML = `<p id="text-post" *ngIf="post.content.text != ''" class="text-post">${this.post.content.text}</p>`;
+      console.log(textPost)
+    }
+    return textPost || '';
   }
 }

@@ -11,6 +11,7 @@ import { ImagesUploaderComponent } from './components/create-post/images-videos-
 import { DocumentUploaderComponent } from './components/create-post/document-uploader/document-uploader.component';
 
 import { CommentsComponent } from './components/comments/comments.component';
+import { ViewCommentsComponent } from './components/view-comments/view-comments.component';
 import { OptionsPostComponent } from './components/options-post/options-post.component';
 import { ModalDeletePostComponent } from './components/modal-delete-post/modal-delete-post.component';
 import { ModalEditPostComponent } from './components/modal-edit-post/modal-edit-post.component';
@@ -18,6 +19,11 @@ import { EditTextComponent } from './components/modal-edit-post/edit-text/edit-t
 import { ImageVideoEditorComponent } from './components/modal-edit-post/image-video-editor/image-video-editor.component';
 import { ModalListReactionsComponent } from './components/modal-list-reactions/modal-list-reactions.component';
 import { DocumentEditorComponent } from './components/modal-edit-post/document-editor/document-editor.component';
+import { ViewPostDetailComponent } from './components/view-post-detail/view-post-detail.component';
+import { PhotosGalleryComponent } from './components/photos-gallery/photos-gallery.component';
+import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
+import { HomePhotosSectionComponent} from './components/home-photos-section/home-photos-section.component';
+import { CommentsModule } from '../comments/comments.module';
 
 
 @NgModule({
@@ -26,6 +32,8 @@ import { DocumentEditorComponent } from './components/modal-edit-post/document-e
     DepartmentDetailsComponent,
     PostComponent,
     CreatePostComponent,
+    CommentsComponent,
+    ViewCommentsComponent,
     TextEditorComponent,
     ImagesUploaderComponent,
     DocumentUploaderComponent,
@@ -35,13 +43,17 @@ import { DocumentEditorComponent } from './components/modal-edit-post/document-e
     EditTextComponent,
     ImageVideoEditorComponent,
     ModalListReactionsComponent,
-    DocumentEditorComponent
-
+    DocumentEditorComponent,
+    ViewPostDetailComponent,
+    PhotosGalleryComponent,
+    VideosGalleryComponent,
+    HomePhotosSectionComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    CommentsModule
   ],
   exports: [
     ViewAllPostsComponent,
