@@ -1,5 +1,6 @@
 <div class="post-container">
   <!-- Parte superior del post -->
+  <!--
   <div class="d-flex gap-3 mb-2">
     <ng-container *ngIf="institution">
       <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
@@ -13,6 +14,24 @@
       </div>
     </ng-container>
   </div>
+  -->
+
+  <div class="header-post">
+    @if (institution) {
+      <div class="data-user">
+        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+        <div class="info-user">
+          <h2>{{ institution.name }}</h2>
+          <p>{{ calculateTimePost() }}</p>
+        </div>
+      </div>
+      <div class="options-post d-flex justify-content-center align-items-center"
+        (click)="showOptions.set(!showOptions())">
+        <i class="bi bi-three-dots"></i>
+      </div>
+    }
+  </div>
+
   <!-- Popup de opciones post Editar/Eliminar -->
   <app-options-post *ngIf="showOptions()" (clickOutside)="showOptions.set(false)"
     [postReference]="post.uuid"></app-options-post>
@@ -20,11 +39,16 @@
   <app-modal-edit-post [institution]="institution" [postToEdit]="post"
     (postUpdated)="updatePost($event)"></app-modal-edit-post>
   <app-modal-delete-post (confirmDeletePost)="deletePost($event)" [postReference]="post.uuid"></app-modal-delete-post>
+
   <!-- Contenido del post -->
-  <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
+  <!--<p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>-->
+  @if (post.content.text != '') {
+    <p class="text-post">{{ post.content.text }}</p>
+  }
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
-  <ng-container *ngIf="listMediaPost.length > 0">
+  @if (listMediaPost.length > 0) {
+  <!--<ng-container *ngIf="listMediaPost.length > 0">-->
 
     <!-- Visualizar posts con imagenes y/o videos -->
     <div *ngIf="post.content.media[0].type != 'document'" class="post-medias" [ngClass]="getGridClass(listMediaPost)">
@@ -70,8 +94,9 @@
         </div>
       </a>
     </ng-container>
-  </ng-container>
-
+  <!--</ng-container>-->
+  }
+  
   <!-- Cantidad de reacciones y comentarios -->
   <div class="reactions-comments d-flex justify-content-between" *ngIf="amountReactions() > 0 || amountComments() > 0">
     <div class="likes" *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid"
@@ -96,7 +121,6 @@
     </div>
   </div>
   <hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}">
-
 
   <!-- Botones de reaccionar, comentar y compartir -->
   <div class="bottuns d-flex justify-content-evenly m-2">
@@ -126,8 +150,6 @@
       <i class="fa-solid fa-share"></i>
       Compartir</button>
   </div>
-  
-    <!-- Boton de Comentar -->
 
-
-
+  <!-- Boton de Comentar -->
+</div>

@@ -1,47 +1,75 @@
-
-
-<nav class="navbar navbar-expand-lg navbar-custom">
+<!--<nav class="navbar navbar-expand-lg navbar-custom">-->
+<nav class="navbar-custom">
   <a class="navbar-brand">
-    <img src="assets/umss2.png" alt="Logo" class="logo">
+    <img src="assets/umss-logo.png" alt="Logo" class="logo">
   </a>
-  <button
-    class="navbar-toggler"
-    type="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#navbarNav"
-    aria-controls="navbarNav"
-    aria-expanded="false"
-    aria-label="Toggle navigation"
-  >
+
+  <!--
+  <div class="search-bar">
+    <input type="text" class="form-control" placeholder="Buscar">
+  </div>
+  -->
+  <!--
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a
-          class="nav-link user-icon-wrapper"
-          (click)="toggleMenu()"
-        >
+        <a class="nav-link user-icon-wrapper" (click)="toggleMenu()">
           <fa-icon [icon]="['fas', 'user']" *ngIf="!authenticated" class="user-icon"></fa-icon>
           <ng-container *ngIf="authenticated && user">
-            <img *ngIf="authenticated" class="user-profile-img" [src]="user.photo_profile_path" [alt]="'Foto de perfil'">
+            <img *ngIf="authenticated" class="user-profile-img" [src]="user.photo_profile_path"
+              [alt]="'Foto de perfil'">
           </ng-container>
         </a>
-        <div *ngIf="isMenuOpen" class="dropdown-menu">
+        @if (isMenuOpen) {
+        <div class="dropdown-menu">
           <ng-container *ngIf="authenticated">
             <a class="dropdown-item">Ver perfil</a>
             <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
           </ng-container>
           <ng-container *ngIf="!authenticated">
             <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
-            
             <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
           </ng-container>
         </div>
+        }
       </li>
     </ul>
   </div>
+
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  -->
+
+  <div class="avatar-user">
+    @if (!authenticated) {
+    <img src="assets/user-icon-1.png" alt="" (click)="toggleMenu()" class="logo user-image">
+    }
+    @if (authenticated && user) {
+    <img src="{{ user.photo_profile_path }}" alt="Foto de perfil" (click)="toggleMenu()" class="logo user-image">
+    }
+    <img src="assets/logo-informatica.png" alt="" class="logo">
+  </div>
+
+  @if (isMenuOpen) {
+  <div class="dropdown-menu">
+    <ng-container *ngIf="authenticated">
+      <a class="dropdown-item">Ver perfil</a>
+      <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
+    </ng-container>
+    <ng-container *ngIf="!authenticated">
+      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
+      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
+    </ng-container>
+  </div>
+  }
 </nav>
+
 <app-login></app-login>
 
 <app-register></app-register>

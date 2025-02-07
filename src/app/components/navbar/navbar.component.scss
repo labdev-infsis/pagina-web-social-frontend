@@ -1,67 +1,49 @@
 .navbar-custom {
-  background: linear-gradient(to right, #023E73, #F21D2F);
-  padding: 8px;
+  margin: 0 15px;
+  padding: 15px 10% 0;
+  height: 80px;
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  border-bottom: 2px solid var(--blue-color);
 
   .logo {
-    max-width: 150px;
-    height: auto;
-    margin-left: 15px;
+    height: 50px;
   }
 
-  .user-icon-wrapper {
+  .avatar-user {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 3px solid #ffffff;
-    cursor: pointer;
-    margin-right: 15px;
-    position: relative;
+    gap: 10px;
   }
+  .user-image {
+    transition: transform 0.3s ease;
 
-  .user-profile-img {
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    margin-left: 1px;
-  }
-
-  .user-icon {
-    color: #ffffff;
-    font-size: 2rem;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+    }
   }
 
   .dropdown-menu {
     position: absolute;
-    top: 200%; // Centra verticalmente
-    right: 18px; // Desplaza a la izquierda desde el icono
-    transform: translateY(-50%); // Alineación vertical
+    top: 80px;
+    right: 15%;
     width: 180px;
-    background: linear-gradient(to bottom, rgba(225, 39, 39, 0.9), rgba(0, 55, 112, 0.9));
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    backdrop-filter: blur(5px);
     border: none;
     
     .dropdown-item {
-      color: white;
+      margin: 8px 0;
       font-size: 1rem;
       text-decoration: none;
-      margin: 8px 0;
+      color: var(--blue-color);
     }
 
     .dropdown-item:hover {
-      color: #F21D2F;
     }
   }
+
 }

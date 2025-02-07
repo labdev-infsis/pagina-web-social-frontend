@@ -8,7 +8,8 @@
         </div>
         <div class="modal-body user-post-container">
           <div class="info-user d-flex gap-3 mb-3">
-            <ng-container *ngIf="institution">
+            @if (institution) {
+            <!--<ng-container *ngIf="institution">-->
               <img
                 [src]="institution.logo_url"
                 [alt]="'Foto de perfil'"
@@ -20,7 +21,8 @@
                   <option *ngFor="let config of commentConfig" [value]="config.uuid">{{config.name}}</option>
                 </select>
               </div>
-            </ng-container>
+            <!--</ng-container>-->
+            }
           </div>
           <form [formGroup]="postForm" class="form d-flex flex-column">
             <div class="container">

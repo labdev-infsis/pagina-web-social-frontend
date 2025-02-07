@@ -4,9 +4,9 @@
     Cargando videos...
   </div>
   <div class="gallery-container" *ngIf="!isLoading && videos.length > 0">
-    <div *ngFor="let video of videos" class="video-container">
-      <video [src]="video.url" controls class="video"></video>
-    </div>
+    @for (video of videos; track video.url) {
+    <video [src]="video.url" controls class="video"></video>
+    }
   </div>
   <div class="no-videos" *ngIf="!isLoading && videos.length === 0">
     No hay Videos.
