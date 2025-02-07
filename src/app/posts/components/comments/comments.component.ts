@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
+import { Component, ViewChild, ElementRef,Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
@@ -9,12 +9,15 @@ import { Media } from '../../models/media';
 import { PostComment } from '../../models/post-comment';
 
 
+
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
   styleUrl: './comments.component.scss'
 })
 export class CommentsComponent implements OnInit {
+  @ViewChild('commentInput') commentInput!: ElementRef;
+
   private modalService = inject(NgbModal);
   @Input() institution !: Institution;
   @Input() post !: Post;
@@ -102,14 +105,20 @@ export class CommentsComponent implements OnInit {
 
   // Método para alternar la visibilidad del input de comentarios
   toggleCommentInput() {
-    this.showCommentInput = !this.showCommentInput;
+    this.showCommentInput = true;
+    
+    // 🖱 Espera un pequeño tiempo y luego pone foco en el input
+    setTimeout(() => {
+      this.commentInput?.nativeElement.focus();
+    }, 100);
   }
-
   addComment() {
     if (!this.newComment.trim()) return;
 
-    console.log("this.post antes de crear comentario:", this.post);
-
+    console.log('Comentario agregado:', this.newComment);
+    this.newComment = '';
+    this.showCommentInput = false; // 🔄 Oculta el input después de comentar
+  
     if (!this.post || !this.post.uuid) {
       console.error("Error: this.post o this.post.uuid es undefined");
       return;
