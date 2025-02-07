@@ -33,6 +33,7 @@ export class PostComponent {
   institution!: Institution;
   listMediaPost!: Media[]; // Lista de imagenes videos o documento del post 
   showOptions: WritableSignal<boolean> = signal(false); // Controla la visibilidad de las opciones del post
+  openModalEdit: WritableSignal<boolean> = signal(false);
   like = false
   myReaction = {
     class: 'default',
@@ -115,7 +116,8 @@ export class PostComponent {
     this.requestUpdatePost.emit(postUpdated);
   }
 
-  sendCopyPost(): Post {//Enviar copia del post para editar
+  //Enviar copia del post para editar
+  sendCopyPost(): Post {
     const copyPost: Post = { ...this.post };
     return copyPost;
   }

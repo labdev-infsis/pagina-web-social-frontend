@@ -18,8 +18,8 @@
   <app-options-post *ngIf="showOptions() && authenticated === true && currentUser.role === 'ADMIN'" (clickOutside)="showOptions.set(false)"
     [postReference]="post.uuid"></app-options-post>
   <!-- Modals de editar y eliminar post -->
-  <app-modal-edit-post [institution]="institution" [postToEdit]="post"
-    (postUpdated)="updatePost($event)"></app-modal-edit-post>
+  <app-modal-edit-post [showModalEdit]="openModalEdit" [institution]="institution" [postToEdit]="sendCopyPost()" 
+    (postUpdatedEvent)="updatePost($event)"></app-modal-edit-post>
   <app-modal-delete-post (confirmDeletePost)="deletePost($event)" [postReference]="post.uuid"></app-modal-delete-post>
   
   <!-- Contenido de texto del post -->

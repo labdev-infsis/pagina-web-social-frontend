@@ -1,0 +1,65 @@
+.area-media-doc {
+  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #D0D3D7;
+  position: relative;
+  margin: 10px 0;
+
+  .btn-close {
+    border-radius: 50%;
+    background-color: #fbfcfd;
+    border: 1px solid #e0e0e0;
+    height: 20px;
+    width: 20px;
+    font-size: 10px;
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    z-index: 1;
+  }
+
+  .back-doc {
+    span {
+      font-size: 17px;
+      margin: 0;
+    }
+
+    p {
+      font-size: 13px;
+      color: #65686C;
+    }
+
+    .btn {
+      background-color: #ebf5ff;
+      color: #0b6ad3;
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      background-color: #DFE9F2; 
+    }
+  }
+
+  .preview-doc {
+    background-color: #F2F4F7;
+    border-radius: 10px;
+    height: 60px;
+
+    .icon-doc {
+      margin: 10px;
+      img {
+        height: 32px;
+        width: 32px;
+      }
+    }
+
+    .name-doc {
+      margin: 5px;
+      span {
+        font-size: 15px;
+        font-weight: 600;
+        color: #65686C;
+      }
+    }
+  }
+}

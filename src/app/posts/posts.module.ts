@@ -18,11 +18,13 @@ import { ModalEditPostComponent } from './components/modal-edit-post/modal-edit-
 import { EditTextComponent } from './components/modal-edit-post/edit-text/edit-text.component';
 import { ImageVideoEditorComponent } from './components/modal-edit-post/image-video-editor/image-video-editor.component';
 import { ModalListReactionsComponent } from './components/modal-list-reactions/modal-list-reactions.component';
+import { DocumentEditorComponent } from './components/modal-edit-post/document-editor/document-editor.component';
 import { ViewPostDetailComponent } from './components/view-post-detail/view-post-detail.component';
 import { PhotosGalleryComponent } from './components/photos-gallery/photos-gallery.component';
 import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
 import { HomePhotosSectionComponent} from './components/home-photos-section/home-photos-section.component';
 import { CommentsModule } from '../comments/comments.module';
+
 
 @NgModule({
   declarations: [
@@ -41,11 +43,11 @@ import { CommentsModule } from '../comments/comments.module';
     EditTextComponent,
     ImageVideoEditorComponent,
     ModalListReactionsComponent,
+    DocumentEditorComponent,
     ViewPostDetailComponent,
     PhotosGalleryComponent,
     VideosGalleryComponent,
     HomePhotosSectionComponent
-
   ],
   imports: [
     CommonModule,
