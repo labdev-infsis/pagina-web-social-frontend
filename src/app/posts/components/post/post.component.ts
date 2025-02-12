@@ -22,6 +22,7 @@ import { AuthService } from '../../../authentication/services/auth.service';
 export class PostComponent {
   private modalService = inject(NgbModal);
   @Input() post: any;
+  @Output() reactionChanged = new EventEmitter<void>(); // Nuevo Output para emitir eventos de cambio de reacción
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
@@ -82,7 +83,6 @@ export class PostComponent {
   
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
-      console.log(this.post.reactions)
       this.recuperarReaccion(); 
     } else {
       console.warn("Advertencia: this.post.reactions es undefined");
@@ -123,7 +123,7 @@ export class PostComponent {
   }
 
   openViewPostComments(post: Post) {
-		const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
+    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = post;
     modalRef.componentInstance.postUuid = post.uuid;
@@ -131,7 +131,7 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
-	}
+    }
 
   getGridClass(media: Media[]): string {
     if (media.length === 1) return 'single';
@@ -185,18 +185,38 @@ export class PostComponent {
 
   reactUserBoton(postUuid: any) {
     if (!this.like) { //No seleccionaron ningun emoji por default Me gusta
+      
       this.react(postUuid, this.emoji_type_id.thumbs_up)
+      this.myReaction = {
+        class: 'thumbs-up',
+        emoji: 'fa-solid fa-thumbs-up',
+        name: 'Me gusta'
+      }
+      this.incrementTotalReactions()
     } else {
-      //Si reaccionaron y hacen click en el boton quitar la reaccion
+      // Si reaccionaron y hacen click en el boton quitar la reaccion
+      this.removeReaction(postUuid);
     }
-    //Info reactions
-    //"emoji_type": "thumbs-up" like id: 
-    //"emoji_type": "red-heart" encanta id:
-    //"emoji_type": "crying-face"  id: 
-    //"emoji_type": "angry-face" id: 
-
   }
 
+  removeReaction(postUuid: string) {
+  this.postService.deleteReaction(postUuid).subscribe({
+    next: () => {
+      this.like = false;
+      this.myReaction = {
+        class: 'default',
+        emoji: 'fa-regular fa-thumbs-up',
+        name: 'Me gusta'
+      };
+      this.totalReactions.update(valor => valor - 1);
+      this.reactionChanged.emit(); // Emitir evento de cambio de reacción
+      console.log('Reacción eliminada');
+    },
+    error: (error) => {
+      console.log('No se pudo eliminar la reacción', error);
+    }
+  });
+}
   getTypeDoc(typeDoc: string) {
     if (typeDoc == 'application/pdf')
       return 'PDF';
@@ -262,14 +282,16 @@ export class PostComponent {
     }
   }
 
-  clickReaction(postUuid: string, typeReaction: string) {
-    this.like = true;
+  clickReaction(postUuid: string, typeReaction: string, event: Event) {
+    event.stopPropagation(); // Detener la propagación del evento de clic
+    
     if (typeReaction === 'thumbs-up') {
       this.myReaction = {
         class: typeReaction,
         emoji: 'fa-solid fa-thumbs-up',
         name: 'Me gusta'
       }
+      this.incrementTotalReactions()
       this.react(postUuid, this.emoji_type_id.thumbs_up)
     } else if (typeReaction === 'red-heart') {
       this.myReaction = {
@@ -277,6 +299,7 @@ export class PostComponent {
         emoji: 'fa-solid fa-heart',
         name: 'Me encanta'
       }
+      this.incrementTotalReactions()
       this.react(postUuid, this.emoji_type_id.red_heart)
     } else if (typeReaction === 'crying-face') {
       this.myReaction = {
@@ -284,6 +307,7 @@ export class PostComponent {
         emoji: '',
         name: 'Me entristece'
       }
+      this.incrementTotalReactions()
       this.react(postUuid, this.emoji_type_id.crying_face)
     } else if (typeReaction === 'angry-face') {
       this.myReaction = {
@@ -291,7 +315,17 @@ export class PostComponent {
         emoji: '',
         name: 'Me enfada'
       }
+      this.incrementTotalReactions()
       this.react(postUuid, this.emoji_type_id.angry_face)
+    }
+  }
+
+  //necesito un metodo para aumentar o no el totalReactions
+  incrementTotalReactions() {
+    if(this.like==false) {
+      this.totalReactions.update(valor => valor + 1)
+    }else{
+      this.totalReactions.update(valor => valor)
     }
   }
 
@@ -302,9 +336,11 @@ export class PostComponent {
     }
     this.postService.postReaction(postUuid, newReaction).subscribe({
       next: () => {
-        this.like = !this.like
+        this.like = true;
         console.log('Reaccion exitosa')
-        this.totalReactions.update(valor => valor + 1)
+        console.log(this.like)
+        //this.totalReactions.update(valor => valor + 1)
+        this.reactionChanged.emit(); // Emitir evento de cambio de reacción
       },
       error: (error) => {
         console.log('No se pudo reaccionar', error)
