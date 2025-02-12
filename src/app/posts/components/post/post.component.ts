@@ -320,7 +320,7 @@ export class PostComponent {
     }
   }
 
-  //necesito un metodo para aumentar o no el totalReactions
+  //Metodo para aumentar o no el totalReactions
   incrementTotalReactions() {
     if(this.like==false) {
       this.totalReactions.update(valor => valor + 1)
