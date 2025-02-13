@@ -180,5 +180,10 @@ export class PostService {
     const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
     return this.http.get<any[]>(url);
   }
-
+  
+  //Eliminar mi reaccion de post
+  deleteReaction(postUuid: string): Observable<any> {
+    const urlReactPost = 'reactions';
+    return this.http.delete<any>(`${this.ROOT_URL}/posts/${postUuid}/${urlReactPost}`, this.reqHeader);
+  }
 }

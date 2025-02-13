@@ -148,19 +148,15 @@
   <div class="bottuns d-flex justify-content-evenly m-2" [hidden]="!authenticated">
     <!-- Boton de Reaccionar -->
     <button type="button" class="btn icon-btn" [ngClass]="myReaction.class" id="btn-like" [hidden]="!authenticated" [disabled]="!authenticated" (click)="reactUserBoton(post.uuid)">
-      <i class="{{ myReaction.emoji }}"
-        *ngIf="myReaction.class == 'thumbs-up' || myReaction.class == 'red-heart' || myReaction.class == 'default'"></i>
-      <img src="../../../../assets/{{myReaction.class}}.png" class="{{myReaction.class}}"
-        *ngIf="myReaction.class == 'crying-face' || myReaction.class == 'angry-face'">
+      <i class="{{ myReaction.emoji }}" *ngIf="myReaction.class == 'thumbs-up' || myReaction.class == 'red-heart' || myReaction.class == 'default'"></i>
+      <img src="../../../../assets/{{myReaction.class}}.png" class="{{myReaction.class}}" *ngIf="myReaction.class == 'crying-face' || myReaction.class == 'angry-face'">
       <span class="ms-1">{{ myReaction.name }}</span>
       <!-- Opciones de reaccion  -->
       <div class="option-reactions">
-        <i class="fa-solid fa-thumbs-up" (click)="clickReaction(post.uuid, 'thumbs-up')"></i>
-        <i class="fa-solid fa-heart" (click)="clickReaction(post.uuid, 'red-heart')"></i>
-        <img src="../../../../assets/crying-face.png" class="crying-face"
-          (click)="clickReaction(post.uuid, 'crying-face')">
-        <img src="../../../../assets/angry-face.png" class="angry-face"
-          (click)="clickReaction(post.uuid, 'angry-face')">
+        <i class="fa-solid fa-thumbs-up" (click)="clickReaction(post.uuid, 'thumbs-up', $event)"></i>
+        <i class="fa-solid fa-heart" (click)="clickReaction(post.uuid, 'red-heart', $event)"></i>
+        <img src="../../../../assets/crying-face.png" class="crying-face" (click)="clickReaction(post.uuid, 'crying-face', $event)">
+        <img src="../../../../assets/angry-face.png" class="angry-face" (click)="clickReaction(post.uuid, 'angry-face', $event)">
       </div>
     </button>
 
