@@ -7,5 +7,8 @@ export interface Comment {
     date: Date;
     user_name:  string;
     user_photo: string;
+    userId: string;
     reply_count: BigInt
+    reactions?: any[];
+    totalReactions?: number;
 }

@@ -61,11 +61,16 @@
 
 <!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
 <div *ngIf="showCommentInput" class="comment-box">
-  <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input">
+  <input #commentInput [(ngModel)]="newComment" 
+         placeholder="Escribe un comentario..." 
+         class="comment-input"
+         (keydown.enter)="addComment()">  <!-- ⬅ Aquí agregamos el evento -->
+
   <button (click)="addComment()" class="send-comment-button">
     <i class="bi bi-send"></i>
   </button>
 </div>
+
 
 
 

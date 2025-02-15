@@ -53,7 +53,9 @@ export class CommentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadComments();
-  }
+
+   
+}
 
   // Simulación de carga de comentarios  
   loadComments(): void {
@@ -136,11 +138,15 @@ export class CommentsComponent implements OnInit {
         return;
     }
 
+   
     const commentData = {
-        postId: this.post.uuid,
-        userId: this.post.user_id,
-        content: this.newComment
-    };
+      postId: this.post.uuid,
+      id_user: this.authService.getUserId(),  
+      content: this.newComment
+  };
+  
+    
+    
 
     console.log("Datos del comentario que se enviarán:", commentData);
 

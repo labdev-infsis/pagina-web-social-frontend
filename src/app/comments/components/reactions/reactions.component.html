@@ -1,20 +1,35 @@
 <div class="reaction-container" (mouseleave)="delayedCloseReactions()">
-  <!-- Botón de reacción -->
-  <button class="reaction-btn"
-          (mouseenter)="toggleReactions(true)">
-    {{ selectedReaction || '👍' }} {{ totalReactions }}
+
+  <!-- Botón principal de reacción -->
+  <button class="reaction-btn" (mouseenter)="toggleReactions(true)">
+    <span class="reaction-icon">
+      {{ selectedReaction ? getEmojiByUuid(selectedReaction) : '👍' }}
+    </span>
+    <span class="reaction-text">
+      {{ getReactionText(selectedReaction) }}
+    </span>
   </button>
 
-  <!-- Menú de reacciones -->
+  <!-- Popup con las reacciones disponibles -->
   <div class="reaction-popup"
        *ngIf="showReactions"
        (mouseenter)="toggleReactions(true)"
        (mouseleave)="delayedCloseReactions()">
-       <span *ngFor="let emoji of emojis" (click)="reactToComment(commentUuid, emoji)">
-        {{ emoji }}
-      </span>
-    </div>
+       
+    <!-- Lista de emojis disponibles -->
+    <span *ngFor="let emoji of emojis" 
+          (click)="reactToComment(commentUuid, emoji)">
+      {{ emoji }}
+    </span>
+  </div>
 
-  <!-- Botón de responder -->
+  <!-- Contador de reacciones agrupadas -->
+  <div class="reaction-summary" *ngIf="reactionCounts.length > 0">
+    <span *ngFor="let reaction of reactionCounts">
+      {{ reaction.emoji }} {{ reaction.count }}
+    </span>
+  </div>
+
+  <!-- Botón de Responder -->
   <button class="reply-btn">Responder</button>
 </div>

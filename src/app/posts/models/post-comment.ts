@@ -1,6 +1,6 @@
 export interface PostComment {
     postId: string;
-    userId: string;
+    id_user: string;
     content: string;
     createdAt?: string; 
   }

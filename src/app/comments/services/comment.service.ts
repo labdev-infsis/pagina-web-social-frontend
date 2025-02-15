@@ -23,7 +23,7 @@ export class CommentService {
 
   // Reaccionar a un comentario
   reactToComment(commentUuid: string, reactionData: any): Observable<any> {
-    const token = localStorage.getItem('token'); // 🔥 Obtener el token desde localStorage
+    const token = localStorage.getItem('token'); //  Obtener el token desde localStorage
 
     if (!token) {
       console.error("🚨 No hay token de autenticación");
@@ -32,14 +32,44 @@ export class CommentService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` // 🔥 Enviar el token en la cabecera
+      'Authorization': `Bearer ${token}` // Enviar el token en la cabecera
     });
 
     return this.http.post<any>(
-      `${this.BASE_URL}/comment/${commentUuid}/reactions`, // 🔥 Usa BASE_URL correctamente
+      `${this.BASE_URL}/comment/${commentUuid}/reactions`, 
       reactionData,
       { headers }
     );
+
+    
     
   }
+
+// 📌 Actualizar una reacción existente
+updateReaction(reactionUuid: string, reactionData: any): Observable<any> {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error("🚨 No hay token de autenticación");
+    return throwError(() => new Error("No autorizado"));
+  }
+
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  return this.http.put<any>(
+    `${this.BASE_URL}/reactions/${reactionUuid}`, 
+    reactionData,
+    { headers }
+  );
+}
+
+
+  
+  getCommentReactions(commentUuid: string) {
+    return this.http.get<any[]>(`${this.BASE_URL}/comment/${commentUuid}/reactions`);
+  }
+
 }
