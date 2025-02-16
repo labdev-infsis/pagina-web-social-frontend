@@ -1,0 +1,29 @@
+[33mdcaa110[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFE-09-reaccionar-a-comentarios[m[33m, [m[1;31morigin/FE-09-reaccionar-a-comentarios[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m8d429ac[m HEAD@{1}: reset: moving to HEAD
+[33m8d429ac[m HEAD@{2}: checkout: moving from develop to FE-09-reaccionar-a-comentarios
+[33m605ad40[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{3}: pull origin develop: Fast-forward
+[33m32d868a[m HEAD@{4}: checkout: moving from FE-09-reaccionar-a-comentarios to develop
+[33m8d429ac[m HEAD@{5}: pull origin FE-09-reaccionar-a-comentarios --rebase (finish): returning to refs/heads/FE-09-reaccionar-a-comentarios
+[33m8d429ac[m HEAD@{6}: pull origin FE-09-reaccionar-a-comentarios --rebase (pick): 💾 Guardando cambios antes de actualizar la rama
+[33mdcaa110[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFE-09-reaccionar-a-comentarios[m[33m, [m[1;31morigin/FE-09-reaccionar-a-comentarios[m[33m)[m HEAD@{7}: pull origin FE-09-reaccionar-a-comentarios --rebase (start): checkout dcaa110b46d0dd0b1b13eefe5c9fcc15c9a4f8a8
+[33m89dbab7[m HEAD@{8}: commit: 💾 Guardando cambios antes de actualizar la rama
+[33m04656c9[m HEAD@{9}: reset: moving to HEAD
+[33m04656c9[m HEAD@{10}: commit: FE-09: Implementación de reacciones a comentarios
+[33mfb09eae[m HEAD@{11}: commit: FE-09 Implementación de reacciones en comentarios
+[33m4e91126[m HEAD@{12}: commit: [FE-09] Implementación inicial de reacciones en comentarios
+[33m32d868a[m HEAD@{13}: checkout: moving from develop to FE-09-reaccionar-a-comentarios
+[33m32d868a[m HEAD@{14}: checkout: moving from develop to develop
+[33m32d868a[m HEAD@{15}: pull origin develop: Fast-forward
+[33m80a93f6[m HEAD@{16}: checkout: moving from FE-04-comentar-publicacion to develop
+[33m7ab2614[m[33m ([m[1;32mFE-04-comentar-publicacion[m[33m)[m HEAD@{17}: checkout: moving from develop to FE-04-comentar-publicacion
+[33m80a93f6[m HEAD@{18}: checkout: moving from FE-04-comentar-publicacion to develop
+[33m7ab2614[m[33m ([m[1;32mFE-04-comentar-publicacion[m[33m)[m HEAD@{19}: checkout: moving from develop to FE-04-comentar-publicacion
+[33m80a93f6[m HEAD@{20}: pull origin develop: Fast-forward
+[33m469c04c[m HEAD@{21}: checkout: moving from FE-04-comentar-publicacion to develop
+[33m7ab2614[m[33m ([m[1;32mFE-04-comentar-publicacion[m[33m)[m HEAD@{22}: commit: se implemento comentar publicacion
+[33m469c04c[m HEAD@{23}: checkout: moving from develop to FE-04-comentar-publicacion
+[33m469c04c[m HEAD@{24}: pull origin develop --force: Fast-forward
+[33mbd47d32[m[33m ([m[1;31morigin/register1[m[33m, [m[1;32mmain[m[33m)[m HEAD@{25}: reset: moving to HEAD
+[33mbd47d32[m[33m ([m[1;31morigin/register1[m[33m, [m[1;32mmain[m[33m)[m HEAD@{26}: checkout: moving from develop to develop
+[33mbd47d32[m[33m ([m[1;31morigin/register1[m[33m, [m[1;32mmain[m[33m)[m HEAD@{27}: checkout: moving from main to develop
+[33mbd47d32[m[33m ([m[1;31morigin/register1[m[33m, [m[1;32mmain[m[33m)[m HEAD@{28}: clone: from https://github.com/labdev-infsis/pagina-web-social-frontend.git

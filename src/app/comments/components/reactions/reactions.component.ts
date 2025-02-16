@@ -213,11 +213,11 @@ keepPopupOpen(event: Event) {
             reactionDate: new Date().toISOString()
           };
   
-          console.log("🔥 Enviando nueva reacción...", reactionData);
+        // console.log("🔥 Enviando nueva reacción...", reactionData);
   
           this.commentService.reactToComment(commentUuid, reactionData).subscribe({
             next: (response) => {
-              console.log("✅ Nueva reacción agregada correctamente:", response);
+              //console.log("✅ Nueva reacción agregada correctamente:", response);
               this.selectedReaction = this.getEmojiByUuid(emojiUuid);
               this.loadTotalReactions();
             },
