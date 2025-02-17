@@ -73,7 +73,7 @@
 
           <!-- 🔥 ÚNICO input de comentarios -->
           <div class="d-flex flex-row">
-            <img [src]="currentUser?.photo_profile_path || 'default-avatar.png'" alt="Foto de perfil" class="comment-img">
+            <img [src]="currentUser.photo_profile_path || 'default-avatar.png'" alt="Foto de perfil" class="comment-img">
 
             <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
             <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button" (click)="toggleCommentInput()">

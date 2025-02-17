@@ -8,6 +8,6 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'pagina-web-social-frontend';
   constructor() {
-    console.log("Token en localStorage:", localStorage.getItem('token'));
+    // console.log("Token en localStorage:", localStorage.getItem('token'));
   }
 }
