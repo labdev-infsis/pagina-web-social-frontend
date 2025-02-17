@@ -75,8 +75,23 @@ export class AuthService {
   }
 
   getUserId() {
-    return localStorage.getItem('userid');
-  }
+    const token = this.getToken();
+    
+    if (!token) {
+        console.warn("⚠️ No hay token en localStorage.");
+        return null;
+    }
+
+    try {
+        // 🔥 Decodificar el token para extraer el userId
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId || null;
+    } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        return null;
+    }
+}
+
 
   getAdvisorId(){
     return localStorage.getItem('advisorId');

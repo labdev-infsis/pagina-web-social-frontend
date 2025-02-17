@@ -9,6 +9,7 @@
   
     <!-- Preview de imagenes videos del post -->
     <div class="images-videos" *ngIf="showPreviewMedia" [ngClass]="getGridClass()">
+
       @if (listFileMediaPost[0].type.includes('image') || listFileMediaPost[0].type.includes('video')) {
         <div class="buttons-edit">
           <!-- Boton para editar toda la media -->
@@ -23,6 +24,7 @@
           </button>
         </div>
       }
+
       <!-- Iterar imagenes y videos del post-->
       <ng-container *ngFor="let media of listFileMediaPost; let i = index"> 
         <!-- Mostrar las primeras 4 imágenes o videos directamente -->
