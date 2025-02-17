@@ -81,3 +81,27 @@
 
   }
 }
+
+.modal-body {
+  .images-videos {
+    min-height: 160px;
+    display: grid; 
+    gap: 5px; 
+    grid-template-columns: repeat(2, minmax(100px, 1fr)); 
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    background-color: #ffffff;
+    margin: auto;
+
+    img, video {        
+      width: 100%;
+      // min-height: inherit;
+      min-height: 207.5px;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+  }
+}

@@ -1,7 +1,8 @@
 <!-- Modal editar un post -->
 <div *ngIf="showModalEdit()" class="modal fade" id="{{'edit-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      @if (!visibleEditAllMedia()) {  
         <div class="modal-header p-2">
           <h5 class="modal-title fw-bold" id="modalNewPost">Editar publicación</h5>
           <button type="button" class="btn-close m-0" (click)="openModalConfirmExitEdit(postToEdit.uuid)" aria-label="Close"></button>
@@ -9,7 +10,6 @@
         <div class="modal-body user-post-container">
           <div class="info-user d-flex gap-3 mb-3">
             @if (institution) {
-            <!--<ng-container *ngIf="institution">-->
               <img
                 [src]="institution.logo_url"
                 [alt]="'Foto de perfil'"
@@ -21,7 +21,6 @@
                   <option *ngFor="let config of commentConfig" [value]="config.uuid">{{config.name}}</option>
                 </select>
               </div>
-            <!--</ng-container>-->
             }
           </div>
           <form [formGroup]="postForm" class="form d-flex flex-column">
@@ -30,7 +29,8 @@
               <app-edit-text  [contentText]="postToEdit.content.text" [postUuid]="postToEdit.uuid" (textChangeEvent)="getTextPost($event)"></app-edit-text>
               
               <!-- Seleccionar imagen (es) -->
-              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadOldFilesMediaEvent)="setFilesMediaPostOld($event)" (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)"></app-image-video-editor>
+              <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadOldFilesMediaEvent)="setFilesMediaPostOld($event)" 
+              (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)" (showEditAllMedia)="editAllMedia($event)"></app-image-video-editor>
               
               <!-- Seleccionar archivo -->
               <app-document-editor [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadNewFileDoc)="setFileDocPostAdded($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-editor>
@@ -47,6 +47,25 @@
             <button type="button" class="btn btn-primary fw-semibold" [disabled]="disabledSaveButton()" data-bs-dismiss="modal" (click)="updatePost()">Guardar</button>
           </form>
         </div>
+      } @else {
+        <div class="modal-header p-2">
+          <button type="button" class="btn-close m-0" aria-label="Close" (click)="visibleEditAllMedia.set(false)"></button>
+          <h5 class="modal-title fw-bold" id="modalNewPost">Fotos/videos</h5>
+        </div>
+        <div class="modal-body">
+          <div class="images-videos">
+          <!-- Iterar imagenes y videos del post-->
+            <ng-container *ngFor="let media of postToEdit.content.media; let i = index"> 
+              <!-- Mostrar si es img o video -->
+              <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
+                <ng-template #mostrarVideo>
+                  <video [src]="media.path" controls></video>
+                </ng-template>
+            </ng-container>
+
+          </div>
+        </div>
+      }
       </div>
     </div>
 </div>

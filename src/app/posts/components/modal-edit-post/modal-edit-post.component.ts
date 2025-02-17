@@ -23,6 +23,7 @@ export class ModalEditPostComponent {
   @Output() postUpdatedEvent = new EventEmitter<Post>();
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
+  visibleEditAllMedia = signal(false);//Mostrar la edicion de cada imagen video para eliminar
   visibleAreaMedia = signal(false); //Mostrar seleccion y prevista de imagenes
   visibleAreaMediaDoc = signal(false); //Mostrar seleccion y prevista de documentos
 
@@ -167,6 +168,19 @@ export class ModalEditPostComponent {
         }
       }, 10);
     }
+  }
+
+  editAllMedia(showEditAllMedia: boolean){
+    if(showEditAllMedia){
+      this.visibleEditAllMedia.set(true);
+    }
+  }
+
+  // Verificar si es imagen para mostrar etiqueta img o video
+  isImage(urlMedia: string): boolean{
+    let response = false;
+    urlMedia.includes('image')? response = true : response = false;
+    return response;
   }
   
   updatePost(){

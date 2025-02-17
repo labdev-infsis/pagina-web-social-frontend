@@ -12,6 +12,7 @@ export class ImageVideoEditorComponent {
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
   @Output() loadNewFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos nuevos seleccionadas
   @Output() loadOldFilesMediaEvent = new EventEmitter<Media[]>(); //Devolver las imagenes/videos nuevos seleccionadas
+  @Output() showEditAllMedia = new EventEmitter<boolean>();
   @ViewChild('inputFileEdit') inputFileEdit!: ElementRef<HTMLInputElement> 
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
   mediaListPreviewAdded: string[] = []; //Imagenes videos a mostrar en formato base64
@@ -134,7 +135,7 @@ export class ImageVideoEditorComponent {
     }
   }
 
-  openEditAll(){
-    
+  openEditAllMedia(){
+    this.showEditAllMedia.emit(true);
   }
 }
