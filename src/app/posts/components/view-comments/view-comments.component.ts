@@ -5,9 +5,7 @@ import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
 import { PostComponent } from '../post/post.component';
 import { ChangeDetectorRef } from '@angular/core';
-
 import { Post } from '../../models/post';
-
 import moment from 'moment';
 //import moment from 'moment-timezone';
 import 'moment/locale/es';
