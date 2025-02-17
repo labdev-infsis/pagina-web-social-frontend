@@ -11,4 +11,5 @@ export interface Comment {
     reply_count: number;
     reactions?: any[];
     totalReactions?: number;
+
 }
