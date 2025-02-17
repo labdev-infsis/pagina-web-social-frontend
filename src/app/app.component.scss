@@ -1,0 +1,14 @@
+main {
+	margin: 0 auto;
+	width: var(--main-width);
+	min-height: 100vh;
+	border: 1px solid var(--blue-color);
+}
+
+@media screen and (max-width: 1440px ) {
+
+	main {
+		width: 100%;
+	}
+
+}

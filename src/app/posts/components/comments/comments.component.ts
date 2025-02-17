@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef,Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
@@ -9,8 +9,8 @@ import { Media } from '../../models/media';
 import { PostComment } from '../../models/post-comment';
 import { ChangeDetectorRef } from '@angular/core';
 import { ViewCommentsComponent } from '../view-comments/view-comments.component';
-
-
+import { UserDetail } from '../../models/user-detail';
+import moment from 'moment';
 
 
 @Component({
@@ -22,7 +22,6 @@ export class CommentsComponent implements OnInit {
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
 
-  private modalService = inject(NgbModal);
   @Input() institution !: Institution;
   @Input() post !: Post;
   @Input() postUuid!: string;
@@ -36,7 +35,9 @@ export class CommentsComponent implements OnInit {
   showCommentInput: boolean = false;
   newComment: string = ''; // Nuevo comentario  
   comments!: Comment[]; // Lista de comentarios  
-  authenticated: boolean
+  authenticated: boolean;
+  currentUser!: UserDetail;
+  currentComment!: Comment;
 
 
   constructor(
@@ -45,17 +46,24 @@ export class CommentsComponent implements OnInit {
     public modal: NgbModal,
     private authService: AuthService,
     private cdr: ChangeDetectorRef // ⬅️ Añadir esta línea
-  
+
   ) {
     this.authenticated = authService.isAuthenticated();
   }
-  
+
 
   ngOnInit(): void {
     this.loadComments();
 
-   
-}
+    this.postService.getUser().subscribe({
+      next: (user: UserDetail) => {
+        this.currentUser = user;
+      },
+      error: (error) => {
+        console.error('Error al obtener el usuario actual', error);
+      }
+    });
+  }
 
   // Simulación de carga de comentarios  
   loadComments(): void {
@@ -70,7 +78,7 @@ export class CommentsComponent implements OnInit {
         console.error('Error al obtener comentarios', error);
       }
     });
-}
+  }
 
 
   // Simulación de "Me gusta"  
@@ -119,51 +127,79 @@ export class CommentsComponent implements OnInit {
   // Método para alternar la visibilidad del input de comentarios
   toggleCommentInput() {
     this.showCommentInput = true;
-    
+
     //  Espera un pequeño tiempo y luego pone foco en el input
     setTimeout(() => {
       this.commentInput?.nativeElement.focus();
     }, 100);
   }
-  
 
-  
+
+
   addComment() {
     if (!this.newComment.trim()) return;
 
-    console.log('Comentario agregado:', this.newComment);
 
     if (!this.post || !this.post.uuid) {
-        console.error("Error: this.post o this.post.uuid es undefined");
-        return;
+      
+      return;
     }
 
    
-    const commentData = {
-      postId: this.post.uuid,
-      id_user: this.authService.getUserId(),  
-      content: this.newComment
-  };
-  
+    this.postService.getUser().subscribe({
+      next: (user: UserDetail) => {
+        this.currentUser = user;
+      
+        const commentToAdd: Comment = {
+          uuid: '',
+          content: this.newComment,
+          date:  moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          user_name: this.currentUser.name + ' ' + this.currentUser.lastName,
+          user_photo: this.currentUser.photo_profile_path,
+          userId: this.currentUser.uuid,
+          moderated: false,
+          state: '',
+          reply_count: 0
+        };
+
+        this.comments.push(commentToAdd);
+
+        console.log("Date: ", moment());
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al obtener el usuario actual', error);
+      }
+    });
+
+const commentData: PostComment = {
+    date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+    postId: this.post.uuid,
+    id_user: this.authService.getUserId(),  // ✅ Corregido a `id_user`
+    content: this.newComment
+};
+
+    
     
     
 
     console.log("Datos del comentario que se enviarán:", commentData);
 
     this.postService.addComment(this.post.uuid, commentData).subscribe({
-        next: (newComment) => {
-            console.log(" Comentario agregado en backend:", newComment);
+      next: (newComment) => {
+        console.log(" Comentario agregado en backend:", newComment);
 
-            this.newComment = ''; //  Limpiar input
-            this.showCommentInput = false; //  Ocultar input
+        this.newComment = ''; //  Limpiar input
+        this.showCommentInput = false; //  Ocultar input
 
-            // 🔥 Llamar explícitamente a loadComments() en ViewCommentsComponent
-            if (this.viewCommentsComponent) {
-                this.viewCommentsComponent.loadComments();
-            }
-        },
-        error: (err) => console.error("❌ Error al agregar comentario", err)
+        // 🔥 Llamar explícitamente a loadComments() en ViewCommentsComponent
+        if (this.viewCommentsComponent) {
+          this.viewCommentsComponent.loadComments();
+        }
+      },
+      error: (err) => console.error("❌ Error al agregar comentario", err)
     });
-}
+  }
 
 }  

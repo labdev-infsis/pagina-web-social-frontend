@@ -5,9 +5,10 @@
     </div>
     <div class="col-7">
       <div *ngIf="posts" class="main-container">
-        <app-create-post *ngIf="authenticated"></app-create-post>
+        <app-create-post *ngIf="authenticated === true && currentUser.role === 'ADMIN'" ></app-create-post>
         <app-post *ngFor="let post of posts" [post]="post" (requestDeletePost)="deletePost($event)"
-        (requestUpdatePost)="updatePost($event)"></app-post>
+          (requestUpdatePost)="updatePost($event)" (reactionChanged)="updateReactions(post.uuid)">
+        </app-post>
       </div>
     </div>
   </div>

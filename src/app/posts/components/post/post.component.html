@@ -1,5 +1,6 @@
 <div class="post-container">
   <!-- Parte superior del post -->
+  <!--
   <div class="d-flex gap-3 mb-2">
     <ng-container *ngIf="institution">
       <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
@@ -8,22 +9,46 @@
         <p>{{calculateTimePost()}}</p>
       </div>
       <div class="options-post d-flex justify-content-center align-items-center"
+      *ngIf="authenticated === true && currentUser.role === 'ADMIN'"
         (click)="showOptions.set(!showOptions())">
         <i class="bi bi-three-dots"></i>
       </div>
     </ng-container>
   </div>
+  -->
+
+  <div class="header-post">
+    @if (institution) {
+      <div class="data-user">
+        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+        <div class="info-user">
+          <h2>{{ institution.name }}</h2>
+          <p>{{ calculateTimePost() }}</p>
+        </div>
+      </div>
+      <div class="options-post d-flex justify-content-center align-items-center"
+        (click)="showOptions.set(!showOptions())">
+        <i class="bi bi-three-dots"></i>
+      </div>
+    }
+  </div>
+
   <!-- Popup de opciones post Editar/Eliminar -->
-  <app-options-post *ngIf="showOptions()" (clickOutside)="showOptions.set(false)"
+  <app-options-post *ngIf="showOptions() && authenticated === true && currentUser.role === 'ADMIN'" (clickOutside)="showOptions.set(false)"
     [postReference]="post.uuid"></app-options-post>
   <!-- Modals de editar y eliminar post -->
-  <app-modal-edit-post [institution]="institution" [postToEdit]="post"
-    (postUpdated)="updatePost($event)"></app-modal-edit-post>
+  <app-modal-edit-post [showModalEdit]="openModalEdit" [institution]="institution" [postToEdit]="sendCopyPost()" 
+    (postUpdatedEvent)="updatePost($event)"></app-modal-edit-post>
   <app-modal-delete-post (confirmDeletePost)="deletePost($event)" [postReference]="post.uuid"></app-modal-delete-post>
-  <!-- Contenido del post -->
-  <p *ngIf="post.content.text != ''" class="text-post">{{post.content.text}}</p>
+  
+  <!-- Contenido de texto del post -->
+  <p *ngIf="post.content.text != '' && allowedTextLength(); else reduceText" class="text-post">{{post.content.text}}</p>
+  <ng-template #reduceText>
+    <p id="{{'text-post-'+post.uuid}}" *ngIf="post.content.text != ''" class="text-post">{{adjustedTextLength()}}<span class="see-more fw-bold" (click)="showAllText(post.uuid)">Ver más</span></p>
+  </ng-template>
 
   <!-- Si hay contenido multi media (imagenes/videos, documento) -->
+  <!--@if (listMediaPost.length > 0) {-->
   <ng-container *ngIf="listMediaPost.length > 0">
 
     <!-- Visualizar posts con imagenes y/o videos -->
@@ -71,8 +96,29 @@
       </a>
     </ng-container>
   </ng-container>
+  <!--}-->
+  <hr>
+    <!-- Cantidad de reacciones y comentarios -->
+  <div class="interactions-quantity " *ngIf="amountReactions() > 0 || amountComments() > 0">
+    <div *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid"
+      data-bs-toggle="modal">
+      <span class="quantity">{{ totalReactions() }}</span>
+      <i class="bi bi-hand-thumbs-up icon"></i>
+    </div>
+    <app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>
+    <div class="divisor" *ngIf="amountComments() > 0"></div>
+    <div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
+      <span class="quantity" >{{ post.commentCounter.totalComments }}</span>
+      <i class="bi bi-chat-left-text icon"></i>
+    </div>
+    <!--<div class="divisor"></div> -->
+    <div class="item" hidden>
+      <span class="quantity" >20</span>
+      <i class="fa fa-share icon"></i>
+    </div>
+  </div>
 
-  <!-- Cantidad de reacciones y comentarios -->
+  <!-- Cantidad de reacciones y comentarios 
   <div class="reactions-comments d-flex justify-content-between" *ngIf="amountReactions() > 0 || amountComments() > 0">
     <div class="likes" *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid"
       data-bs-toggle="modal">
@@ -90,44 +136,38 @@
       <span>{{ totalReactions() }}</span>
     </div>
     <app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>
-    <div class="comments" *ngIf="amountComments() > 0">
+    <div class="comments" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
       <span>{{ post.commentCounter.totalComments }}</span>
-      <i class="bi bi-chat-fill"></i>
+      <i class="bi bi-chat-left-text"></i>
     </div>
   </div>
-  <hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}">
-
+  -->
+  <hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}" [hidden]="!authenticated">
 
   <!-- Botones de reaccionar, comentar y compartir -->
-  <div class="bottuns d-flex justify-content-evenly m-2">
+  <div class="bottuns d-flex justify-content-evenly m-2" [hidden]="!authenticated">
     <!-- Boton de Reaccionar -->
-    <button type="button" class="btn" [ngClass]="myReaction.class" id="btn-like" (click)="reactUserBoton(post.uuid)">
-      <i class="{{ myReaction.emoji }}"
-        *ngIf="myReaction.class == 'thumbs-up' || myReaction.class == 'red-heart' || myReaction.class == 'default'"></i>
-      <img src="../../../../assets/{{myReaction.class}}.png" class="{{myReaction.class}}"
-        *ngIf="myReaction.class == 'crying-face' || myReaction.class == 'angry-face'">
+    <button type="button" class="btn icon-btn" [ngClass]="myReaction.class" id="btn-like" [hidden]="!authenticated" [disabled]="!authenticated" (click)="reactUserBoton(post.uuid)">
+      <i class="{{ myReaction.emoji }}" *ngIf="myReaction.class == 'thumbs-up' || myReaction.class == 'red-heart' || myReaction.class == 'default'"></i>
+      <img src="../../../../assets/{{myReaction.class}}.png" class="{{myReaction.class}}" *ngIf="myReaction.class == 'crying-face' || myReaction.class == 'angry-face'">
       <span class="ms-1">{{ myReaction.name }}</span>
       <!-- Opciones de reaccion  -->
       <div class="option-reactions">
-        <i class="fa-solid fa-thumbs-up" (click)="clickReaction(post.uuid, 'thumbs-up')"></i>
-        <i class="fa-solid fa-heart" (click)="clickReaction(post.uuid, 'red-heart')"></i>
-        <img src="../../../../assets/crying-face.png" class="crying-face"
-          (click)="clickReaction(post.uuid, 'crying-face')">
-        <img src="../../../../assets/angry-face.png" class="angry-face"
-          (click)="clickReaction(post.uuid, 'angry-face')">
+        <i class="fa-solid fa-thumbs-up" (click)="clickReaction(post.uuid, 'thumbs-up', $event)"></i>
+        <i class="fa-solid fa-heart" (click)="clickReaction(post.uuid, 'red-heart', $event)"></i>
+        <img src="../../../../assets/crying-face.png" class="crying-face" (click)="clickReaction(post.uuid, 'crying-face', $event)">
+        <img src="../../../../assets/angry-face.png" class="angry-face" (click)="clickReaction(post.uuid, 'angry-face', $event)">
       </div>
     </button>
 
-    <button type="button" class="btn btn-secondary" (click)="openViewPostComments(post)">
+    <button type="button" class="btn icon-btn" id="btn-comment" [hidden]="!authenticated" [disabled]="!authenticated" (click)="openViewPostComments(post)">
       <i class="bi bi-chat-left-text"></i>
       Comentar</button>
     <!-- Boton de Compartir -->
-    <button type="button" class="btn btn-secondary" disabled>
+    <button type="button" class="btn icon-btn" id="btn-share" [hidden]="!authenticated">
       <i class="fa-solid fa-share"></i>
       Compartir</button>
   </div>
-  
-    <!-- Boton de Comentar -->
 
-
-
+  <!-- Boton de Comentar -->
+</div>

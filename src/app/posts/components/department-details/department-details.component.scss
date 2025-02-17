@@ -4,45 +4,73 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 50px auto;
+  padding-right: 25px;
+  width: 396px;
+  color: var(--blue-color);
+
+  /*border: 1px solid rgb(12, 224, 40);*/
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  width: 340px;
+
+  h3 {
+    /*font-family: "Roboto Condensed", serif;*/
+    font-family: var(--secondary-font-family);
+    font-optical-sizing: auto;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  a {
+    /*font-family: "Monserrat", serif;*/
+    font-family: var(--primary-font-family);
+    font-size: 14px;
+    color: var(--blue-color);
+    text-decoration: none;
+  }
+
 }
 
 .details-container {
-  background-color: #ffffff; /* Cambiamos a blanco para un mejor contraste */
+  /*
+  background-color: #ffffff; /* Cambiamos a blanco para un mejor contraste *
   padding: 20px;
-  border-radius: 10px; /* Bordes redondeados más suaves */
+  border-radius: 10px; /* Bordes redondeados más suaves *
   margin-bottom: 20px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); /* Sombra más prominente para mayor relieve */
-  border: 1px solid #e0e0e0; /* Borde ligero para destacar el card */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); /* Sombra más prominente para mayor relieve *
+  border: 1px solid #e0e0e0; /* Borde ligero para destacar el card *
   width: 100%;
 
   h3 {
-    font-size: 1.5rem; /* Aumentar el tamaño de letra del título */
+    font-size: 1.5rem; /* Aumentar el tamaño de letra del título *
     font-weight: bold;
     color: #000000;
     margin-bottom: 10px;
   }
 
   .subtitle {
-    font-size: 1.2rem; /* Ajuste del tamaño para que sea similar al mockup */
+    font-size: 1.2rem; /* Ajuste del tamaño para que sea similar al mockup *
     color: #333;
     margin-bottom: 15px;
-    line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad */
+    line-height: 1.5; /* Espaciado entre líneas para mejor legibilidad *
   }
 
   .info-item {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    font-size: 1.15rem; /* Ajuste del tamaño para mayor legibilidad */
+    font-size: 1.15rem; /* Ajuste del tamaño para mayor legibilidad *
     color: #555;
 
     i {
       font-size: 1.2rem;
       margin-right: 8px;
-      color: #1e73be; /* Color de icono en azul */
+      color: #1e73be; /* Color de icono en azul *
     }
 
     span, a {
@@ -54,9 +82,39 @@
       text-decoration: underline;
     }
   }
+  */
+  margin: 0;
+  padding: 40px 0 20px;
+  padding-right: 56px;
+  width: 100%;
+  border-bottom: 1px solid var(--red-color);
+  /*border: 1px solid var(--red-color);*/
+
+  .info-item {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding-bottom: 10px;
+    font-size: 1.15rem;
+
+    .icon-detail {
+      width: 20px;
+      height: 100%;
+    }
+
+    span,
+    a {
+      font-family: var(--primary-font-family);
+      font-optical-sizing: auto;
+      font-size: 14px;
+      color: var(--blue-color);
+      text-decoration: none;
+    }
+  }
 }
 
 .photos-container {
+  /*
   width: 100%;
   margin-top: 20px;
 
@@ -71,7 +129,7 @@
   }
 
   .view-all-link {
-    font-size: 0.95rem; /* Tamaño del link ajustado */
+    font-size: 0.95rem; /* Tamaño del link ajustado *
     color: #1e73be;
     text-decoration: none;
 
@@ -89,7 +147,7 @@
       overflow: hidden;
       border-radius: 8px;
       border: 1px solid #ddd;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve en las imágenes */
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve en las imágenes *
       background-color: #ffffff;
 
       img {
@@ -101,5 +159,25 @@
       }
     }
   }
-}
+  */
+  margin: 0;
+  padding: 40px 0 20px;
+  padding-right: 56px;
+  width: 100%;
+  border-bottom: 1px solid var(--red-color);
 
+  .grid-container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    width: 340px;
+  }
+
+  .grid-container img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    -o-object-fit: cover;
+    aspect-ratio: 1;
+  }
+}

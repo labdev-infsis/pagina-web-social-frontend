@@ -1,10 +1,11 @@
 <div class="menu-options-post" #menuOptions>
-    <div *ngIf="postReference" class="option-post" [attr.data-bs-target]="'#edit-'+postReference" data-bs-toggle="modal">
+    <div *ngIf="postReference" class="option-post" (click)="openModalEditPost(postReference)">
         <i class="bi bi-pencil-fill"></i>
         <p class="fw-medium m-0">Editar publicación</p>
     </div>
     <div class="option-post" [attr.data-bs-target]="'#delete-'+postReference" data-bs-toggle="modal">
         <i class="bi bi-trash-fill"></i>
-        <p class="fw-medium text-danger m-0">Eliminar publicación</p>
+        <!--<p class="fw-medium text-danger m-0">Eliminar publicación</p>-->
+        <p class="fw-medium m-0">Eliminar publicación</p>
     </div>
 </div>

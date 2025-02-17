@@ -15,6 +15,7 @@
                 <div class="comment-lks">
                     <p><span> {{ calculateTime(comment) }}</span></p>
                 </div>
+                
                 <div class="comment-reactions">
                     <!-- 🔥 Modificación aquí: Se agregó el evento (reactionUpdated) -->
                     <app-reactions 
@@ -22,6 +23,7 @@
                         (reactionUpdated)="updateReactions($event)">
                     </app-reactions>
                 </div>
+
                 <br>
             </div>
         </div>

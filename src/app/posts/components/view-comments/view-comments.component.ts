@@ -6,6 +6,9 @@ import { Comment } from '../../models/comment';
 import { PostComponent } from '../post/post.component';
 import { ChangeDetectorRef } from '@angular/core';
 import { Post } from '../../models/post';
+import moment from 'moment';
+//import moment from 'moment-timezone';
+import 'moment/locale/es';
 
 
 @Component({
@@ -21,7 +24,8 @@ export class ViewCommentsComponent implements OnInit {
 
     comments: Comment[] = []; 
   newComment: string = ''; // Nuevo comentario  
-  authenticated: boolean
+  authenticated: boolean;
+
 
   constructor(
     private postService: PostService,
@@ -31,6 +35,7 @@ export class ViewCommentsComponent implements OnInit {
     private cdr: ChangeDetectorRef // 👈 Agregar esto
   ) {
     this.authenticated = authService.isAuthenticated();
+    moment.locale();
   }
   
   ngOnInit(): void {
@@ -109,6 +114,10 @@ updateReactions(commentUuid: string) {
 
 
   calculateTime(comment : Comment) {
+    
+    var dateComment = moment(comment.date).add(4, 'hours');
+    return dateComment.fromNow();
+    /*
     const postDate = new Date(comment.date)
     const currentDate = new Date(Date.now());
     const diferenciaMs: number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
@@ -138,7 +147,8 @@ updateReactions(commentUuid: string) {
         minute: '2-digit',
       };
       return postDate.toLocaleDateString('es-ES', opciones);
-    }
+    }*/
+
   }
 
 

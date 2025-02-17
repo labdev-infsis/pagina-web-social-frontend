@@ -47,17 +47,20 @@
 
             </div>
             <hr class="hr" />
-            
+
             <!-- Lista de comentarios -->
             <div class="comments-section">
               <app-view-comments [postUuid]="postUuid"></app-view-comments>
 
 
             </div>
-<!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
-<button *ngIf="!showCommentInput" type="button" class="comment-button" (click)="toggleCommentInput()">
-  <i class="bi bi-chat-left-text"></i> Escribe un comentario...
-</button>
+            <!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
+
+          <div class="d-flex flex-row">
+            <img [src]="currentUser.photo_profile_path" alt="Foto de perfil" class="comment-img">
+            <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button" (click)="toggleCommentInput()">
+              <i class="bi bi-chat-left-text"></i> Escribe un comentario...
+            </button>
 
 <!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
 <div *ngIf="showCommentInput" class="comment-box">
