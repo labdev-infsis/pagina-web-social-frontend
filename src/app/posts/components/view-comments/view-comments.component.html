@@ -1,5 +1,3 @@
-
-
 <!-- Lista de comentarios -->
 <div class="comments-section">
     <div class="comment-box fle">
@@ -17,11 +15,15 @@
                 <div class="comment-lks">
                     <p><span> {{ calculateTime(comment) }}</span></p>
                 </div>
-                <!-- 
+                
                 <div class="comment-reactions">
-                    <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+                    <!-- 🔥 Modificación aquí: Se agregó el evento (reactionUpdated) -->
+                    <app-reactions 
+                        [commentUuid]="comment.uuid" 
+                        (reactionUpdated)="updateReactions($event)">
+                    </app-reactions>
                 </div>
--->
+
                 <br>
             </div>
         </div>

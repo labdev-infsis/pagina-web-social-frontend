@@ -144,6 +144,7 @@ export class CommentsComponent implements OnInit {
       return;
     }
 
+   
     this.postService.getUser().subscribe({
       next: (user: UserDetail) => {
         this.currentUser = user;
@@ -154,6 +155,7 @@ export class CommentsComponent implements OnInit {
           date:  moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
           user_name: this.currentUser.name + ' ' + this.currentUser.lastName,
           user_photo: this.currentUser.photo_profile_path,
+          userId: this.currentUser.uuid,
           moderated: false,
           state: '',
           reply_count: 0
@@ -170,10 +172,16 @@ export class CommentsComponent implements OnInit {
       }
     });
 
-    const commentData = {
-      content: this.newComment,
-      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
-    };
+const commentData: PostComment = {
+    date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+    postId: this.post.uuid,
+    id_user: this.authService.getUserId(),  // ✅ Corregido a `id_user`
+    content: this.newComment
+};
+
+    
+    
+    
 
     console.log("Datos del comentario que se enviarán:", commentData);
 

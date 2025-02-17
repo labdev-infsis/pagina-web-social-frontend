@@ -1,28 +1,26 @@
 <!-- Modal ver detalle de Post -->
-
 <div class="modal-dialog modal-dialog-centered">
   <div class="modal-content">
     <div class="modal-header text-center">
       <h4 class="modal-title w-100">Publicación de {{postAuthor}}</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
     </div>
+    
     <div class="modal-body">
-      <div>
-        <div class="post-details">
-          <!-- Información del autor -->
+      <div class="post-details">
 
-          <div class="d-flex flex-column">
-            <div class="d-flex flex-row justify-content-start" *ngIf="institution">
-              <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
-              <div class="info-user">
-                <h2>{{ institution.name }}</h2>
-                <p>{{calculateTimePost()}}</p>
-              </div>
-
+        <!-- Información del autor -->
+        <div class="d-flex flex-column">
+          <div class="d-flex flex-row justify-content-start" *ngIf="institution">
+            <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+            <div class="info-user">
+              <h2>{{ institution.name }}</h2>
+              <p>{{calculateTimePost()}}</p>
             </div>
+          </div>
 
-            <!-- Descripción del post -->
-            <p class="post-description">{{ postDescription }}</p>
+          <!-- Descripción del post -->
+          <p class="post-description">{{ postDescription }}</p>
 
             <!-- Imagen del post a la izquierda -->
             <div class="object-fit-md-contain border rounded">
@@ -68,33 +66,34 @@
 
             <hr class="hr" />
 
-            <!-- Lista de comentarios -->
-            <div class="comments-section">
-              <app-view-comments [postUuid]="postUuid"></app-view-comments>
-
-
-            </div>
-            <!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
-
-            <div class="d-flex flex-row">
-              <img [src]="currentUser.photo_profile_path" alt="Foto de perfil" class="comment-img">
-              <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button"
-                (click)="toggleCommentInput()">
-                <i class="bi bi-chat-left-text"></i> Escribe un comentario...
-              </button>
-
-              <!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
-              <div *ngIf="showCommentInput && authenticated" class="comment-box">
-                <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..."
-                  class="comment-input">
-                <button (click)="addComment()" class="send-comment-button">
-                  <i class="bi bi-send"></i>
-                </button>
-              </div>
-            </div>
-
-
+          <!-- Lista de comentarios -->
+          <div class="comments-section">
+            <app-view-comments [postUuid]="postUuid"></app-view-comments>
           </div>
+
+          <!-- 🔥 ÚNICO input de comentarios -->
+          <div class="d-flex flex-row">
+            <img [src]="currentUser?.photo_profile_path || 'default-avatar.png'" alt="Foto de perfil" class="comment-img">
+
+            <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
+            <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button" (click)="toggleCommentInput()">
+              <i class="bi bi-chat-left-text"></i> Escribe un comentario...
+            </button>
+
+            <!-- Input para escribir comentario (se muestra solo cuando el usuario lo activa) -->
+            <div *ngIf="showCommentInput && authenticated" class="comment-box">
+              <input #commentInput [(ngModel)]="newComment" 
+                     placeholder="Escribe un comentario..." 
+                     class="comment-input" 
+                     (keydown.enter)="addComment()">
+              <button (click)="addComment()" class="send-comment-button">
+                <i class="bi bi-send"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 🔥 FIN del input de comentarios -->
         </div>
       </div>
     </div>
+  </div>
+</div>

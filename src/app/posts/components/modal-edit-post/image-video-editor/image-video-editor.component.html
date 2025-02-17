@@ -9,18 +9,21 @@
   
     <!-- Preview de imagenes videos del post -->
     <div class="images-videos" *ngIf="showPreviewMedia" [ngClass]="getGridClass()">
-      <div *ngIf="listFileMediaPost[0].type.includes('image')" class="buttons-edit">
-        <!-- Boton para editar toda la media -->
-        <!-- <button class="btn fw-semibold" type="button" (click)="openEditAll()">
-          <i class="bi bi-pencil-fill"></i>
-          Editar todo
-        </button> -->
-        <!-- Boton añadir imagenes-videos -->
-        <button class="btn fw-semibold" type="button" (click)="openInputFileMedia()">
-          <i class="bi bi-file-earmark-plus-fill"></i>
-          Añadir fotos o videos
-        </button>
-      </div>
+
+      @if (listFileMediaPost[0].type.includes('image') || listFileMediaPost[0].type.includes('video')) {
+        <div class="buttons-edit">
+          <!-- Boton para editar toda la media -->
+          <!-- <button class="btn fw-semibold" type="button" (click)="openEditAll()">
+            <i class="bi bi-pencil-fill"></i>
+            Editar todo
+          </button> -->
+          <!-- Boton añadir imagenes-videos -->
+          <button class="btn fw-semibold" type="button" (click)="openInputFileMedia()">
+            <i class="bi bi-file-earmark-plus-fill"></i>
+            Añadir fotos o videos
+          </button>
+        </div>
+      }
 
       <!-- Iterar imagenes y videos del post-->
       <ng-container *ngFor="let media of listFileMediaPost; let i = index"> 
