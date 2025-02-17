@@ -22,27 +22,49 @@
           <!-- Descripción del post -->
           <p class="post-description">{{ postDescription }}</p>
 
-          <!-- Imagen del post a la izquierda -->
-          <div class="object-fit-md-contain border rounded">
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner image-box text-center">
-                <div *ngFor="let image of postImages; let i = index"
-                  class="carousel-item {{ i === 0 ? 'active' : '' }}">
-                  <img src="{{ image.path }}" class="object-fit-scale" alt="...">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-          </div>
+            <!-- Imagen del post a la izquierda -->
+            <div class="object-fit-md-contain border rounded">
 
-          <hr class="hr" />
+              @if (postImages) {
+              <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner image-box text-center">
+                  <div *ngFor="let image of postImages; let i = index"
+                    class="carousel-item {{ i === 0 ? 'active' : '' }}">
+                    @if (image.type === "image"){
+                    <img src="{{ image.path}}" class="object-fit-scale" alt="...">
+                    }
+                    @else if (image.type === "video") {
+                    <video [src]="image.path" controls class="video" controls video-control="videoControl"></video>
+                    }
+                    @else if (image.type === "document") {
+                      <div class="iframe-custom-container allowFullScreen">
+                      <pdf-viewer [src]="image.path" [render-text]="true" [original-size]="false"
+                        style="width: 400px; height: 500px;"
+                        [autoresize]="true"
+                        
+                        class="pdf-viewer"
+                        ></pdf-viewer>
+                      </div>
+
+                    }
+
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              }
+            </div>
+
+            <hr class="hr" />
 
           <!-- Lista de comentarios -->
           <div class="comments-section">

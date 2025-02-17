@@ -65,6 +65,7 @@ export class HomePhotosSectionComponent implements OnInit {
       this.postService.getPost(postUuid).subscribe({
         next: (dataPost: Post) => {
           this.currentPost = dataPost;
+          console.log("Post Retrieved: "  + this.currentPost);
           this.openModal();
         },
         error: (error) => {
@@ -76,6 +77,7 @@ export class HomePhotosSectionComponent implements OnInit {
     }
 
     openModal() {
+      console.log("Current Post View Modal: "  + this.currentPost);
       const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
       
       modalRef.componentInstance.institution = this.institution;

@@ -5,7 +5,7 @@
   </div>
   <div class="gallery-container" *ngIf="!isLoading && photos.length > 0">
     @for (photo of photos; track photo.url) {
-    <img [src]="photo.url" alt="Institution Photo" class="photo" />
+    <img [src]="photo.url" alt="Institution Photo" class="photo" (click)="openViewPost(photo.postUuid)" />
     }
   </div>
   <div class="no-photos" *ngIf="!isLoading && photos.length === 0">

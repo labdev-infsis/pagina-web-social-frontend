@@ -15,6 +15,7 @@ import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontaweso
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './posts/components/comments/comments.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +31,8 @@ import { CommentsComponent } from './posts/components/comments/comments.componen
     PostsModule,
     HttpClientModule,
     FontAwesomeModule,
-    NgbModule
+    NgbModule,
+    PdfViewerModule
 ],
   providers: [],
   bootstrap: [AppComponent]

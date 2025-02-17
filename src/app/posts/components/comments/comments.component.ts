@@ -12,7 +12,6 @@ import { ViewCommentsComponent } from '../view-comments/view-comments.component'
 import { UserDetail } from '../../models/user-detail';
 import moment from 'moment';
 
-
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
@@ -54,7 +53,7 @@ export class CommentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadComments();
-
+    console.log("Videos: " + JSON.stringify(this.postImages));
     this.postService.getUser().subscribe({
       next: (user: UserDetail) => {
         this.currentUser = user;

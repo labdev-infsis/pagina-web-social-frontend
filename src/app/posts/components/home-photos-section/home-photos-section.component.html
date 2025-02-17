@@ -13,7 +13,7 @@
   @if (!isLoading && photos.length > 0) {
   <div class="grid-container">
     @for (photo of photos; track photo.url) {
-    <img src="{{ photo.url }}" alt="Foto de {{ institution.name }}">
+    <img src="{{ photo.url }}" alt="Foto de {{ institution.name }}" (click)="openViewPost(photo.postUuid)">
     }
   </div>
   }
