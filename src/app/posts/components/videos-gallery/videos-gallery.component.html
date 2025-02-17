@@ -5,7 +5,7 @@
   </div>
   <div class="gallery-container" *ngIf="!isLoading && videos.length > 0">
     @for (video of videos; track video.url) {
-    <video [src]="video.url" autoplay muted playsinline class="video"  (click)="openViewPost(video.postUuid)"></video>
+    <video [src]="video.url" muted playsinline class="video" controls  (click)="openViewPost(video.postUuid)"></video>
     }
   </div>
   <div class="no-videos" *ngIf="!isLoading && videos.length === 0">
