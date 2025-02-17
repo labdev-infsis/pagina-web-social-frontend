@@ -26,11 +26,30 @@
 
             <!-- Imagen del post a la izquierda -->
             <div class="object-fit-md-contain border rounded">
+
+              @if (postImages) {
               <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner image-box text-center">
                   <div *ngFor="let image of postImages; let i = index"
                     class="carousel-item {{ i === 0 ? 'active' : '' }}">
+                    @if (image.type === "image"){
                     <img src="{{ image.path}}" class="object-fit-scale" alt="...">
+                    }
+                    @else if (image.type === "video") {
+                    <video [src]="image.path" controls class="video" controls video-control="videoControl"></video>
+                    }
+                    @else if (image.type === "document") {
+                      <div class="iframe-custom-container allowFullScreen">
+                      <pdf-viewer [src]="image.path" [render-text]="true" [original-size]="false"
+                        style="width: 400px; height: 500px;"
+                        [autoresize]="true"
+                        
+                        class="pdf-viewer"
+                        ></pdf-viewer>
+                      </div>
+
+                    }
+
                   </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
@@ -44,8 +63,9 @@
                   <span class="visually-hidden">Next</span>
                 </button>
               </div>
-
+              }
             </div>
+
             <hr class="hr" />
 
             <!-- Lista de comentarios -->
@@ -56,23 +76,24 @@
             </div>
             <!-- Botón de Comentar (Solo se muestra si el input NO está abierto) -->
 
-          <div class="d-flex flex-row">
-            <img [src]="currentUser.photo_profile_path" alt="Foto de perfil" class="comment-img">
-            <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button" (click)="toggleCommentInput()">
-              <i class="bi bi-chat-left-text"></i> Escribe un comentario...
-            </button>
-
-            <!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
-            <div *ngIf="showCommentInput && authenticated" class="comment-box">
-              <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..."
-                class="comment-input">
-              <button (click)="addComment()" class="send-comment-button">
-                <i class="bi bi-send"></i>
+            <div class="d-flex flex-row">
+              <img [src]="currentUser.photo_profile_path" alt="Foto de perfil" class="comment-img">
+              <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button"
+                (click)="toggleCommentInput()">
+                <i class="bi bi-chat-left-text"></i> Escribe un comentario...
               </button>
-            </div>
-          </div>
 
-            
+              <!-- Campo de Comentario (Solo se muestra si showCommentInput es true) -->
+              <div *ngIf="showCommentInput && authenticated" class="comment-box">
+                <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..."
+                  class="comment-input">
+                <button (click)="addComment()" class="send-comment-button">
+                  <i class="bi bi-send"></i>
+                </button>
+              </div>
+            </div>
+
+
           </div>
         </div>
       </div>
