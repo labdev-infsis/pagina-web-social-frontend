@@ -66,15 +66,83 @@
 
             <hr class="hr" />
 
-          <!-- Lista de comentarios -->
-          <div class="comments-section">
-            <app-view-comments [postUuid]="postUuid"></app-view-comments>
-          </div>
+            <div class="comments-section">
+              <div *ngFor="let comment of comments" class="comment-box">
+                
+                <!-- 📌 Información del usuario que comentó -->
+                <div class="d-flex flex-row">
+                  <img [src]="comment.user_photo" alt="Foto de perfil" class="comment-img">
+                  <div class="comment-text">
+                    <p><strong>{{ comment.user_name }}</strong></p>
+                    <p>{{ comment.content }}</p>
+                    <span class="comment-time">{{ calculateTimeFromNow(comment.date) }}</span>
+                      <!-- 🕒 Formato correcto de fecha -->
+                  </div>
+                </div>
+            
+                <!-- 📌 🔥 Reacciones y botón Responder en una nueva fila -->
+                <div class="comment-footer">
+                  <div class="comment-actions">
+                    <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+                    <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
+                  </div>
+                </div>
+            
+              
+<!-- 📌 Input para escribir respuesta -->
+<div *ngIf="replyInputVisible[comment.uuid]" class="reply-box">
+  <img [src]="currentUser.photo_profile_path || 'default-avatar.png'" alt="Foto de perfil" class="reply-img">
+  <div class="reply-input-container">
+    <input #replyInput id="replyInput-{{comment.uuid}}" [(ngModel)]="replyText[comment.uuid]" placeholder="Escribe una respuesta..."
+           class="reply-input" (keydown.enter)="addReply(comment.uuid)">
+    <button class="send-reply-btn" (click)="addReply(comment.uuid)">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
+</div>
+
+
+
+<!-- 📌 Respuestas anidadas debajo del comentario -->
+<div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
+  <!-- 📌 Muestra solo un número limitado de respuestas al principio -->
+  <div *ngFor="let reply of comment.replies | slice:0:replyLimit[comment.uuid] || 2" class="reply">
+    <img [src]="currentUser.photo_profile_path" alt="Foto de perfil" class="reply-img">
+    <div class="reply-text">
+      <p><strong>{{ currentUser.name }} {{ currentUser.lastName }}</strong></p>
+      <p>{{ reply.content }}</p>
+      <span class="reply-time">{{ calculateTimeFromNow(reply.createdDate) }}</span>
+    </div>
+  </div>
+
+  <!-- 📌 Botón para Ver Más Respuestas (Muestra TODAS) -->
+  <button class="view-more-replies" 
+          *ngIf="(replyLimit[comment.uuid] || 2) < comment.replies.length"
+          (click)="showAllReplies(comment.uuid)">
+    Ver más respuestas
+  </button>
+
+  <!-- 📌 Botón para Ver Menos Respuestas (Oculta TODAS excepto las más recientes) -->
+  <button class="view-less-replies" 
+          *ngIf="(replyLimit[comment.uuid] || 2) === comment.replies.length"
+          (click)="showLessReplies(comment.uuid)">
+    Ver menos respuestas
+  </button>
+</div>
+
+
+            
+              </div>
+            </div>
+            
 
           <!-- 🔥 ÚNICO input de comentarios -->
           <div class="d-flex flex-row">
             <img [src]="currentUser.photo_profile_path || 'default-avatar.png'" alt="Foto de perfil" class="comment-img">
 
+
+
+            
             <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
             <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button" (click)="toggleCommentInput()">
               <i class="bi bi-chat-left-text"></i> Escribe un comentario...
