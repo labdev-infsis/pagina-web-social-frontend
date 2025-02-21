@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
+
 import { Comment } from '../../models/comment';
 import { Institution } from '../../models/institution';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,7 +11,9 @@ import { PostComment } from '../../models/post-comment';
 import { ChangeDetectorRef } from '@angular/core';
 import { ViewCommentsComponent } from '../view-comments/view-comments.component';
 import { UserDetail } from '../../models/user-detail';
-import moment from 'moment';
+
+import moment from 'moment-timezone';
+
 
 @Component({
   selector: 'app-comments',
@@ -20,6 +23,7 @@ import moment from 'moment';
 export class CommentsComponent implements OnInit {
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
+  @ViewChild('replyInput') replyInputElement!: ElementRef;
 
   @Input() institution !: Institution;
   @Input() post !: Post;
@@ -37,10 +41,14 @@ export class CommentsComponent implements OnInit {
   authenticated: boolean;
   currentUser!: UserDetail;
   currentComment!: Comment;
-
+  replyInputVisible: { [key: string]: boolean } = {}; // Controla qué input está visible
+  replyText: { [key: string]: string } = {}; // Almacena el texto de cada respuesta
+  // Controla cuántas respuestas se muestran inicialmente
+replyLimit: { [key: string]: number } = {};
 
   constructor(
     private postService: PostService,
+    
 
     public modal: NgbModal,
     private authService: AuthService,
@@ -50,6 +58,26 @@ export class CommentsComponent implements OnInit {
     this.authenticated = authService.isAuthenticated();
   }
 
+
+// 🔥 Mostrar TODAS las respuestas
+showAllReplies(commentUuid: string) {
+  // Encuentra el total de respuestas para este comentario
+  const totalReplies = this.comments.find(c => c.uuid === commentUuid)?.replies?.length || 0;
+  
+  // Muestra TODAS las respuestas
+  this.replyLimit[commentUuid] = totalReplies;
+}
+
+// 🔥 Mostrar menos respuestas
+showLessReplies(commentUuid: string) {
+  // Restar 2 al límite actual
+  this.replyLimit[commentUuid] = (this.replyLimit[commentUuid] || 2) - 2;
+
+  // Asegurarse de que siempre muestre al menos 2 respuestas
+  if (this.replyLimit[commentUuid] < 2) {
+    this.replyLimit[commentUuid] = 2;
+  }
+}
 
   ngOnInit(): void {
     this.loadComments();
@@ -63,21 +91,46 @@ export class CommentsComponent implements OnInit {
       }
     });
   }
+// Simulación de carga de comentarios  
+loadComments(): void {
+  console.log("Post UUID: " + this.postUuid);
+  console.log("Post: ", this.post);
 
-  // Simulación de carga de comentarios  
-  loadComments(): void {
-    console.log("Post UUID: " + this.postUuid);
-    console.log("Post: " + this.post);
-    this.postService.getPostComments(this.postUuid).subscribe({
-      next: (data: Comment[]) => {
-        this.comments = data.reverse(); // Asegurarnos de mostrar los más recientes primero
-        this.cdr.detectChanges(); // Forzar la actualización de la vista
-      },
-      error: (error) => {
-        console.error('Error al obtener comentarios', error);
+  this.postService.getPostComments(this.postUuid).subscribe({
+    next: (data: Comment[]) => {
+      
+
+      this.comments = data; // Deja los comentarios en el orden natural que llegan
+      this.comments.forEach((comment) => {
+        this.loadReplies(comment.uuid);
+      });
+      this.cdr.detectChanges(); // Forzar la actualización de la vista
+    },
+    error: (error) => {
+      console.error('❌ Error al obtener comentarios', error);
+    }
+  });
+}
+
+loadReplies(commentUuid: string): void {
+  this.postService.getRepliesByCommentUuid(commentUuid).subscribe({
+    next: (data) => {
+      console.log("✅ Respuestas recibidas:", data); // 🔥 Verifica la estructura de las respuestas
+
+      const parentComment = this.comments.find(comment => comment.uuid === commentUuid);
+      if (parentComment) {
+        // 📌 Ordenar las respuestas en orden descendente (de más reciente a más antiguo)
+        parentComment.replies = data.sort((a, b) => {
+          return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+        });
       }
-    });
-  }
+
+      this.cdr.detectChanges(); // 🔥 Forzar la actualización de la vista
+    },
+    error: (error) => console.error('❌ Error al obtener respuestas:', error)
+  });
+}
+
 
 
   // Simulación de "Me gusta"  
@@ -90,6 +143,23 @@ export class CommentsComponent implements OnInit {
     console.log(`Responder al comentario: ${comment.content}`);
   }
 
+  calculateTimeFromNow(date: string) {
+    //  Interpretar la fecha con la zona horaria incluida (evitando doble conversión)
+    const utcDate = moment.utc(date);
+
+  
+    //  Obtener la zona horaria real del usuario
+    const userTimeZone = moment.tz.guess();
+  
+    //  Convertir la fecha a la zona horaria del usuario SIN modificar la hora
+    const localDate = utcDate.clone().tz(userTimeZone, true); 
+  
+   
+  
+    return localDate.fromNow(); // "Hace 5 minutos", "Hace 2 horas", etc.
+  }
+  
+  
   calculateTimePost() {
     const postDate = new Date(this.post.date)
     const currentDate = new Date(Date.now());
@@ -133,7 +203,75 @@ export class CommentsComponent implements OnInit {
     }, 100);
   }
 
+// Mostrar/Cerrar el input de respuesta
+toggleReplyInput(commentUuid: string) {
+  this.replyInputVisible[commentUuid] = !this.replyInputVisible[commentUuid];
 
+  // 🔥 Espera un pequeño tiempo y luego pone foco en el input
+  setTimeout(() => {
+    const inputElement = document.querySelector(`#replyInput-${commentUuid}`) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, 100);
+}
+
+
+
+  //  Agregar respuesta a un comentario
+addReply(commentUuid: string) {
+  const replyContent = this.replyText[commentUuid]?.trim();
+  if (!replyContent) return;
+
+  this.postService.getUser().subscribe({
+    next: (user: UserDetail) => {
+      const replyData = {
+        content: replyContent,
+        user_name: user.name + ' ' + user.lastName,
+        user_photo: user.photo_profile_path,
+        userId: user.uuid,
+        date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS') // 🔥 Formato correcto de fecha
+      };
+
+      // 🔥 Llamada al backend para crear respuesta
+      this.postService.addReply(commentUuid, replyData).subscribe({
+        next: (newReply: any) => {
+          console.log("🔥 Nueva respuesta agregada:", newReply);
+
+          // 📌 Añadir la respuesta solo a este comentario
+          const parentComment = this.comments.find(c => c.uuid === commentUuid);
+          if (parentComment) {
+            parentComment.replies = parentComment.replies || [];
+
+            // Convertir `newReply` en un objeto que tenga todas las propiedades de `Reply`
+            const formattedReply = {
+              uuid: newReply.uuid, //  UUID devuelto por el backend
+              content: newReply.content,
+              createdDate: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+              user_name: newReply.user_name,
+              user_photo: newReply.user_photo
+            };
+
+            parentComment.replies.push(formattedReply); //  Agregar respuesta sin recargar
+            
+            // 🔥 Ordenar las respuestas en orden descendente (más reciente primero)
+            parentComment.replies.sort((a, b) => {
+              return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+            });
+          }
+
+          this.replyText[commentUuid] = ""; // Limpiar el input
+          this.replyInputVisible[commentUuid] = false; //  Ocultar el input
+          this.cdr.detectChanges();
+        },
+        error: (error) => console.error('❌ Error al agregar respuesta:', error)
+      });
+    },
+    error: (error) => console.error('❌ Error al obtener el usuario:', error)
+  });
+}
+
+  
 
   addComment() {
     if (!this.newComment.trim()) return;
@@ -192,10 +330,9 @@ const commentData: PostComment = {
         this.newComment = ''; //  Limpiar input
         this.showCommentInput = false; //  Ocultar input
 
-        // 🔥 Llamar explícitamente a loadComments() en ViewCommentsComponent
-        if (this.viewCommentsComponent) {
-          this.viewCommentsComponent.loadComments();
-        }
+    
+           // 🔥 Recargar comentarios para obtener la fecha correcta desde el backend
+      this.loadComments();
       },
       error: (err) => console.error("❌ Error al agregar comentario", err)
     });

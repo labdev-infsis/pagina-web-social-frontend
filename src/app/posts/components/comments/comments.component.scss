@@ -438,14 +438,30 @@ span:hover {
 }
 
 .comment-box {
-  display: flex;
-  align-items: center;
-  background: #f0f2f5;
-  border-radius: 20px;
   padding: 10px;
-  width: 100%;
-  margin-top: 10px;
+  border-bottom: 1px solid #ddd;
 }
+.comment-text {
+  background: #f0f2f5;
+  padding: 8px;
+  border-radius: 10px;
+  max-width: 80%;
+}
+.comment-time {
+  font-size: 12px;
+  color: #65676b;
+  display: block;
+  margin-top: 2px;
+}
+/* 📌 Sección de reacciones y botón "Responder" alineados debajo del comentario */
+.comment-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
 
 .comment-input {
   flex: 1;
@@ -487,9 +503,8 @@ span:hover {
 .comment-actions {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espacio entre "Me gusta", "Responder" y las reacciones */
+  gap: 10px;
   margin-top: 5px;
-  font-size: 13px;
 }
 
 .action-btn {
@@ -543,4 +558,124 @@ span:hover {
 
 .reaction-popup span:hover {
   transform: scale(1.3);
+}
+
+.reply-box {
+  display: flex;
+  align-items: center;
+  margin-left: 50px;
+  margin-top: 5px;
+}
+
+.reply-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #65676b;
+  padding: 5px;
+  transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+
+.reply-btn:hover {
+  color: #1877f2;
+  background: rgba(24, 119, 242, 0.1);
+}
+
+/* 📌 Estilos para respuestas anidadas */
+.replies {
+  margin-left: 50px;
+  margin-top: 5px;
+  border-left: 2px solid #ddd;
+  padding-left: 10px;
+}
+
+.reply {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.reply-text {
+  background: #f0f2f5;
+  padding: 8px;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.reply-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.reply-input-container {
+  display: flex;
+  align-items: center;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 8px;
+  width: 100%;
+}
+.reply-input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  padding: 5px;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+.send-reply-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #65676b;
+  margin-left: 8px;
+
+  &:hover {
+    color: #1877f2;
+  }
+}
+
+.send-reply-btn:hover {
+  background-color: #1659c7;
+}
+.reply-time {
+  font-size: 12px;
+  color: #6c757d;  // Color gris claro para que no resalte demasiado
+  display: block;
+  margin-top: 4px;  // Espacio pequeño arriba para que no quede pegado al contenido
+  text-align: right; // Alinear a la derecha para que quede más ordenado
+}
+.view-more-replies {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 4px 0;
+  display: block;
+  margin-top: 4px;
+}
+.view-more-replies:hover {
+  color: #0056b3;
+}
+
+.view-more-replies, .view-less-replies {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 4px 0;
+  display: block;
+  margin-top: 4px;
+}
+
+.view-more-replies:hover, .view-less-replies:hover {
+  color: #0056b3;
 }

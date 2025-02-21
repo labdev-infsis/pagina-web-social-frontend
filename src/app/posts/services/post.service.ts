@@ -204,4 +204,27 @@ export class PostService {
     const urlReactPost = 'reactions';
     return this.http.delete<any>(`${this.ROOT_URL}/posts/${postUuid}/${urlReactPost}`, this.reqHeader);
   }
+
+
+
+addReply(commentUuid: string, replyData: any): Observable<any> {
+  const token = localStorage.getItem('token'); // 🔥 Obtiene el token del almacenamiento local
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`  // 🔥 Incluye el token en el encabezado
+  };
+
+  return this.http.post<any>(
+    `${this.ROOT_URL}/comments/${commentUuid}/replies`, 
+    replyData, 
+    { headers: headers }
+  );
+}
+
+getRepliesByCommentUuid(commentUuid: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.ROOT_URL}/comments/${commentUuid}/replies`);
+}
+
+
+  
 }

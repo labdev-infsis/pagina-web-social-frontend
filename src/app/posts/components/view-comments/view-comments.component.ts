@@ -62,7 +62,7 @@ export class ViewCommentsComponent implements OnInit {
             }
 
             this.comments = [...data.reverse()]; // 🔄 Recargar lista de comentarios
-           // console.log("✅ Comentarios recargados:", this.comments);
+           console.log("✅ Comentarios recargados:", this.comments);
 
             // ✅ Llamamos `loadReactions` después de confirmar que `comments` está definido
             this.comments.forEach(comment => this.loadReactions(comment));
