@@ -39,6 +39,7 @@ export class ModalEditPostComponent {
     img_vid : 'images-videos',
     doc: 'document'
   }
+  listDeleteMedia: {id:string,type:string}[] = []; // Lista de id de medias a eliminar
 
   constructor(
       private postService: PostService,
@@ -151,7 +152,25 @@ export class ModalEditPostComponent {
       modal?.hide();
       this.selectedCommentConfig = this.postToEdit.comment_config_id;
       this.showModalEdit.set(false);
+
+      setTimeout(()=>{
+        // Eliminar cualquier backdrop que haya quedado
+        let backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        // Restaurar los estilos originales del body
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      },400);
     }
+  }
+
+  //Añadir clase segun media del post y media añadida
+  getGridClass(): string {
+    const lengthMedia = this.postToEdit.content.media.length;
+    if (lengthMedia === 1) return 'single';
+    if (lengthMedia === 2) return 'two';
+    if (lengthMedia === 3) return 'three';
+    return 'more';
   }
 
   //Abrir modal de confirmación de salir de edición
@@ -174,6 +193,30 @@ export class ModalEditPostComponent {
     if(showEditAllMedia){
       this.visibleEditAllMedia.set(true);
     }
+  }
+
+  // Eliminar imagen o video de post
+  selectMediaToDelete(mediaPost: Media){
+    // Obtener el id de la media para eliminarla
+    const lengthPath = mediaPost.path.split("/").length;
+    const idMedia = mediaPost.path.split("/")[lengthPath-1];
+    this.listDeleteMedia.push(
+      {
+        id: idMedia,
+        type: mediaPost.type
+      }
+    );
+    console.log(this.listDeleteMedia)
+    
+    // Eliminar la media del post de la preview
+    console.log(this.postToEdit.content.media)
+    let index = this.postToEdit.content.media.indexOf(mediaPost);
+    this.postToEdit.content.media.splice(index,1);
+    console.log(this.postToEdit.content.media)
+
+
+    // Eliminar la media desde el endpoint
+    //al actualizar
   }
 
   // Verificar si es imagen para mostrar etiqueta img o video
@@ -217,7 +260,29 @@ export class ModalEditPostComponent {
 
         const amountImagesPost = this.postToEdit.content.media.length;
 
-        //Borrar lista de media antigua 
+        //Borrar lista de media antigua
+        Array.from(this.listDeleteMedia).forEach((media)=>{
+          if(media.type.includes('image')){
+            this.postService.deleteImage(media.id).subscribe({
+              next: () => {
+                console.log('Imagen eliminada exitosamente');
+              },
+              error: (error) => {
+                console.log('Error al eliminar una imagen de post', error);
+              }
+            });
+          }else if(media.type.includes('video')){
+            this.postService.deleteVideo(media.id).subscribe({
+              next: () => {
+                console.log('Video eliminado exitosamente');
+              },
+              error: (error) => {
+                console.log('Error al eliminar un video de post', error);
+              }
+            });
+          }
+        });
+
 
         //Subir las nuevas imagenes-videos
         this.postService.uploadMedia(formData).pipe(

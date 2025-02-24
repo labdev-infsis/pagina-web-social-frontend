@@ -1,8 +1,8 @@
 <!-- Modal editar un post -->
 <div *ngIf="showModalEdit()" class="modal fade" id="{{'edit-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true" data-bs-backdrop="static">
+  @if (!visibleEditAllMedia()) {  
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      @if (!visibleEditAllMedia()) {  
         <div class="modal-header p-2">
           <h5 class="modal-title fw-bold" id="modalNewPost">Editar publicación</h5>
           <button type="button" class="btn-close m-0" (click)="openModalConfirmExitEdit(postToEdit.uuid)" aria-label="Close"></button>
@@ -47,27 +47,44 @@
             <button type="button" class="btn btn-primary fw-semibold" [disabled]="disabledSaveButton()" data-bs-dismiss="modal" (click)="updatePost()">Guardar</button>
           </form>
         </div>
-      } @else {
+      </div>
+    </div>
+  } @else {
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <!-- Mostrar la media una a una para eliminar -->
         <div class="modal-header p-2">
-          <button type="button" class="btn-close m-0" aria-label="Close" (click)="visibleEditAllMedia.set(false)"></button>
+          <button type="button" class="btn btn-back m-0" (click)="visibleEditAllMedia.set(false)">
+            <i class="bi bi-arrow-left"></i>
+          </button>
           <h5 class="modal-title fw-bold" id="modalNewPost">Fotos/videos</h5>
         </div>
         <div class="modal-body">
-          <div class="images-videos">
+          <div class="images-videos" [ngClass]="getGridClass()">
           <!-- Iterar imagenes y videos del post-->
             <ng-container *ngFor="let media of postToEdit.content.media; let i = index"> 
               <!-- Mostrar si es img o video -->
-              <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
+              <div class="media">
+                <!-- Boton para eliminar una img o video -->
+                <button type="button" class="btn-close m-0" aria-label="Close" (click)="selectMediaToDelete(media)"></button>
+                <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
                 <ng-template #mostrarVideo>
                   <video [src]="media.path" controls></video>
                 </ng-template>
+              </div>
             </ng-container>
-
           </div>
         </div>
-      }
+        <div class="modal-footer">
+          <button type="button" class="btn btn-add-media fw-semibold">
+            <i class="bi bi-file-earmark-plus-fill"></i>
+            Agregar fotos/videos
+          </button>
+        <button type="button" class="btn btn-primary fw-semibold" (click)="visibleEditAllMedia.set(false)">Listo</button>
+        </div>
       </div>
     </div>
+  }
 </div>
 
 <!-- Modal confirmacion salir de modal edicion -->

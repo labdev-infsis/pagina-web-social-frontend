@@ -14,6 +14,7 @@ import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
 import { PostComment } from '../models/post-comment';
+import { Media } from '../models/media';
 
 @Injectable({
   providedIn: 'root'
@@ -44,13 +45,13 @@ export class PostService {
     return this.http.get<Post>(`${this.ROOT_URL}/posts/${postUuid}`);
   }
 
-    // Método para obtener los posts
-    getPosts(): Observable<Post[]>{
-      const getPosts = 'posts'
-      const token = this.authService.getToken();
-      const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
-      return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
-    }
+  // Método para obtener los posts
+  getPosts(): Observable<Post[]>{
+    const getPosts = 'posts'
+    const token = this.authService.getToken();
+    const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
+    return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
+  }
 
   //Método para crear un post
   createPost(dataPost: CreatePost): Observable<CreatePost> {
@@ -136,6 +137,24 @@ export class PostService {
   deletePost(postUuid: string): Observable<Post> {
     const deletePost = 'posts'
     return this.http.delete<Post>(`${this.ROOT_URL}/${deletePost}/${postUuid}`, this.reqHeader);
+  }
+
+  //Metodo para eliminar una imagen
+  deleteImage(imageUuid: string): Observable<void> {
+    const deleteImage = 'images';
+    return this.http.delete<void>(`${this.ROOT_URL}/${deleteImage}/${imageUuid}`, this.reqHeader);
+  }
+
+  //Metodo para eliminar un video
+  deleteVideo(videoUuid: string): Observable<void> {
+    const deleteVideo = 'videos';
+    return this.http.delete<void>(`${this.ROOT_URL}/${deleteVideo}/${videoUuid}`, this.reqHeader);
+  }
+
+  //Metodo para eliminar un documento
+  deleteDoc(docUuid: string): Observable<void> {
+    const deleteDoc = 'documents';
+    return this.http.delete<void>(`${this.ROOT_URL}/${deleteDoc}/${docUuid}`, this.reqHeader);
   }
 
   //Método para actualizar un post
