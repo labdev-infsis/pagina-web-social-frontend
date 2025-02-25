@@ -58,16 +58,16 @@
   </div>
 
   @if (isMenuOpen) {
-  <div class="dropdown-menu">
-    <ng-container *ngIf="authenticated">
-      <a class="dropdown-item">Ver perfil</a>
-      <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
-    </ng-container>
-    <ng-container *ngIf="!authenticated">
-      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
-      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
-    </ng-container>
-  </div>
+    <div class="dropdown-menu">
+      <ng-container *ngIf="authenticated">
+        <a class="dropdown-item">Ver perfil</a>
+        <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
+      </ng-container>
+      <ng-container *ngIf="!authenticated">
+        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
+        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
+      </ng-container>
+    </div>
   }
 </nav>
 

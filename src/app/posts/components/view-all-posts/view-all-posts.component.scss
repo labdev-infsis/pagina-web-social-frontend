@@ -6,6 +6,10 @@
   margin: 50px auto;
   padding-left: 20px;
   border-left: 1px solid var(--red-color);
+
+  .text-center {
+    color: var(--blue-color);
+  }
 }
 
 @media screen and (max-width: 1440px) {
