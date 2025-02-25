@@ -144,10 +144,14 @@ nav ul > li a {
 	color: var(--blue-color);
 	text-decoration: none;
 
-	&:hover,
-	&:active {
+	&:hover {
 		padding-bottom: 11px;
-		color: var(--red-color);
-		border-bottom: 10px solid var(--red-color);
+		border-bottom: 10px solid var(--blue-color);
 	}
+}
+
+nav ul > li a.active {
+    padding-bottom: 11px;
+    color: var(--red-color);
+    border-bottom: 10px solid var(--red-color);
 }
