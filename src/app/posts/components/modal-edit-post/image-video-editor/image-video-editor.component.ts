@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal } from '@angular/core';
 import { Media } from '../../../models/media';
 
 @Component({
@@ -10,18 +10,16 @@ export class ImageVideoEditorComponent {
   @Input() showAreaMedia! : WritableSignal<boolean>; //Mostrar seleccion y prevista de imagenes videos
   @Input() listMediaPost!: Media[] | undefined; // Lista de imagenes o videos del post
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
-  @Output() loadNewFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos nuevos seleccionadas
+  @Output() loadNewFilesMediaEvent = new EventEmitter<{file:File, url: string}[]>(); //Devolver las imagenes/videos nuevos seleccionadas
   @Output() loadOldFilesMediaEvent = new EventEmitter<Media[]>(); //Devolver las imagenes/videos nuevos seleccionadas
   @Output() showEditAllMedia = new EventEmitter<boolean>();
   @ViewChild('inputFileEdit') inputFileEdit!: ElementRef<HTMLInputElement> 
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
-  mediaListPreviewAdded: string[] = []; //Imagenes videos a mostrar en formato base64
-  listFileMediaAdded: File[] = []; //Lista de archivos seleccionados
+  @Input() listFileMediaAdded: {file:File, url: string}[] = []; //Lista de archivos seleccionados
   listFileMediaPost: Media[] = []; //Lista de archivos del post - not undefined
 
   ngOnInit(){
     if(this.listMediaPost && this.listMediaPost.length > 0){
-
       this.listFileMediaPost = this.listMediaPost; //Asegurarse de trabajar con no undefined
       this.showAreaMedia.set(true);
       this.showPreviewMedia = true;
@@ -30,7 +28,6 @@ export class ImageVideoEditorComponent {
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){
-    this.mediaListPreviewAdded = [];
     this.listMediaPost = []; // Borrar la copia del medias del post
     this.listFileMediaAdded = [];
     this.showPreviewMedia = false;
@@ -47,7 +44,7 @@ export class ImageVideoEditorComponent {
     inputFile.click();
   }
 
-  async changeInputMedia(event: Event | DragEvent){
+  changeInputMedia(event: Event | DragEvent){
     event.preventDefault();
     let valueMedia;
     if (event instanceof DragEvent && event.dataTransfer) {
@@ -61,31 +58,18 @@ export class ImageVideoEditorComponent {
     
     if(valueMedia?.files && valueMedia.files.length >0 ){
       this.showPreviewMedia = true;
-      //Renderizar imagenes videos seleccionados
-      this.listFileMediaAdded = Array.from(valueMedia.files);
-      //Emitir al padre las images precargadas para habilitar el boton de publicar
-      this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
-      this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar imagenes existentes antiguas
-
-      const mediaPromises = this.listFileMediaAdded.map(file => this.readFileAsDataURL(file));
-      
-      this.mediaListPreviewAdded = await Promise.all(mediaPromises);
-    }
-  }
-
-  private readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject('Error al leer el archivo');
+      //Agregar file con su url al atributo
+      this.listFileMediaAdded = this.listFileMediaAdded.concat( Array.from(valueMedia.files).map((file)=>{
+        return {
+          file,
+          url: URL.createObjectURL(file)
         }
-      };
-      reader.onerror = () => reject('Error al leer el archivo');
-      reader.readAsDataURL(file);
-    });
+      }));
+
+      //Emitir al padre las images precargadas para habilitar el boton de publicar
+      this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);//Enviar media nueva seleccionada
+      this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar media existente antiguas actualizada
+    }
   }
 
   onDragOver(event: DragEvent): void {
@@ -105,34 +89,6 @@ export class ImageVideoEditorComponent {
   //Obtener cantidad de media existente y seleccionada
   getAmountMedia(){
     return this.listFileMediaPost.length + this.listFileMediaAdded.length;
-  }
-
-  // Verificar si es imagen para mostrar etiqueta img o video
-  isImage(urlMedia: string): boolean{
-    let response = false;
-    urlMedia.includes('image')? response = true : response = false;
-    return response;
-  }
-
-  //Eliminar imagen prevista NO USADA AUN
-  deletePreviewMedia(media:string){
-    let index = this.mediaListPreviewAdded.indexOf(media);
-    this.mediaListPreviewAdded.splice(index,1);
-    const fileInput = document.getElementById('input-file') as HTMLInputElement;
-    if (fileInput && fileInput.files) {
-      const files = Array.from(fileInput.files);
-
-      if (index >= 0 && index < files.length) {
-        files.splice(index, 1); // Elimina el archivo en la posición indicada
-      }
-
-      // Usa DataTransfer para crear una nueva lista de archivos
-      const dataTransfer = new DataTransfer();
-      files.forEach(file => dataTransfer.items.add(file));
-
-      // Asigna la nueva lista de archivos al input
-      fileInput.files = dataTransfer.files;
-    }
   }
 
   openEditAllMedia(){

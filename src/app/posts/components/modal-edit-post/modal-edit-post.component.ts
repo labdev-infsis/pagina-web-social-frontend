@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal } from '@angular/core';
 import { Institution } from '../../models/institution';
 import { Post } from '../../models/post';
 import { CommentConfig } from '../../models/comment-config';
@@ -21,9 +21,11 @@ export class ModalEditPostComponent {
   @Input() postToEdit!: Post;
   @Input() showModalEdit!: WritableSignal<boolean>;
   @Output() postUpdatedEvent = new EventEmitter<Post>();
+  @ViewChild('inputFileEditAll') inputFileEdit!: ElementRef<HTMLInputElement>;
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
   visibleEditAllMedia = signal(false);//Mostrar la edicion de cada imagen video para eliminar
+  backEditPost = false; //Volver a edicion general del post
   visibleAreaMedia = signal(false); //Mostrar seleccion y prevista de imagenes
   visibleAreaMediaDoc = signal(false); //Mostrar seleccion y prevista de documentos
 
@@ -32,14 +34,14 @@ export class ModalEditPostComponent {
 
   disabledSaveButton = signal(false); //Deshabilitar el boton de guardar
   postForm!: FormGroup;
-  listNewMediaFile: File[] = []; //Lista de media editada obtenida de 'image-video-editor' component
+  listNewMediaFile: {file: File, url: string}[] = []; //Lista de media editada obtenida de 'image-video-editor' component
   listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
   fileDoc!: File;  //Doc añadido en edicion
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
   }
-  listDeleteMedia: {id:string,type:string}[] = []; // Lista de id de medias a eliminar
+  listMediaToDelete: {id: string, type: string}[] = []; // Lista de id de medias a eliminar
 
   constructor(
       private postService: PostService,
@@ -93,7 +95,7 @@ export class ModalEditPostComponent {
   }
   
   //Establecer imagenes-videos editados y Deshabilitar el boton de guardar si no hay imagenes
-  setFilesMediaPostAdded(fileMedia: File[]){
+  setFilesMediaPostAdded(fileMedia: {file: File, url: string}[]){
     this.listNewMediaFile = fileMedia;
     this.listNewMediaFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
   }
@@ -147,14 +149,15 @@ export class ModalEditPostComponent {
   //Cerrar modal sin guardar cambios
   closeResetModalEdit(id: string){
     const modalElement = document.getElementById('edit-'+id);
+    this.backEditPost = false;
     if (modalElement) {
       let modal = Modal.getInstance(modalElement);
       modal?.hide();
       this.selectedCommentConfig = this.postToEdit.comment_config_id;
       this.showModalEdit.set(false);
 
+      // Eliminar cualquier backdrop que haya quedado despues de la animacion
       setTimeout(()=>{
-        // Eliminar cualquier backdrop que haya quedado
         let backdrops = document.querySelectorAll('.modal-backdrop');
         backdrops.forEach(backdrop => backdrop.remove());
         // Restaurar los estilos originales del body
@@ -185,45 +188,66 @@ export class ModalEditPostComponent {
         if (backdrops.length > 1) {
           backdrops[backdrops.length - 1].style.zIndex = "1060"; // Último backdrop
         }
-      }, 10);
+      }, 100);
     }
   }
 
   editAllMedia(showEditAllMedia: boolean){
     if(showEditAllMedia){
+      this.backEditPost = true;
       this.visibleEditAllMedia.set(true);
     }
   }
 
-  // Eliminar imagen o video de post
+  // Seleccionar imagen o video de post para eliminar
   selectMediaToDelete(mediaPost: Media){
     // Obtener el id de la media para eliminarla
     const lengthPath = mediaPost.path.split("/").length;
     const idMedia = mediaPost.path.split("/")[lengthPath-1];
-    this.listDeleteMedia.push(
+    this.listMediaToDelete.push(
       {
         id: idMedia,
         type: mediaPost.type
       }
     );
-    console.log(this.listDeleteMedia)
     
     // Eliminar la media del post de la preview
-    console.log(this.postToEdit.content.media)
     let index = this.postToEdit.content.media.indexOf(mediaPost);
     this.postToEdit.content.media.splice(index,1);
-    console.log(this.postToEdit.content.media)
 
-
-    // Eliminar la media desde el endpoint
-    //al actualizar
+    // Eliminar la media desde el endpoint al guardar el post
   }
 
-  // Verificar si es imagen para mostrar etiqueta img o video
-  isImage(urlMedia: string): boolean{
-    let response = false;
-    urlMedia.includes('image')? response = true : response = false;
-    return response;
+  deleteNewMediaSelected( url:string ){
+    this.listNewMediaFile = this.listNewMediaFile.filter( media => media.url != url);
+  }
+
+  openInputFile(){
+    this.inputFileEdit.nativeElement.click();
+  }
+
+  changeInputMedia(event: Event){
+    event.preventDefault();
+    let valueMedia;
+    if (event.target instanceof HTMLInputElement && event.target.files) {
+      // Evento de entrada de archivo
+      valueMedia = event.target;
+    }
+    
+    
+    if(valueMedia?.files && valueMedia.files.length >0 ){
+      //Agregar file con su url al atributo
+      this.listNewMediaFile = this.listNewMediaFile.concat( Array.from(valueMedia.files).map((file)=>{
+        return {
+          file,
+          url: URL.createObjectURL(file)
+        }
+      }));
+
+      //Emitir al padre las images precargadas para habilitar el boton de publicar
+      // this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);//Enviar media nueva seleccionada
+      // this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar media existente antiguas actualizada
+    }
   }
   
   updatePost(){
@@ -254,14 +278,14 @@ export class ModalEditPostComponent {
       if(this.listNewMediaFile && this.listNewMediaFile.length > 0){ 
 
         //Convertir las nuevas imagenes y videos en Form Data con su key correspondiente
-        Array.from(this.listNewMediaFile).forEach((file) => {
-          file.type.includes('image')? formData.append('images', file) : formData.append('videos', file);
+        Array.from(this.listNewMediaFile).forEach((item) => {
+          item.file.type.includes('image')? formData.append('images', item.file) : formData.append('videos', item.file);
         });
 
         const amountImagesPost = this.postToEdit.content.media.length;
 
-        //Borrar lista de media antigua
-        Array.from(this.listDeleteMedia).forEach((media)=>{
+        //Borrar lista de media seleccionada a eliminar
+        Array.from(this.listMediaToDelete).forEach((media)=>{
           if(media.type.includes('image')){
             this.postService.deleteImage(media.id).subscribe({
               next: () => {

@@ -1,7 +1,7 @@
 <!-- Modal editar un post -->
 <div *ngIf="showModalEdit()" class="modal fade" id="{{'edit-'+postToEdit.uuid}}" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true" data-bs-backdrop="static">
   @if (!visibleEditAllMedia()) {  
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered" [ngClass]="{'move-right': !visibleEditAllMedia() && backEditPost}">
     <div class="modal-content">
         <div class="modal-header p-2">
           <h5 class="modal-title fw-bold" id="modalNewPost">Editar publicación</h5>
@@ -30,7 +30,7 @@
               
               <!-- Seleccionar imagen (es) -->
               <app-image-video-editor [showAreaMedia]="visibleAreaMedia" (closeAreaMediaEvent)="closeAreaMedia($event)" (loadOldFilesMediaEvent)="setFilesMediaPostOld($event)" 
-              (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)" (showEditAllMedia)="editAllMedia($event)"></app-image-video-editor>
+              [listFileMediaAdded]="listNewMediaFile" (loadNewFilesMediaEvent)="setFilesMediaPostAdded($event)" [listMediaPost]="sendMedia(typeMedia.img_vid)" (showEditAllMedia)="editAllMedia($event)"></app-image-video-editor>
               
               <!-- Seleccionar archivo -->
               <app-document-editor [showAreaDoc]="visibleAreaMediaDoc" (closeAreaDocEvent)="closeAreaDoc($event)" (loadNewFileDoc)="setFileDocPostAdded($event)" [mediaDocPost]="sendMedia(typeMedia.doc)"></app-document-editor>
@@ -50,8 +50,8 @@
       </div>
     </div>
   } @else {
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" [ngClass]="{'move-left': visibleEditAllMedia()}">
+      <div class="modal-content modal-content-edit-media">
         <!-- Mostrar la media una a una para eliminar -->
         <div class="modal-header p-2">
           <button type="button" class="btn btn-back m-0" (click)="visibleEditAllMedia.set(false)">
@@ -67,19 +67,32 @@
               <div class="media">
                 <!-- Boton para eliminar una img o video -->
                 <button type="button" class="btn-close m-0" aria-label="Close" (click)="selectMediaToDelete(media)"></button>
-                <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
+                <img *ngIf="media.type.includes('image'); else mostrarVideo" [src]="media.path" alt="Imagen del post">
                 <ng-template #mostrarVideo>
                   <video [src]="media.path" controls></video>
                 </ng-template>
               </div>
             </ng-container>
+            @if(listNewMediaFile.length > 0){
+              <ng-container *ngFor="let media of listNewMediaFile">
+                <div class="media">
+                  <!-- Boton para eliminar una img o video en la prevista-->
+                  <button type="button" class="btn-close m-0" aria-label="Close" (click)="deleteNewMediaSelected(media.url)"></button>
+                  <img *ngIf="media.file.type.includes('image'); else mostrarVideo" [src]="media.url" alt="Imagen del post">
+                  <ng-template #mostrarVideo>
+                    <video [src]="media.url" controls></video>
+                  </ng-template>
+                </div>
+              </ng-container>
+            }
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-add-media fw-semibold">
+          <button type="button" class="btn btn-add-media fw-semibold" (click)="openInputFile()">
             <i class="bi bi-file-earmark-plus-fill"></i>
             Agregar fotos/videos
           </button>
+          <input type="file" #inputFileEditAll hidden multiple accept="image/*,video/*" (input)="changeInputMedia($event)">
         <button type="button" class="btn btn-primary fw-semibold" (click)="visibleEditAllMedia.set(false)">Listo</button>
         </div>
       </div>
