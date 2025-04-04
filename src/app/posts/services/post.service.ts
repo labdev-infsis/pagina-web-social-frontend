@@ -22,6 +22,8 @@ export class PostService {
 
   private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV}`;
   private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }) };
+  private page = 0;
+  private size = 5;
 
 
   constructor(private http: HttpClient, private authService: AuthService) { }
@@ -51,6 +53,16 @@ export class PostService {
       const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
       return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
     }
+
+  //Metodo para obtener posts paginados
+  getPagedPosts(): Observable<Post[]>{
+    const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${this.page}&size=${this.size}`;
+    return this.http.get<Post[]>(urlPagedPosts);
+  }
+  // Avanzar a la siguiente pagina de los posts
+  nextPage(): void {
+    this.page++;  // Avanzar a la siguiente página
+  }
 
   //Método para crear un post
   createPost(dataPost: CreatePost): Observable<CreatePost> {
