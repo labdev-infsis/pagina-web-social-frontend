@@ -7,7 +7,7 @@ import { UserDetail } from '../../models/user-detail';
 @Component({
   selector: 'app-view-all-posts',
   templateUrl: './view-all-posts.component.html',
-  styleUrl: './view-all-posts.component.scss'
+  styleUrl: './view-all-posts.component.scss',
 })
 export class ViewAllPostsComponent implements OnInit {
   posts!: Post[];
@@ -16,31 +16,30 @@ export class ViewAllPostsComponent implements OnInit {
   selectedPostReactions: any = null;
   selectedPostUuid: string = '';
 
-  constructor(private postService: PostService,
+  constructor(
+    private postService: PostService,
     private authService: AuthService
-  ){
-    this.authenticated = authService.isAuthenticated()
+  ) {
+    this.authenticated = authService.isAuthenticated();
   }
 
-  ngOnInit(){
-
+  ngOnInit() {
     this.postService.getPosts().subscribe({
-      next:(data: Post[]) => {
+      next: (data: Post[]) => {
         this.posts = data.reverse();
       },
-      error:(error) => {
+      error: (error) => {
         console.error('Error al obtener los posts', error);
-      }
+      },
     });
 
     this.postService.getUser().subscribe({
-      next:(user: UserDetail) => {
+      next: (user: UserDetail) => {
         this.currentUser = user;
-        console.log('Obteniendo el usuario actual', this.currentUser);
       },
-      error:(error) => {
+      error: (error) => {
         console.error('Error al obtener el usuario actual', error);
-      }
+      },
     });
   }
 
@@ -49,17 +48,17 @@ export class ViewAllPostsComponent implements OnInit {
       next: (response) => {
         // Actualizar la lista localmente
         console.log('post eliminado', response);
-        this.posts = this.posts.filter(post => post.uuid !== postUuid);
+        this.posts = this.posts.filter((post) => post.uuid !== postUuid);
       },
       error: (error) => {
-        console.log('Error al eliminar el post',error);
-      }
+        console.log('Error al eliminar el post', error);
+      },
     });
   }
 
-  updatePost(postUpdated: Post){
+  updatePost(postUpdated: Post) {
     // Actualizar el post en la lista local
-    this.posts = this.posts.map(post => 
+    this.posts = this.posts.map((post) =>
       post.uuid === postUpdated.uuid ? postUpdated : post
     );
   }
@@ -67,14 +66,14 @@ export class ViewAllPostsComponent implements OnInit {
   updateReactions(postUuid: string) {
     this.postService.getPost(postUuid).subscribe({
       next: (post) => {
-        const index = this.posts.findIndex(p => p.uuid === postUuid);
+        const index = this.posts.findIndex((p) => p.uuid === postUuid);
         if (index !== -1) {
           this.posts[index].reactions = post.reactions;
         }
       },
       error: (error) => {
         console.error('Error al actualizar las reacciones', error);
-      }
+      },
     });
   }
 }

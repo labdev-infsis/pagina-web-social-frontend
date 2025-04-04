@@ -1,8 +1,21 @@
-import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, inject, signal, TemplateRef, WritableSignal } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  inject,
+  signal,
+  TemplateRef,
+  WritableSignal,
+} from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 
 import { Comment } from '../../models/comment';
+import { Reply } from '../../models/comment';
 import { Institution } from '../../models/institution';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Post } from '../../models/post';
@@ -14,156 +27,184 @@ import { UserDetail } from '../../models/user-detail';
 
 import moment from 'moment-timezone';
 
-
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
-  styleUrl: './comments.component.scss'
+  styleUrl: './comments.component.scss',
 })
 export class CommentsComponent implements OnInit {
   @ViewChild('commentInput') commentInput!: ElementRef;
-  @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
+  @ViewChild(ViewCommentsComponent)
+  viewCommentsComponent!: ViewCommentsComponent;
   @ViewChild('replyInput') replyInputElement!: ElementRef;
 
-  @Input() institution !: Institution;
-  @Input() post !: Post;
+  @Input() institution!: Institution;
+  @Input() post!: Post;
   @Input() postUuid!: string;
-  @Input() postImages!: [Media]; // Imagen del post  
-  @Input() postAuthor!: string; // Autor del post  
-  @Input() postTime!: string; // Tiempo del post  
-  @Input() postDescription!: string; // Descripción del post  
-  @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup 
-  @Output() commentAdded = new EventEmitter<void>(); // 🔥 Emitir evento cuando se agrega un comentario
+  @Input() postImages!: [Media];
+  @Input() postAuthor!: string;
+  @Input() postTime!: string;
+  @Input() postDescription!: string;
+  @Output() close = new EventEmitter<void>();
+  @Output() commentAdded = new EventEmitter<void>();
   newComments: PostComment[] = [];
   showCommentInput: boolean = false;
-  newComment: string = ''; // Nuevo comentario  
-  comments!: Comment[]; // Lista de comentarios  
+  newComment: string = '';
+  comments!: Comment[];
   authenticated: boolean;
-  currentUser!: UserDetail;
+  currentUser: UserDetail | null = null;
   currentComment!: Comment;
-  replyInputVisible: { [key: string]: boolean } = {}; // Controla qué input está visible
-  replyText: { [key: string]: string } = {}; // Almacena el texto de cada respuesta
-  // Controla cuántas respuestas se muestran inicialmente
-replyLimit: { [key: string]: number } = {};
+  replyInputVisible: { [key: string]: boolean } = {};
+  replyText: { [key: string]: string } = {};
+  replyLimit: { [key: string]: number } = {};
+  replyVisibility: { [key: string]: boolean } = {};
+  showReplies: { [key: string]: boolean } = {};
 
   constructor(
     private postService: PostService,
-    
 
     public modal: NgbModal,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef // ⬅️ Añadir esta línea
-
+    private cdr: ChangeDetectorRef
   ) {
     this.authenticated = authService.isAuthenticated();
   }
 
-
-// 🔥 Mostrar TODAS las respuestas
-showAllReplies(commentUuid: string) {
-  // Encuentra el total de respuestas para este comentario
-  const totalReplies = this.comments.find(c => c.uuid === commentUuid)?.replies?.length || 0;
-  
-  // Muestra TODAS las respuestas
-  this.replyLimit[commentUuid] = totalReplies;
-}
-
-// 🔥 Mostrar menos respuestas
-showLessReplies(commentUuid: string) {
-  // Restar 2 al límite actual
-  this.replyLimit[commentUuid] = (this.replyLimit[commentUuid] || 2) - 2;
-
-  // Asegurarse de que siempre muestre al menos 2 respuestas
-  if (this.replyLimit[commentUuid] < 2) {
-    this.replyLimit[commentUuid] = 2;
+  showLessReplies(uuid: string) {
+    this.replyLimit[uuid] = 2;
+    this.replyVisibility[uuid] = false;
+    this.cdr.detectChanges();
   }
-}
+
+  showAllReplies(uuid: string) {
+    const item = this.findItemByUuid(uuid, this.comments);
+    if (item) {
+      this.replyLimit[uuid] = item.replies?.length || 0;
+      this.replyVisibility[uuid] = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  findItemByUuid(uuid: string, items: any[]): any {
+    for (let item of items) {
+      if (item.uuid === uuid) return item;
+      if (item.replies && item.replies.length) {
+        let found = this.findItemByUuid(uuid, item.replies);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  toggleReplies(replyUuid: string) {
+    this.showReplies[replyUuid] = !this.showReplies[replyUuid];
+  }
 
   ngOnInit(): void {
     this.loadComments();
-    console.log("Videos: " + JSON.stringify(this.postImages));
+    console.log('Videos: ' + JSON.stringify(this.postImages));
+
     this.postService.getUser().subscribe({
       next: (user: UserDetail) => {
-        this.currentUser = user;
+        this.currentUser = user || null;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al obtener el usuario actual', error);
-      }
+        this.currentUser = null;
+      },
     });
   }
-// Simulación de carga de comentarios  
-loadComments(): void {
-  console.log("Post UUID: " + this.postUuid);
-  console.log("Post: ", this.post);
 
-  this.postService.getPostComments(this.postUuid).subscribe({
-    next: (data: Comment[]) => {
-      
+  loadComments(): void {
+    this.postService.getPostComments(this.postUuid).subscribe({
+      next: (data: Comment[]) => {
+        this.comments = data.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
 
-      this.comments = data; // Deja los comentarios en el orden natural que llegan
-      this.comments.forEach((comment) => {
-        this.loadReplies(comment.uuid);
-      });
-      this.cdr.detectChanges(); // Forzar la actualización de la vista
-    },
-    error: (error) => {
-      console.error('❌ Error al obtener comentarios', error);
-    }
-  });
-}
-
-loadReplies(commentUuid: string): void {
-  this.postService.getRepliesByCommentUuid(commentUuid).subscribe({
-    next: (data) => {
-      console.log("✅ Respuestas recibidas:", data); // 🔥 Verifica la estructura de las respuestas
-
-      const parentComment = this.comments.find(comment => comment.uuid === commentUuid);
-      if (parentComment) {
-        // 📌 Ordenar las respuestas en orden descendente (de más reciente a más antiguo)
-        parentComment.replies = data.sort((a, b) => {
-          return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+        this.comments.forEach((comment) => {
+          this.replyLimit[comment.uuid] = 2;
+          this.replyVisibility[comment.uuid] = false;
+          this.loadReplies(comment.uuid);
         });
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener comentarios', error);
+      },
+    });
+  }
+
+  loadReplies(commentUuid: string): void {
+    this.postService.getRepliesByCommentUuid(commentUuid).subscribe({
+      next: (data) => {
+        const parentComment = this.comments.find(
+          (comment) => comment.uuid === commentUuid
+        );
+        if (parentComment) {
+          parentComment.replies = data.sort(
+            (a, b) =>
+              new Date(b.createdDate).getTime() -
+              new Date(a.createdDate).getTime()
+          );
+
+          parentComment.replies.forEach((reply) => {
+            this.replyLimit[reply.uuid] = 2;
+            this.replyVisibility[reply.uuid] = false;
+            if (reply.replies) {
+              this.initializeNestedReplies(reply.replies);
+            }
+          });
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => console.error('❌ Error al obtener respuestas:', error),
+    });
+  }
+
+  initializeNestedReplies(replies: any[]): void {
+    replies.forEach((reply) => {
+      if (reply.replies && reply.replies.length > 0) {
+        reply.replies = reply.replies.sort(
+          (
+            a: { createdDate: string | number | Date },
+            b: { createdDate: string | number | Date }
+          ) =>
+            new Date(b.createdDate).getTime() -
+            new Date(a.createdDate).getTime()
+        );
+        this.initializeNestedReplies(reply.replies);
       }
+      this.replyLimit[reply.uuid] = 2;
+      this.replyVisibility[reply.uuid] = false;
+    });
+  }
 
-      this.cdr.detectChanges(); // 🔥 Forzar la actualización de la vista
-    },
-    error: (error) => console.error('❌ Error al obtener respuestas:', error)
-  });
-}
-
-
-
-  // Simulación de "Me gusta"  
   likeComment(comment: any): void {
     console.log(`Me gusta en el comentario: ${comment.content}`);
   }
 
-  // Simulación de "Responder"  
   replyToComment(comment: any): void {
     console.log(`Responder al comentario: ${comment.content}`);
   }
 
   calculateTimeFromNow(date: string) {
-    //  Interpretar la fecha con la zona horaria incluida (evitando doble conversión)
     const utcDate = moment.utc(date);
 
-  
-    //  Obtener la zona horaria real del usuario
     const userTimeZone = moment.tz.guess();
-  
-    //  Convertir la fecha a la zona horaria del usuario SIN modificar la hora
-    const localDate = utcDate.clone().tz(userTimeZone, true); 
-  
-   
-  
-    return localDate.fromNow(); // "Hace 5 minutos", "Hace 2 horas", etc.
+
+    const localDate = utcDate.clone().tz(userTimeZone, true);
+
+    return localDate.fromNow();
   }
-  
-  
+
   calculateTimePost() {
-    const postDate = new Date(this.post.date)
+    const postDate = new Date(this.post.date);
     const currentDate = new Date(Date.now());
-    const diferenciaMs: number = currentDate.getTime() - postDate.getTime(); // Diferencia en milisegundos
+    const diferenciaMs: number = currentDate.getTime() - postDate.getTime();
     const unMinuto = 60 * 1000;
     const unaHora = 60 * unMinuto;
     const unDia = 24 * unaHora;
@@ -180,7 +221,6 @@ loadReplies(commentUuid: string): void {
     } else if (diferenciaMs < sieteDias) {
       const dias = Math.floor(diferenciaMs / unDia);
       return `Hace ${dias} d`;
-
     } else {
       const opciones: Intl.DateTimeFormatOptions = {
         day: '2-digit',
@@ -193,149 +233,163 @@ loadReplies(commentUuid: string): void {
     }
   }
 
-  // Método para alternar la visibilidad del input de comentarios
   toggleCommentInput() {
     this.showCommentInput = true;
 
-    //  Espera un pequeño tiempo y luego pone foco en el input
     setTimeout(() => {
       this.commentInput?.nativeElement.focus();
     }, 100);
   }
 
-// Mostrar/Cerrar el input de respuesta
-toggleReplyInput(commentUuid: string) {
-  this.replyInputVisible[commentUuid] = !this.replyInputVisible[commentUuid];
+  toggleReplyInput(commentUuid: string) {
+    this.replyInputVisible[commentUuid] = !this.replyInputVisible[commentUuid];
 
-  // 🔥 Espera un pequeño tiempo y luego pone foco en el input
-  setTimeout(() => {
-    const inputElement = document.querySelector(`#replyInput-${commentUuid}`) as HTMLInputElement;
-    if (inputElement) {
-      inputElement.focus();
-    }
-  }, 100);
-}
+    setTimeout(() => {
+      const inputElement = document.querySelector(
+        `#replyInput-${commentUuid}`
+      ) as HTMLInputElement;
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, 100);
+  }
 
+  addReply(
+    commentUuid: string,
+    parentUuid: string | null,
+    isReplyToComment: boolean
+  ) {
+    const replyContent = this.replyText[parentUuid || commentUuid]?.trim();
+    if (!replyContent) return;
 
+    const replyData = {
+      content: replyContent,
+      userId: this.authService.getUserId(),
+      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      parentReplyUuid: isReplyToComment ? null : parentUuid,
+    };
 
-  //  Agregar respuesta a un comentario
-addReply(commentUuid: string) {
-  const replyContent = this.replyText[commentUuid]?.trim();
-  if (!replyContent) return;
-
-  this.postService.getUser().subscribe({
-    next: (user: UserDetail) => {
-      const replyData = {
-        content: replyContent,
-        user_name: user.name + ' ' + user.lastName,
-        user_photo: user.photo_profile_path,
-        userId: user.uuid,
-        date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS') // 🔥 Formato correcto de fecha
-      };
-
-      // 🔥 Llamada al backend para crear respuesta
-      this.postService.addReply(commentUuid, replyData).subscribe({
-        next: (newReply: any) => {
-          console.log("🔥 Nueva respuesta agregada:", newReply);
-
-          // 📌 Añadir la respuesta solo a este comentario
-          const parentComment = this.comments.find(c => c.uuid === commentUuid);
-          if (parentComment) {
-            parentComment.replies = parentComment.replies || [];
-
-            // Convertir `newReply` en un objeto que tenga todas las propiedades de `Reply`
+    this.postService.addReply(commentUuid, replyData).subscribe({
+      next: (newReply: any) => {
+        this.postService.getUser().subscribe({
+          next: (user: UserDetail) => {
             const formattedReply = {
-              uuid: newReply.uuid, //  UUID devuelto por el backend
+              uuid: newReply.uuid,
               content: newReply.content,
-              createdDate: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
-              user_name: newReply.user_name,
-              user_photo: newReply.user_photo
+              createdDate: newReply.date || newReply.createdDate,
+              name: user.name,
+              lastName: user.lastName,
+              user_photo: user.photo_profile_path,
+              replies: [],
             };
 
-            parentComment.replies.push(formattedReply); //  Agregar respuesta sin recargar
-            
-            // 🔥 Ordenar las respuestas en orden descendente (más reciente primero)
-            parentComment.replies.sort((a, b) => {
-              return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
-            });
-          }
+            if (isReplyToComment) {
+              const parentComment = this.comments.find(
+                (c) => c.uuid === commentUuid
+              );
+              if (parentComment) {
+                parentComment.replies = parentComment.replies || [];
+                parentComment.replies.unshift(formattedReply);
+              }
+            } else {
+              const findParentReply = (
+                replies: Reply[],
+                uuid: string
+              ): Reply | undefined => {
+                for (const reply of replies) {
+                  if (reply.uuid === uuid) return reply;
+                  if (reply.replies?.length) {
+                    const found = findParentReply(reply.replies, uuid);
+                    if (found) return found;
+                  }
+                }
+                return undefined;
+              };
 
-          this.replyText[commentUuid] = ""; // Limpiar el input
-          this.replyInputVisible[commentUuid] = false; //  Ocultar el input
-          this.cdr.detectChanges();
-        },
-        error: (error) => console.error('❌ Error al agregar respuesta:', error)
-      });
-    },
-    error: (error) => console.error('❌ Error al obtener el usuario:', error)
-  });
-}
+              let parentReplyFound = false;
+              for (const comment of this.comments) {
+                const parentReply = findParentReply(
+                  comment.replies || [],
+                  parentUuid || commentUuid
+                );
+                if (parentReply) {
+                  parentReply.replies = parentReply.replies || [];
+                  parentReply.replies.unshift(formattedReply);
 
-  
+                  parentReplyFound = true;
+                  break;
+                }
+              }
+
+              if (!parentReplyFound) {
+                console.error(
+                  `❌ No se encontró la respuesta padre con UUID: ${parentUuid}`
+                );
+              }
+            }
+
+            this.replyText[parentUuid || commentUuid] = '';
+            this.replyInputVisible[parentUuid || commentUuid] = false;
+
+            this.cdr.detectChanges();
+          },
+          error: (error) =>
+            console.error('❌ Error al obtener el usuario:', error),
+        });
+      },
+      error: (error) => console.error('❌ Error al agregar respuesta:', error),
+    });
+  }
 
   addComment() {
     if (!this.newComment.trim()) return;
 
-
     if (!this.post || !this.post.uuid) {
-      
       return;
     }
 
-   
-    this.postService.getUser().subscribe({
-      next: (user: UserDetail) => {
-        this.currentUser = user;
-      
-        const commentToAdd: Comment = {
-          uuid: '',
-          content: this.newComment,
-          date:  moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
-          user_name: this.currentUser.name + ' ' + this.currentUser.lastName,
-          user_photo: this.currentUser.photo_profile_path,
-          userId: this.currentUser.uuid,
-          moderated: false,
-          state: '',
-          reply_count: 0
-        };
-
-        this.comments.push(commentToAdd);
-
-        console.log("Date: ", moment());
-
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error al obtener el usuario actual', error);
-      }
-    });
-
-const commentData: PostComment = {
-    date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
-    postId: this.post.uuid,
-    id_user: this.authService.getUserId(),  // ✅ Corregido a `id_user`
-    content: this.newComment
-};
-
-    
-    
-    
-
-    console.log("Datos del comentario que se enviarán:", commentData);
+    const commentData: PostComment = {
+      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      postId: this.post.uuid,
+      id_user: this.authService.getUserId(),
+      content: this.newComment,
+    };
 
     this.postService.addComment(this.post.uuid, commentData).subscribe({
       next: (newComment) => {
-        console.log(" Comentario agregado en backend:", newComment);
+        this.postService.getUser().subscribe({
+          next: (user: UserDetail) => {
+            this.currentUser = user;
 
-        this.newComment = ''; //  Limpiar input
-        this.showCommentInput = false; //  Ocultar input
+            const commentToAdd: Comment = {
+              uuid: newComment.uuid || '',
+              content: newComment.content,
+              date: newComment.date,
+              user_name:
+                this.currentUser.name + ' ' + this.currentUser.lastName,
+              user_photo: this.currentUser.photo_profile_path,
+              userId: this.currentUser.uuid,
+              moderated: false,
+              state: '',
+              reply_count: 0,
+              replies: [],
+              reactions: [],
+            };
 
-    
-           // 🔥 Recargar comentarios para obtener la fecha correcta desde el backend
-      this.loadComments();
+            this.comments.unshift(commentToAdd);
+            this.cdr.detectChanges();
+
+            this.newComment = '';
+            this.showCommentInput = false;
+          },
+          error: (error) => {
+            console.error('❌ Error al obtener el usuario actual', error);
+          },
+        });
       },
-      error: (err) => console.error("❌ Error al agregar comentario", err)
+      error: (err) => {
+        console.error('❌ Error al agregar comentario', err);
+      },
     });
   }
-
-}  
+}
