@@ -183,13 +183,9 @@ export class CommentsComponent implements OnInit {
     });
   }
 
-  likeComment(comment: any): void {
-    console.log(`Me gusta en el comentario: ${comment.content}`);
-  }
+  likeComment(comment: any): void {}
 
-  replyToComment(comment: any): void {
-    console.log(`Responder al comentario: ${comment.content}`);
-  }
+  replyToComment(comment: any): void {}
 
   calculateTimeFromNow(date: string) {
     const utcDate = moment.utc(date);
