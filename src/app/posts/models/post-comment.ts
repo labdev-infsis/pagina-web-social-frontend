@@ -1,8 +1,7 @@
 export interface PostComment {
-
-    postId: string;
-    id_user: string;
-
-    content: string;
-    date: string; 
-  }
+  content: string;
+  date: string;
+  postId: string;
+  id_user: string;
+  uuid?: string;
+}
