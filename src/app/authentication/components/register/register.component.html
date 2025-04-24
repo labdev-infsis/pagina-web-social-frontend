@@ -18,7 +18,7 @@
             <form [formGroup]="registerForm" (ngSubmit)="register()" class="needs-validation" novalidate>
 
               <!-- Nombre Completo -->
-            <div class="mb-3 mt-3">
+            <div class="mb-3">
               <label for="fullName" class="form-label">Nombre Completo</label>
               <input type="text" class="form-control" [ngClass]="{'is-invalid': hasErrors('fullName', 'required')}" id="fullName" formControlName="fullName" />
               <div class="invalid-feedback" *ngIf="hasErrors('fullName', 'required')">
