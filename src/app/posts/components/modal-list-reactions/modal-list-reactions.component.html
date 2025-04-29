@@ -25,10 +25,14 @@
               <ng-container *ngFor="let reaction of reactions.reactions_by_user">
                 <div class="reactions-by-user d-flex flex-row gap-3">
                   <div class="img-profile">
-                    <img
+                    <img (mouseover)="showPopupUser.set(true)" 
+                      (mouseout)="showPopupUser.set(false)"
                       [src]="reaction.user_photo"
                       [alt]="'Foto de perfil'"
                     />
+                    <span *ngIf="showPopupUser()" class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+                      <button class="btn btn-primary" type="button" disabled>Disabled button</button>
+                    </span>
                   </div>
                   <div class="name-user d-flex align-items-center">
                     <p class="fw-semibold fs-6 mb-0">{{ reaction.user_name }}</p>
