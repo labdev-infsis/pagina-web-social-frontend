@@ -87,14 +87,11 @@ export class PostService {
     return this.http.post<UploadedMedia[]>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
   }
 
-    //Método para subir imagenes
+    //Método para subir imagenes a facebook
   uploadPhotoToFacebook(formData: FormData): Observable<FbUploadedMedia> {
-    const uploadImgs = 'photos'
-    const publishedStatus = 'false'
-    const headers = new HttpHeaders({
-      'Content-Type': 'multipart/formdata'
-      });
-    return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${uploadImgs}?published=${publishedStatus}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData)
+    const uploadImgs = 'photos';
+    const publishedStatus = 'false';
+    return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${uploadImgs}?published=${publishedStatus}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
   //Método para subir media (imagenes y videos)
