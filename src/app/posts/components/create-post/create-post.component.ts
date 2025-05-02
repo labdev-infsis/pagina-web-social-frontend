@@ -1,4 +1,4 @@
-import { Component, signal} from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,6 +10,7 @@ import { Institution } from '../../models/institution';
 import { UploadedDocument } from '../../models/uploaded-document';
 import moment from 'moment';
 import { CommentConfig } from '../../models/comment-config';
+import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 
 @Component({
   selector: 'app-create-post',
@@ -20,38 +21,39 @@ export class CreatePostComponent {
   institution!: Institution;
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
+  fbMediaResponse!: FbUploadedMedia;
   visibleAreaMedia = signal(false); //Mostrar seleccion y prevista de imagenes
   visibleAreaMediaDoc = signal(false); //Mostrar seleccion y prevista de documentos
   disableLoadImage = signal(false); //Deshabilitar el boton de cargar imagenes
   disableLoadDoc = signal(false); //Deshabilitar el boton de cargar documentos
   disabledPublishButton = signal(true); //Deshabilitar el boton de publicar
   postForm!: FormGroup;
-  listFile!: File[]; 
+  listFile!: File[];
   fileDoc!: File;
 
   constructor(
     private postService: PostService,
     private formBuilder: FormBuilder
-  ){}
+  ) { }
 
-  ngOnInit(){
+  ngOnInit() {
     const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
     //Obtener la informacion de la institucion
     this.postService.getInstitution(uuid).subscribe({
-      next:(institutionData: Institution)=>{
+      next: (institutionData: Institution) => {
         this.institution = institutionData
       },
-      error: (error)=>{
+      error: (error) => {
         console.log(error)
       }
     });
     //Obtener la configuracion de comentarios
     this.postService.getCommentsConfiguration().subscribe({
-      next: (commentsConfiguration: CommentConfig[])=>{
+      next: (commentsConfiguration: CommentConfig[]) => {
         this.commentConfig = commentsConfiguration;
         this.selectedCommentConfig = this.commentConfig[0].uuid;//Por defecto todos comentan
       },
-      error: (error)=>{
+      error: (error) => {
         console.log('Error al obtener la configuracion de comentarios', error)
       }
     })
@@ -60,13 +62,13 @@ export class CreatePostComponent {
 
   private buildForm() {
     this.postForm = this.formBuilder.group({
-      contentPost: ['',  [Validators.maxLength(1000)]],
+      contentPost: ['', [Validators.maxLength(1000)]],
       media: [[]],
       mediaDoc: [[]]
     });
   }
 
-  openModalCreatePost(){
+  openModalCreatePost() {
     const modalElement = document.getElementById('modalCreatePost');
     if (modalElement) {
       const modal = new Modal(modalElement);
@@ -75,52 +77,53 @@ export class CreatePostComponent {
   }
 
   //Deshabilitar el boton de publicar si no hay texto
-  getTextPost(text: string){
+  getTextPost(text: string) {
     this.postForm.get('contentPost')?.setValue(text);
     text != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   //Mostrar area de imagenes y deshabilitar el boton de cargar documentos
-  showAreaMedia(){
+  showAreaMedia() {
     this.visibleAreaMedia.set(true);
     this.disableLoadDoc.set(true);
   }
 
   //Ocultar area de imagenes
-  closeAreaMedia(option: boolean){
+  closeAreaMedia(option: boolean) {
     this.disableLoadDoc.set(option); //Habilitar el boton de cargar documentos
     this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
     this.listFile = [];//Limpiar la lista de imagenes
   }
 
   //Deshabilitar el boton de publicar si no hay imagenes
-  getFilesImagesPost(fileMedia: File[]){
+  getFilesImagesPost(fileMedia: File[]) {
     this.listFile = fileMedia;
     this.listFile ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
-  showAreaDoc(){
+  showAreaDoc() {
     this.visibleAreaMediaDoc.set(true);
     this.disableLoadImage.set(true);
   }
 
   //Ocultar area de documentos
-  closeAreaDoc(option: boolean){
+  closeAreaDoc(option: boolean) {
     this.disableLoadImage.set(option);
     this.disabledPublishButton.set(true);
-    this.fileDoc = new File([''],'');//Limpiar el archivo
+    this.fileDoc = new File([''], '');//Limpiar el archivo
   }
 
   //Deshabilitar el boton de publicar si no hay archivo
-  getFileDocPost(doc: File){
+  getFileDocPost(doc: File) {
     this.fileDoc = doc;
     this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
-  post(){
+  post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
+    const formDataFB = new FormData();
     const responseMedia: Media[] = []; //Respuesta de imagenes y videos guardados
     let responseDoc: Media;
     const post: CreatePost = {
@@ -134,21 +137,36 @@ export class CreatePostComponent {
     }
 
     //Si hay info para postear
-    if(valueFormPost.contentPost != '' || this.listFile || this.fileDoc){
-      if(this.listFile && this.listFile.length > 0){ //Si hay imagenes-videos se los procesa
+    if (valueFormPost.contentPost != '' || this.listFile || this.fileDoc) {
+      if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
-          file.type.includes('image')? formData.append('images', file) : formData.append('videos', file);
+          if (file.type.includes('image')) {
+            formData.append('images', file);
+            formDataFB.append('source', file);
+          } else if (file.type.includes('video')) {
+            formData.append('videos', file);
+          }
         });
 
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             uploadResponse.forEach((media, index) => {
+              this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
+                next: (fbPhoto: FbUploadedMedia) => {
+                  this.fbMediaResponse = fbPhoto;
+                  console.log('FaCebook Media ID:', this.fbMediaResponse);
+                },
+                error: (error) => {
+                  console.error('Error uploading photo', error);
+                }
+              });
               responseMedia.push({
                 number: index + 1,
                 type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
                 name: media.name,
-                path: media.urlResource
+                path: media.urlResource,
+                fb_media_id: this.fbMediaResponse.id
               });
             });
 
@@ -157,14 +175,15 @@ export class CreatePostComponent {
             return this.postService.createPost(post);
           })
         ).subscribe({
-          next: ()=> {
+          next: () => {
             window.location.reload()
           },
           error: (error) => {
-            console.log('Error al crear el post con contenido media (imagenes y/o videos)',error)
+            console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
           }
         })
-      }else if(this.fileDoc && this.fileDoc.size > 0){//Si hay un archivo
+
+      } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
         //Convertir el archivo en form data
         formData.append('file', this.fileDoc);
 
@@ -174,7 +193,8 @@ export class CreatePostComponent {
               number: 1,
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
-              path: uploadResponse.urlResource
+              path: uploadResponse.urlResource,
+              fb_media_id: ''
             }
 
             post.content.media?.push(responseDoc)
@@ -182,14 +202,14 @@ export class CreatePostComponent {
             return this.postService.createPost(post);
           })
         ).subscribe({
-          next: ()=> {
+          next: () => {
             window.location.reload()
           },
           error: (error) => {
-            console.log('Error al crear el post con archivo',error)
+            console.log('Error al crear el post con archivo', error)
           }
-        })      
-      }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+        })
+      } else if (valueFormPost.contentPost != '') {//Si solo tiene texto
 
         this.postService.createPost(post).subscribe({
           next: () => {
@@ -200,7 +220,7 @@ export class CreatePostComponent {
           }
         })
       }
-    }else{
+    } else {
       console.log('No hay datos para postear');
     }
   }

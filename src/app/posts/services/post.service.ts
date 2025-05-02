@@ -14,6 +14,7 @@ import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
 import { PostComment } from '../models/post-comment';
+import { FbUploadedMedia } from '../models/fb-uploaded-media';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,10 @@ import { PostComment } from '../models/post-comment';
 export class PostService {
 
   private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV}`;
+  private readonly GRAPH_API_URL = `${environment.GRAPH_FACEBOOK_API_URL}`;
+  private readonly FACEBOOK_PAGE_ID = `${environment.FACEBOOK_PAGE_ID}`;
+  private readonly FACEBOOK_PAGE_ACCESS_TOKEN = `${environment.FACEBOOK_PAGE_ACCESS_TOKEN}`;
+
   private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }) };
   private page = 0;
   private size = 5;
@@ -80,6 +85,16 @@ export class PostService {
   uploadVideos(formData: FormData): Observable<UploadedMedia[]> {
     const uploadImgs = 'videos/posts'
     return this.http.post<UploadedMedia[]>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
+  }
+
+    //Método para subir imagenes
+  uploadPhotoToFacebook(formData: FormData): Observable<FbUploadedMedia> {
+    const uploadImgs = 'photos'
+    const publishedStatus = 'false'
+    const headers = new HttpHeaders({
+      'Content-Type': 'multipart/formdata'
+      });
+    return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${uploadImgs}?published=${publishedStatus}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData)
   }
 
   //Método para subir media (imagenes y videos)

@@ -9,6 +9,7 @@ import { CreatePost } from '../../models/create-post';
 import { concatMap } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
+import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { Modal } from 'bootstrap';
 
 @Component({
@@ -34,6 +35,7 @@ export class ModalEditPostComponent {
   listNewMediaFile: File[] = []; //Lista de media editada obtenida de 'image-video-editor' component
   listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
   fileDoc!: File;  //Doc añadido en edicion
+  fbMediaResponse!: FbUploadedMedia;
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -172,6 +174,7 @@ export class ModalEditPostComponent {
   updatePost(){
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
+    const formDataFB = new FormData();
     const responseMedia: Media[] = []; //Respuesta de imagenes y videos guardados
     let responseDoc: Media;
     const editedPost: CreatePost = {
@@ -209,11 +212,21 @@ export class ModalEditPostComponent {
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             uploadResponse.forEach((media, index) => {
+              this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
+                next: (fbPhoto: FbUploadedMedia) => {
+                  this.fbMediaResponse = fbPhoto;
+                  console.log('FaCebook Media ID:', this.fbMediaResponse);
+                },
+                error: (error) => {
+                  console.error('Error uploading photo', error);
+                }
+              });
               responseMedia.push({
                 number: index + 1 + amountImagesPost,
                 type: media.type,
                 name: media.name,
-                path: media.urlResource
+                path: media.urlResource,
+                fb_media_id: this.fbMediaResponse.id
               });
             });
 
@@ -248,7 +261,8 @@ export class ModalEditPostComponent {
               number: 1,
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
-              path: uploadResponse.urlResource
+              path: uploadResponse.urlResource,
+              fb_media_id: ''
             }
 
             editedPost.content.media?.push(responseDoc)
