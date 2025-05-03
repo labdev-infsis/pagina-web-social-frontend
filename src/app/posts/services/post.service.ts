@@ -94,6 +94,21 @@ export class PostService {
     return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${uploadImgs}?published=${publishedStatus}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
+    //Método para subir imagenes a facebook
+  publishVideoToFacebook(formData: FormData, description: string): Observable<FbUploadedMedia> {
+      const resource = 'videos';
+      return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?description=${description}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
+  }
+
+  //Método para subir imagenes a facebook
+   publishDocumentToFacebook(formData: FormData, description: string, linkDoc: string): Observable<FbUploadedMedia> {
+        const resource = 'feed';
+        linkDoc = 'http://imagenes.fcyt.umss.edu.bo/Calendario%20academico-2025.pdf';
+        return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?message=${description}&link=${linkDoc}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
+    }
+
+
+
   //Método para subir media (imagenes y videos)
   uploadMedia(formData: FormData): Observable<UploadedMedia[]> {
     const imagesFormData = new FormData();

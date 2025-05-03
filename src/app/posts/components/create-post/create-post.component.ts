@@ -143,30 +143,46 @@ export class CreatePostComponent {
         Array.from(this.listFile).forEach((file) => {
           if (file.type.includes('image')) {
             formData.append('images', file);
-            formDataFB.append('source', file);
           } else if (file.type.includes('video')) {
             formData.append('videos', file);
           }
+          formDataFB.append('source', file);
         });
 
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             uploadResponse.forEach((media, index) => {
-              this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
-                next: (fbPhoto: FbUploadedMedia) => {
-                  this.fbMediaResponse = fbPhoto;
-                  console.log('FaCebook Media ID:', this.fbMediaResponse);
-                },
-                error: (error) => {
-                  console.error('Error uploading photo', error);
-                }
-              });
+
+              if( media.type.includes('image')) {
+                console.log("Posting Image");
+                this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
+                  
+                  next: (fbPhoto: FbUploadedMedia) => {
+                    this.fbMediaResponse = fbPhoto;
+                    console.log('Facebook Media ID:', this.fbMediaResponse);
+                  },
+                  error: (error) => {
+                    console.error('Error uploading photo', error);
+                  }
+                });
+              } else {
+                this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost).subscribe({
+                  next: (fbPhoto: FbUploadedMedia) => {
+                    this.fbMediaResponse = fbPhoto;
+                    console.log('Facebook Media ID:', this.fbMediaResponse);
+                  },
+                  error: (error) => {
+                    console.error('Error publishing video', error);
+                  }
+                });
+              }
+              
               responseMedia.push({
                 number: index + 1,
                 type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: this.fbMediaResponse.id
+                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : ''
               });
             });
 
@@ -186,9 +202,18 @@ export class CreatePostComponent {
       } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
         //Convertir el archivo en form data
         formData.append('file', this.fileDoc);
-
+        formDataFB.append('url', this.fileDoc);
         this.postService.uploadDocument(formData).pipe(
           concatMap((uploadResponse: UploadedDocument) => {
+            this.postService.publishDocumentToFacebook(formDataFB, valueFormPost.contentPost, uploadResponse.urlResource).subscribe({
+              next: (fbDocument: FbUploadedMedia) => {
+                this.fbMediaResponse = fbDocument;
+                console.log('Facebook Media ID:', this.fbMediaResponse);
+              },
+              error: (error) => {
+                console.error('Error uploading document', error);
+              }
+            });
             responseDoc = {
               number: 1,
               type: 'document',//uploadResponse.type,
