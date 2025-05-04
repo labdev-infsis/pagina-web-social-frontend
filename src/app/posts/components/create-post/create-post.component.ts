@@ -155,6 +155,7 @@ export class CreatePostComponent {
 
               if( media.type.includes('image')) {
                 console.log("Posting Image");
+                
                 this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
                   
                   next: (fbPhoto: FbUploadedMedia) => {
@@ -182,7 +183,8 @@ export class CreatePostComponent {
                 type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : ''
+                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
+                is_fb_posted: this.fbMediaResponse ? true : false
               });
             });
 
@@ -219,7 +221,8 @@ export class CreatePostComponent {
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
               path: uploadResponse.urlResource,
-              fb_media_id: ''
+              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
+              is_fb_posted: this.fbMediaResponse ? true : false
             }
 
             post.content.media?.push(responseDoc)

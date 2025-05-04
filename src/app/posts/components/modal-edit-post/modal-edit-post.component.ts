@@ -214,6 +214,7 @@ export class ModalEditPostComponent {
             uploadResponse.forEach((media, index) => {
 
               if( media.type.includes('image')) {
+                console.log("postingggg");
                 this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
                   next: (fbPhoto: FbUploadedMedia) => {
                     this.fbMediaResponse = fbPhoto;
@@ -240,7 +241,8 @@ export class ModalEditPostComponent {
                 type: media.type,
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: this.fbMediaResponse.id
+                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
+                is_fb_posted: this.fbMediaResponse ? true : false
               });
             });
 
@@ -285,7 +287,8 @@ export class ModalEditPostComponent {
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
               path: uploadResponse.urlResource,
-              fb_media_id: ''
+              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
+              is_fb_posted: this.fbMediaResponse ? true : false
             }
 
             editedPost.content.media?.push(responseDoc)

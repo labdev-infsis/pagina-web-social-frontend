@@ -3,5 +3,6 @@ export interface Media {
     type:   string;
     name:   string;
     path:   string;
-    fb_media_id: string
+    fb_media_id: string;
+    is_fb_posted: boolean
 }
