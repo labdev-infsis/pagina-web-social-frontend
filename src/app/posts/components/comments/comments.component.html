@@ -186,6 +186,7 @@
                   />
                   <div class="reply-input-container">
                     <input
+                      id="replyInput-{{ comment.uuid }}"
                       [(ngModel)]="replyText[comment.uuid]"
                       placeholder="Escribe una respuesta.."
                       class="reply-input"
@@ -212,6 +213,7 @@
                       let reply of comment.replies
                         | slice : 0 : replyLimit[comment.uuid]
                     "
+                    class="reply-wrapper"
                   >
                     <!-- Imagen del usuario que respondió -->
                     <div class="d-flex flex-row">
@@ -229,6 +231,7 @@
                         <span class="reply-time">{{
                           calculateTimeFromNow(reply.createdDate)
                         }}</span>
+
                         <button
                           class="reply-btn"
                           (click)="toggleReplyInput(reply.uuid)"
@@ -237,7 +240,7 @@
                         </button>
                       </div>
                     </div>
-
+                    <app-reactions [replyUuid]="reply.uuid"></app-reactions>
                     <!-- Input para escribir respuesta dentro de otra respuesta -->
                     <div
                       *ngIf="replyInputVisible[reply.uuid]"
@@ -256,10 +259,12 @@
                           [(ngModel)]="replyText[reply.uuid]"
                           placeholder="Escribe una respuesta..."
                           class="reply-input"
+                          id="replyInput-{{ reply.uuid }}"
                           (keydown.enter)="
                             addReply(comment.uuid, reply.uuid, false)
                           "
                         />
+
                         <button
                           class="send-reply-btn"
                           (click)="addReply(comment.uuid, reply.uuid, false)"
@@ -324,6 +329,7 @@
                         <span class="reply-time">{{
                           calculateTimeFromNow(reply.createdDate)
                         }}</span>
+
                         <button
                           class="reply-btn"
                           (click)="toggleReplyInput(reply.uuid)"
@@ -332,7 +338,7 @@
                         </button>
                       </div>
                     </div>
-
+                    <app-reactions [replyUuid]="reply.uuid"></app-reactions>
                     <!-- Input para escribir respuesta dentro de otra respuesta -->
                     <div
                       *ngIf="replyInputVisible[reply.uuid]"
@@ -348,6 +354,7 @@
                       />
                       <div class="reply-input-container">
                         <input
+                          id="replyInput-{{ reply.uuid }}"
                           [(ngModel)]="replyText[reply.uuid]"
                           placeholder="Escribe una respuesta..."
                           class="reply-input"

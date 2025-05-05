@@ -18,98 +18,15 @@ import 'moment/locale/es';
   styleUrl: './view-comments.component.scss',
 })
 export class ViewCommentsComponent implements OnInit {
-  @Input() postUuid!: string; // UUID del post
-  @Output() close = new EventEmitter<void>(); // Evento para cerrar el popup
+  @Input() postUuid!: string;
+  @Output() close = new EventEmitter<void>();
   @Input() post!: Post;
-  @Output() reactionUpdated = new EventEmitter<string>(); // Emitirá el UUID del comentario actualizado
+  @Output() reactionUpdated = new EventEmitter<string>();
 
   comments: Comment[] = [];
   newComment: string = ''; // Nuevo comentario
-  authenticated: boolean;
 
-  constructor(
-    private postService: PostService,
-    private commentService: CommentService,
-    private authService: AuthService,
-
-    private cdr: ChangeDetectorRef // 👈 Agregar esto
-  ) {
-    this.authenticated = authService.isAuthenticated();
-    moment.locale();
-  }
-
-  ngOnInit(): void {
-    this.loadComments();
-
-    // 🔥 Escuchar cuando `reactionUpdated` se emite desde `ReactionsComponent`
-    this.reactionUpdated.subscribe((commentUuid) => {
-      console.log(
-        `🔄 Recibida actualización de reacciones para comentario: ${commentUuid}`
-      );
-      this.updateReactions(commentUuid);
-    });
-  }
-
-  // Cargado de comentarios
-  loadComments(): void {
-    console.log('Cargando Comentarios....:');
-    this.postService.getPostComments(this.postUuid).subscribe({
-      next: (data: Comment[]) => {
-        if (!data || data.length === 0) {
-          console.warn('⚠️ No hay comentarios aún, esperando carga.'); // ✅ SOLO si está vacío
-          this.comments = [];
-          return;
-        }
-
-        this.comments = [...data.reverse()]; // 🔄 Recargar lista de comentarios
-        console.log('✅ Comentarios recargados:', this.comments);
-
-        // ✅ Llamamos `loadReactions` después de confirmar que `comments` está definido
-        this.comments.forEach((comment) => this.loadReactions(comment));
-
-        this.cdr.detectChanges(); // 🔄 Forzar actualización de la vista
-      },
-      error: (error) => {
-        console.error('❌ Error al recuperar comentarios', error);
-      },
-    });
-  }
-
-  loadReactions(comment: Comment) {
-    if (!comment || !comment.uuid) {
-      console.error(
-        '❌ No se puede cargar reacciones porque `comment` es undefined.'
-      );
-      return;
-    }
-
-    this.commentService.getCommentReactions(comment.uuid).subscribe({
-      next: (reactions) => {
-        comment.reactions = reactions || [];
-        comment.totalReactions = reactions.length; // ✅ Actualizamos la cantidad de reacciones
-
-        console.log(
-          `🔄 Total de reacciones actualizado: ${comment.totalReactions}`
-        );
-
-        this.cdr.detectChanges(); // 🔥 Asegurar que la UI se actualice con los nuevos datos
-      },
-      error: (error) => {
-        console.error('❌ Error al obtener reacciones del comentario:', error);
-      },
-    });
-  }
-
-  updateReactions(commentUuid: string) {
-    const comment = this.comments.find((c) => c.uuid === commentUuid);
-    if (comment) {
-      this.loadReactions(comment);
-    } else {
-      console.warn(
-        '⚠️ No se encontró el comentario en `ViewCommentsComponent`.'
-      );
-    }
-  }
+  ngOnInit(): void {}
 
   calculateTime(comment: Comment) {
     var dateComment = moment(comment.date).add(4, 'hours');

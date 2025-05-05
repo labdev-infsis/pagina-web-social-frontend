@@ -66,4 +66,46 @@ export class CommentService {
       `${this.BASE_URL}/comment/${commentUuid}/reactions`
     );
   }
+
+  // 🔁 Reacciones a respuestas (replies)
+  reactToReply(replyUuid: string, reactionData: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) return throwError(() => new Error('No autorizado'));
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post<any>(
+      `${this.BASE_URL}/reply-reactions/${replyUuid}`,
+      reactionData,
+      { headers }
+    );
+  }
+
+  updateReplyReaction(
+    reactionUuid: string,
+    reactionData: any
+  ): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) return throwError(() => new Error('No autorizado'));
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.put<any>(
+      `${this.BASE_URL}/reply-reactions/${reactionUuid}`,
+      reactionData,
+      { headers }
+    );
+  }
+
+  getReplyReactions(replyUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.BASE_URL}/reply-reactions/${replyUuid}`
+    );
+  }
 }

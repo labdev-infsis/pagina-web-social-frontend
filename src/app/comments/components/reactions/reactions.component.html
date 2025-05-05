@@ -1,34 +1,50 @@
-<div class="reaction-container" (mouseleave)="delayedCloseReactions()">
+<div class="reaction-container">
+  <div
+    class="reaction-hover-area"
+    (mouseenter)="toggleReactions(true)"
+    (mouseleave)="delayedCloseReactions()"
+  >
+    <!-- Botón principal de reacción -->
+    <button class="reaction-btn">
+      <span class="reaction-icon">
+        {{ selectedReaction || "👍" }}
+      </span>
+      <span class="reaction-text">
+        {{ getReactionText(selectedReaction) }}
+      </span>
+    </button>
 
-  <!-- Botón principal de reacción -->
-  <button class="reaction-btn" (mouseenter)="toggleReactions(true)">
-    <span class="reaction-icon">
-      {{ selectedReaction ? getEmojiByUuid(selectedReaction) : '👍' }}
-    </span>
-    <span class="reaction-text">
-      {{ getReactionText(selectedReaction) }}
-    </span>
-
-  </button>
-
-  <!-- Popup con las reacciones disponibles -->
-  <div class="reaction-popup"
-       *ngIf="showReactions"
-       (mouseenter)="toggleReactions(true)"
-       (mouseleave)="delayedCloseReactions()">
-       
-    <!-- Lista de emojis disponibles -->
-    <span *ngFor="let emoji of emojis" 
-          (click)="reactToComment(commentUuid, emoji)">
-      {{ emoji }}
-    </span>
+    <!-- Popup con las reacciones disponibles -->
+    <div class="reaction-popup" *ngIf="showReactions">
+      <span *ngFor="let emoji of emojis" (click)="reactToTarget(emoji)">
+        {{ emoji }}
+      </span>
+    </div>
   </div>
 
   <!-- Contador de reacciones agrupadas -->
-  <div class="reaction-summary" *ngIf="reactionCounts.length > 0">
+  <div
+    class="reaction-summary"
+    *ngIf="reactionCounts.length > 0"
+    (mouseenter)="showReactionDetails = true"
+    (mouseleave)="showReactionDetails = false"
+  >
     <span *ngFor="let reaction of reactionCounts">
       {{ reaction.emoji }} {{ reaction.count }}
     </span>
-  </div>
 
+    <!-- 🔥 Popup de detalles -->
+    <div class="reaction-detail-popup" *ngIf="showReactionDetails">
+      <div class="reaction-detail-item" *ngFor="let user of detailedReactions">
+        <img
+          [src]="user.userPhoto || 'assets/default-avatar.png'"
+          class="reaction-avatar"
+          alt="Avatar"
+          (error)="user.userPhoto = 'assets/default-avatar.png'"
+        />
+        <span class="reaction-name">{{ user.userName }}</span>
+        <span class="reaction-emoji">{{ user.emoji }}</span>
+      </div>
+    </div>
+  </div>
 </div>

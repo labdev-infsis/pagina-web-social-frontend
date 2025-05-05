@@ -236,17 +236,18 @@ export class CommentsComponent implements OnInit {
       this.commentInput?.nativeElement.focus();
     }, 100);
   }
+  toggleReplyInput(replyUuid: string) {
+    Object.keys(this.replyInputVisible).forEach((key) => {
+      this.replyInputVisible[key] = false;
+    });
 
-  toggleReplyInput(commentUuid: string) {
-    this.replyInputVisible[commentUuid] = !this.replyInputVisible[commentUuid];
+    this.replyInputVisible[replyUuid] = true;
 
     setTimeout(() => {
-      const inputElement = document.querySelector(
-        `#replyInput-${commentUuid}`
+      const input = document.querySelector(
+        `#replyInput-${replyUuid}`
       ) as HTMLInputElement;
-      if (inputElement) {
-        inputElement.focus();
-      }
+      if (input) input.focus();
     }, 100);
   }
 
