@@ -184,7 +184,8 @@ export class ModalEditPostComponent {
       content: {
         text: valueFormPost.contentPost,
         media: []
-      }
+      },
+      is_fb_posted: false
     }
 
     //Si hay info para postear (texto, imagen o video, documento)
@@ -213,36 +214,14 @@ export class ModalEditPostComponent {
           concatMap((uploadResponse: UploadedMedia[]) => {
             uploadResponse.forEach((media, index) => {
 
-              if( media.type.includes('image')) {
-                console.log("postingggg");
-                this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
-                  next: (fbPhoto: FbUploadedMedia) => {
-                    this.fbMediaResponse = fbPhoto;
-                    console.log('Facebook Media ID:', this.fbMediaResponse);
-                  },
-                  error: (error) => {
-                    console.error('Error uploading photo', error);
-                  }
-                });
-              } else {
-                this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost).subscribe({
-                  next: (fbPhoto: FbUploadedMedia) => {
-                    this.fbMediaResponse = fbPhoto;
-                    console.log('Facebook Media ID:', this.fbMediaResponse);
-                  },
-                  error: (error) => {
-                    console.error('Error publishing video', error);
-                  }
-                });
-              }
+
 
               responseMedia.push({
                 number: index + 1 + amountImagesPost,
                 type: media.type,
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
-                is_fb_posted: this.fbMediaResponse ? true : false
+                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : ''
               });
             });
 
@@ -273,26 +252,17 @@ export class ModalEditPostComponent {
         console.log('dentro', this.fileDoc)
         this.postService.uploadDocument(formData).pipe(
           concatMap((uploadResponse: UploadedDocument) => {
-            this.postService.publishDocumentToFacebook(formDataFB, valueFormPost.contentPost, uploadResponse.urlResource).subscribe({
-              next: (fbDocument: FbUploadedMedia) => {
-                this.fbMediaResponse = fbDocument;
-                console.log('Facebook Media ID:', this.fbMediaResponse);
-              },
-              error: (error) => {
-                console.error('Error uploading document', error);
-              }
-            });
+  
             responseDoc = {
               number: 1,
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
               path: uploadResponse.urlResource,
-              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
-              is_fb_posted: this.fbMediaResponse ? true : false
+              fb_media_id: ''
             }
 
             editedPost.content.media?.push(responseDoc)
-
+            editedPost.is_fb_posted = false;
             return this.postService.updatePost(this.postToEdit.uuid, editedPost);
           })
         ).subscribe({

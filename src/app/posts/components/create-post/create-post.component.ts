@@ -3,7 +3,7 @@ import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Media } from '../../models/media';
-import { concatMap } from 'rxjs';
+import { concatMap, of, forkJoin, map, catchError } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
@@ -30,6 +30,7 @@ export class CreatePostComponent {
   postForm!: FormGroup;
   listFile!: File[];
   fileDoc!: File;
+  isFbPosted!: boolean;
 
   constructor(
     private postService: PostService,
@@ -133,7 +134,8 @@ export class CreatePostComponent {
       content: {
         text: valueFormPost.contentPost.trim(),
         media: []
-      }
+      },
+      is_fb_posted: false
     }
 
     //Si hay info para postear
@@ -151,47 +153,52 @@ export class CreatePostComponent {
 
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
-            uploadResponse.forEach((media, index) => {
 
-              if( media.type.includes('image')) {
-                console.log("Posting Image");
-                
-                this.postService.uploadPhotoToFacebook(formDataFB).subscribe({
-                  
-                  next: (fbPhoto: FbUploadedMedia) => {
-                    this.fbMediaResponse = fbPhoto;
-                    console.log('Facebook Media ID:', this.fbMediaResponse);
-                  },
-                  error: (error) => {
-                    console.error('Error uploading photo', error);
-                  }
-                });
-              } else {
-                this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost).subscribe({
-                  next: (fbPhoto: FbUploadedMedia) => {
-                    this.fbMediaResponse = fbPhoto;
-                    console.log('Facebook Media ID:', this.fbMediaResponse);
-                  },
-                  error: (error) => {
-                    console.error('Error publishing video', error);
-                  }
-                });
-              }
-              
-              responseMedia.push({
+        // Crear array de observables para Facebook
+          const facebookUploads = uploadResponse.map((media, index) => {
+          const isImage = media.type.includes('image');
+          
+          const fbUpload$ = isImage 
+            ? this.postService.uploadPhotoToFacebook(formDataFB)
+            : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
+
+          this.isFbPosted = isImage ? false : true;
+
+          console.log('is image:' + this.isFbPosted);
+
+          return fbUpload$.pipe(
+            map(fbResponse => ({
+              number: index + 1,
+              type: isImage ? 'image' : 'video',
+              name: media.name,
+              path: media.urlResource,
+              fb_media_id: fbResponse.id,
+              is_fb_posted: this.isFbPosted
+            })),
+            catchError(error => {
+              //console.error(Error uploading ${isImage ? 'photo' : 'video'}, error);
+              return of({
                 number: index + 1,
-                type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
+                type: isImage ? 'image' : 'video',
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
-                is_fb_posted: this.fbMediaResponse ? true : false
+                fb_media_id: '',
+                is_fb_posted: this.isFbPosted
               });
-            });
+            })
+            
+          );
+        });
 
+        return forkJoin(facebookUploads).pipe(
+          map(responseMedia => {
             post.content.media = responseMedia;
-
+            post.is_fb_posted = this.isFbPosted;
             return this.postService.createPost(post);
           })
+        );
+      }),
+      concatMap(createPost$ => createPost$)
         ).subscribe({
           next: () => {
             window.location.reload()
@@ -210,25 +217,27 @@ export class CreatePostComponent {
             this.postService.publishDocumentToFacebook(formDataFB, valueFormPost.contentPost, uploadResponse.urlResource).subscribe({
               next: (fbDocument: FbUploadedMedia) => {
                 this.fbMediaResponse = fbDocument;
+                this.isFbPosted = true;
                 console.log('Facebook Media ID:', this.fbMediaResponse);
               },
               error: (error) => {
                 console.error('Error uploading document', error);
               }
             });
+
             responseDoc = {
               number: 1,
               type: 'document',//uploadResponse.type,
               name: uploadResponse.name,
               path: uploadResponse.urlResource,
-              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : '',
-              is_fb_posted: this.fbMediaResponse ? true : false
+              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : ''
             }
 
-            post.content.media?.push(responseDoc)
-
+            post.content.media?.push(responseDoc);
+            post.is_fb_posted = true;
             return this.postService.createPost(post);
           })
+             
         ).subscribe({
           next: () => {
             window.location.reload()
