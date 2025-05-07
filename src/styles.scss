@@ -40,4 +40,16 @@ body {
 // Popup sobre imagenes de usuarios
 .p-overlaypanel.p-component {
 	z-index: 1060 !important;
+
+	.p-overlaypanel-close {
+		border-radius: 50%;
+		background-color: #fff;
+		color: #7e7e7e;
+		top: 5px;
+		right: 5px;
+
+		&:hover {
+			background-color: #c9c7c7;
+		}
+	}
 }

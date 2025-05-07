@@ -25,14 +25,16 @@
               <ng-container *ngFor="let reaction of reactions.reactions_by_user">
                 <div class="reactions-by-user d-flex flex-row gap-3">
                   <div class="img-profile">
-                    <img (mouseover)="showPopupUser.set(true)" 
-                      (mouseout)="showPopupUser.set(false)"
+                    <img
+                      (mouseenter)="pop.toggle($event)"
                       [src]="reaction.user_photo"
                       [alt]="'Foto de perfil'"
                     />
-                    <span *ngIf="showPopupUser()" class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-                      <button class="btn btn-primary" type="button" disabled>Disabled button</button>
-                    </span>
+                    <app-popup-info-user #pop 
+                      [urlImage]="reaction.user_photo" 
+                      [nameUser]="reaction.user_name"
+                      [closeIcon]="true"
+                    ></app-popup-info-user>
                   </div>
                   <div class="name-user d-flex align-items-center">
                     <p class="fw-semibold fs-6 mb-0">{{ reaction.user_name }}</p>
@@ -52,9 +54,15 @@
                   <div class="reactions-by-user d-flex flex-row gap-3">
                     <div class="img-profile">
                       <img
+                        (mouseenter)="pop.toggle($event)"
                         [src]="reactionUser.user_photo"
                         [alt]="'Foto de perfil'"
                       />
+                      <app-popup-info-user #pop 
+                      [urlImage]="reactionUser.user_photo" 
+                      [nameUser]="reactionUser.user_name"
+                      [closeIcon]="true"
+                    ></app-popup-info-user>
                     </div>
                     <div class="name-user d-flex align-items-center">
                       <p class="fw-semibold fs-6 mb-0">{{ reactionUser.user_name }}</p>
