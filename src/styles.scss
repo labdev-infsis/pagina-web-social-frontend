@@ -5,6 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* Estilos base de PrimeNG */
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
 :root {
 	--main-width: 1440px;
 	--nav-width: 1020px;
@@ -31,4 +35,21 @@ body {
 	font-optical-sizing: auto;
 	font-style: normal;
 	font-size: 14px;
+}
+
+// Popup sobre imagenes de usuarios
+.p-overlaypanel.p-component {
+	z-index: 1060 !important;
+
+	.p-overlaypanel-close {
+		border-radius: 50%;
+		background-color: #fff;
+		color: #7e7e7e;
+		top: 5px;
+		right: 5px;
+
+		&:hover {
+			background-color: #c9c7c7;
+		}
+	}
 }
