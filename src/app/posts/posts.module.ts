@@ -27,7 +27,6 @@ import { CommentsModule } from '../comments/comments.module';
 import { NgbCarouselConfig, NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
-
 @NgModule({
   declarations: [
     ViewAllPostsComponent,

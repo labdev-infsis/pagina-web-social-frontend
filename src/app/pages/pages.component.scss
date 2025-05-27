@@ -1,0 +1,34 @@
+.container {
+	display: grid;
+	grid-template-columns: 1fr 4fr;
+	grid-template-rows: 1fr;
+	margin: 0 auto;
+	padding: 50px 0 0;
+	width: 1020px;
+
+	.main-container {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		padding-left: 20px;
+		width: 100%;
+		border-left: 1px solid var(--red-color);
+	}
+}
+
+@media screen and (max-width: 768px) {
+
+	.container {
+		display: flex;
+		flex-direction: column;
+		margin: 0 auto;
+		width: 100%;
+
+		.main-container {
+			padding: unset;
+			padding: 0 15px;
+			border-left: none;
+		}
+	}
+}

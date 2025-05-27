@@ -11,10 +11,40 @@
     height: 50px;
   }
 
+  .logo-small {
+    height: 35px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+    }
+  }
+
   .avatar-user {
     display: flex;
     gap: 10px;
+    align-items: center;
+
+    .icon-up-number {
+      position: relative;
+
+      .number-up {
+        position: absolute;
+        top: -5px;
+        left: 20px;
+        margin: 0;
+        padding: 1px 5px;
+        min-width: 20px;
+        font-size: 0.7rem;
+        color: white;
+        text-align: center;
+        border-radius: 50%;
+        background-color: var(--red-color);
+      }
+    }
   }
+
   .user-image {
     transition: transform 0.3s ease;
     border-radius: 50%;

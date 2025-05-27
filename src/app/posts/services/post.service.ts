@@ -46,6 +46,11 @@ export class PostService {
     return this.http.get<any>(`${this.ROOT_URL}/${getUser}`, this.reqHeader)
   }
 
+  // Método para obtener el número de seguidores de una institución
+  getNumberFollowers(uuid: string): Observable<any> {
+    return this.http.get<number>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);;
+  }
+
   // Método para obtener un post por uuid
   getPost(postUuid: string): Observable<Post> {
     return this.http.get<Post>(`${this.ROOT_URL}/posts/${postUuid}`);
@@ -195,10 +200,7 @@ export class PostService {
     return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`);
   }
 
-
   // Método para agregar un comentario a un post usando uuid
-
-
   addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
     const endpoint = `post/${uuid}/comments`; 
     const token = localStorage.getItem('token');
@@ -215,10 +217,9 @@ export class PostService {
 
     const fullUrl = `${this.ROOT_URL}/${endpoint}`;
 
-
     return this.http.post<PostComment>(fullUrl, commentData, { headers });
-
   }
+
   //Obtener todas las fotos de la institucion 
   getInstitutionPhotos(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/photos`;

@@ -1,0 +1,30 @@
+<div class="modal fade" id="moderateCommentModal" tabindex="-1" aria-labelledby="moderateCommentModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="moderateCommentModalLabel">Moderar comentarios</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<h1>{{ totalModeratedComments }}</h1>
+				<div class="comment-content" *ngFor="let comment of listComments">
+					<img src="{{ comment.user_photo }}" alt="" class="avatar">
+					<div class="content">
+						<div class="header-comment">
+							<h2>{{ comment.user_name }}</h2>
+							<div class="action">
+								<div class="toggle">
+									<input type="checkbox" id="button-moderate-{{ comment.uuid }}" (change)="onButtonApprovComment($event)" [value]="comment.uuid">
+									<label for="button-moderate-{{ comment.uuid }}"></label>
+								</div>
+								<button class="icon-delete" (click)="onButtonDeleteComment(comment.uuid)"></button>
+							</div>
+						</div>
+						<p class="comment">{{ comment.content }}</p>
+						<div class="date">{{ comment.date }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
