@@ -32,3 +32,23 @@ body {
 	font-style: normal;
 	font-size: 14px;
 }
+
+div.p-toast.p-component {
+    .p-toast-message-content {
+		padding: 10px 5px 10px 0;
+
+        .p-toast-message-icon {
+			display: flex;
+            margin: 5px 10px 0 !important;
+
+			.p-icon {
+				width: 1.5rem !important;
+				height: 1.5rem !important;
+			}
+        }
+
+		.p-toast-icon-close {
+			border-radius: 50%;
+		}
+    }
+}

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,7 +33,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     HttpClientModule,
     FontAwesomeModule,
     NgbModule,
-    PdfViewerModule
+    PdfViewerModule,
+    BrowserAnimationsModule
 ],
   providers: [],
   bootstrap: [AppComponent]
