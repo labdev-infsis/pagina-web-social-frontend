@@ -24,8 +24,10 @@ import { PhotosGalleryComponent } from './components/photos-gallery/photos-galle
 import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
 import { HomePhotosSectionComponent} from './components/home-photos-section/home-photos-section.component';
 import { CommentsModule } from '../comments/comments.module';
-import { NgbCarouselConfig, NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PopupInfoUserComponent } from './components/popup-info-user/popup-info-user.component';
 
 
 @NgModule({
@@ -49,7 +51,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ViewPostDetailComponent,
     PhotosGalleryComponent,
     VideosGalleryComponent,
-    HomePhotosSectionComponent
+    HomePhotosSectionComponent,
+    PopupInfoUserComponent
   ],
   imports: [
     CommonModule,
@@ -57,7 +60,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     FormsModule,
     CommentsModule,
     NgbCarouselModule,
-    PdfViewerModule
+    PdfViewerModule,
+    OverlayPanelModule,
   ],
   exports: [
     ViewAllPostsComponent,

@@ -5,6 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* Estilos base de PrimeNG */
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
 :root {
 	--main-width: 1440px;
 	--nav-width: 1020px;
@@ -35,20 +39,38 @@ body {
 
 div.p-toast.p-component {
     .p-toast-message-content {
-		padding: 10px 5px 10px 0;
+		  padding: 10px 5px 10px 0;
 
         .p-toast-message-icon {
-			display: flex;
+			      display: flex;
             margin: 5px 10px 0 !important;
 
-			.p-icon {
-				width: 1.5rem !important;
-				height: 1.5rem !important;
-			}
+            .p-icon {
+              width: 1.5rem !important;
+              height: 1.5rem !important;
+            }
         }
 
-		.p-toast-icon-close {
-			border-radius: 50%;
-		}
+        .p-toast-icon-close {
+          border-radius: 50%;
+        }
     }
+}
+
+// Popup sobre imagenes de usuarios
+.p-overlaypanel.p-component {
+	z-index: 1060 !important;
+
+	.p-overlaypanel-close {
+		border-radius: 50%;
+		background-color: #fff;
+		color: #7e7e7e;
+		top: 5px;
+		right: 5px;
+
+		&:hover {
+			background-color: #c9c7c7;
+		}
+	}
+
 }

@@ -15,7 +15,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CommentsComponent } from './posts/components/comments/comments.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   declarations: [
@@ -26,6 +25,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     AuthenticationModule,
     CommonModule,

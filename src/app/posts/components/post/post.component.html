@@ -20,7 +20,13 @@
   <div class="header-post">
     @if (institution) {
       <div class="data-user">
-        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" (mouseenter)="pop.toggle($event)"/>
+        <app-popup-info-user #pop
+          [urlImage]="institution.logo_url"
+          [nameUser]="institution.name"
+          [email]="institution.email"
+          [closeIcon]="true"
+        ></app-popup-info-user>
         <div class="info-user">
           <h2>{{ institution.name }}</h2>
           <p>{{ calculateTimePost() }}</p>
