@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,7 +15,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CommentsComponent } from './posts/components/comments/comments.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   declarations: [
@@ -25,6 +25,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     AuthenticationModule,
     CommonModule,
@@ -32,7 +33,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     HttpClientModule,
     FontAwesomeModule,
     NgbModule,
-    PdfViewerModule
+    PdfViewerModule,
+    BrowserAnimationsModule
 ],
   providers: [],
   bootstrap: [AppComponent]

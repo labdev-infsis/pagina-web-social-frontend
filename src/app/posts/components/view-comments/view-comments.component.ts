@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PostService } from '../../services/post.service';
-import { CommentService } from '../../../comments/services/comment.service';
+import { CommentService  } from '../../../comments/services/comment.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment } from '../../models/comment';
 import { PostComponent } from '../post/post.component';
@@ -12,10 +12,11 @@ import moment from 'moment';
 //import moment from 'moment-timezone';
 import 'moment/locale/es';
 
+
 @Component({
   selector: 'app-view-comments',
   templateUrl: './view-comments.component.html',
-  styleUrl: './view-comments.component.scss',
+  styleUrl: './view-comments.component.scss'
 })
 export class ViewCommentsComponent implements OnInit {
   @Input() postUuid!: string;
@@ -28,7 +29,11 @@ export class ViewCommentsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  calculateTime(comment: Comment) {
+
+
+
+  calculateTime(comment : Comment) {
+    
     var dateComment = moment(comment.date).add(4, 'hours');
     return dateComment.fromNow();
     /*
@@ -62,10 +67,13 @@ export class ViewCommentsComponent implements OnInit {
       };
       return postDate.toLocaleDateString('es-ES', opciones);
     }*/
+
   }
 
-  // Agregar un nuevo comentario
-  /* 
+
+
+// Agregar un nuevo comentario
+/* 
 addComment(): void {
   if(this.newComment.trim()) {
   this.comments.push({
@@ -77,18 +85,18 @@ addComment(): void {
   }
 */
 
-  // Cerrar el popup
-  closePopup(): void {
-    this.close.emit();
-  }
+// Cerrar el popup  
+closePopup(): void {
+  this.close.emit();
+}
 
-  // Simulación de "Me gusta"
-  likeComment(comment: any): void {
-    console.log(`Me gusta en el comentario: ${comment.content}`);
-  }
+// Simulación de "Me gusta"  
+likeComment(comment: any): void {
+  console.log(`Me gusta en el comentario: ${comment.content}`);
+}
 
-  // Simulación de "Responder"
-  replyToComment(comment: any): void {
-    console.log(`Responder al comentario: ${comment.content}`);
-  }
+// Simulación de "Responder"  
+replyToComment(comment: any): void {
+  console.log(`Responder al comentario: ${comment.content}`);
+}  
 }

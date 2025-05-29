@@ -1,12 +1,11 @@
 .container {
-    background-image: linear-gradient(rgb(0 55 112 / 99%), rgb(225 39 39 / 90%));
     border-radius: 0.5rem;
     padding: 1.7rem 2rem;
+    border: 1px solid var(--blue-color);
 }
 
 .modal-content {
-    color: white;
-    background-image: linear-gradient(rgb(2 62 115 / 70%), rgb(242 29 47 / 70%));
+    color: var(--blue-color);
     padding: 2rem 1rem;
 }
 
@@ -17,22 +16,16 @@
     align-items: center;
     text-align: center;  
     padding: 0;  
-
     position: relative;
-
-
-
 }
 
 .modal-title {
     flex: 1;  
     text-align: center; 
-    color: white; 
+    color: var(--blue-color); 
 }
 
 .btn-close {
-    color: green; 
-    background: transparent;
     border: none; 
     font-size: 1.25rem; 
     line-height: 1;  
@@ -59,9 +52,12 @@
     position: relative;
 }
 
+input {
+    border: 1px solid var(--blue-color);
+}
+
 .is-invalid ~ .invalid-feedback {
-    color: white;
-    text-shadow: 0px 1px 3px red;
+    color: var(--red-color);
 }
 
 .bi {
@@ -75,7 +71,11 @@
 
 
 .bi:hover {
-    color: var(--bs-body-color);
+    color: var(--blue-color);
+}
+
+.hide {
+    display: none !important;
 }
 
 @media (max-width: 576px) {

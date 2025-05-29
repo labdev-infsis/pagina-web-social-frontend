@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import { RegisterComponent } from './components/register/register.component';
+import { ToastModule } from 'primeng/toast';
 @NgModule({
   declarations: [LoginComponent, ChangePasswordComponent, CreateAccountComponent, RegisterComponent],
   imports: [
@@ -19,7 +20,8 @@ import { RegisterComponent } from './components/register/register.component';
     FormsModule,
     RouterModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToastModule
   ],
   exports: [LoginComponent, CreateAccountComponent, RegisterComponent],
   providers: [

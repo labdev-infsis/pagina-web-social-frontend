@@ -11,4 +11,5 @@ export interface Post {
     content:           Content;
     reactions:         Reactions;
     commentCounter:    CommentCounter;
+    is_fb_posted: boolean;
 }

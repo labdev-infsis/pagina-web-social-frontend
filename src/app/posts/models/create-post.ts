@@ -5,4 +5,5 @@ export interface CreatePost {
     date:              string;
     comment_config_id: string;
     content:           Content;
+    is_fb_posted: boolean;
 }
