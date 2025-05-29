@@ -1,10 +1,13 @@
 import { Role } from "./role";
 
-export class User {
-    id?: number;
-    name?: string;
-    phone?: number;
-    password?: string;
-    password_confirmation?: string;
-    old_password?: string;
+export interface User {
+    uuid:               string;
+    name:               string;
+    lastName:           string;
+    email:              string;
+    password:           string;
+    confirm_password:   string;
+    phone?:             number;
+    photoProfilePath?:  string;
+    photoPortadaPath?:  string;
 }

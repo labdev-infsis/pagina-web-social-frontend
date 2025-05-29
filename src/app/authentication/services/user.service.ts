@@ -34,10 +34,9 @@ export class UserService {
     return this.userDatastoreService.findById(id);
   }
 
-  public changePassword(user: User, credentials: any) {
-    user.old_password = credentials.old_password;
+  public changePassword(user: User, credentials: User) {
     user.password = credentials.password;
-    user.password_confirmation = credentials.password_confirmation;
+    user.confirm_password = credentials.confirm_password;
 
     return this.userDatastoreService.changePassword(user);
   }
