@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { User } from '../models/user';
 import { JwtDecodeService } from './jwt-decode.service';
 import { map } from 'rxjs/operators';
+import { User } from '../models/user';
+import { NewUser } from '../models/new-user';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +16,9 @@ export class AuthService {
 
   public token : any
   constructor(
-    private http: HttpClient,
-    private router: Router,
-    private jwtDecodeService: JwtDecodeService
+    private readonly http: HttpClient,
+    private readonly router: Router,
+    private readonly jwtDecodeService: JwtDecodeService
   ) {
   }
 
@@ -44,27 +45,9 @@ export class AuthService {
       );
   }
 
-  // Agregar el método register MARCOS AÑADIDO
-  register(email: string, password: string) {
-    let user = {
-      email,
-      password
-    };
-
-    return this.http.post<any>('http://localhost:9090/api/auth/' + 'register', user) 
-      .pipe(
-        map(user => {
-          this.token = user.accessToken;
-          localStorage.setItem('token', this.token);
-
-          return true;
-        })
-      );
+  register(newUser: NewUser) {
+    return this.http.post<{ message: string}>(this.ROOT_URL + '/register', newUser);
   }
-
-
-
-
 
   getToken() {
     return localStorage.getItem('token');
@@ -85,7 +68,7 @@ export class AuthService {
     try {
         // 🔥 Decodificar el token para extraer el userId
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId || null;
+        return payload.userId ?? null;
     } catch (error) {
         console.error("Error al decodificar el token:", error);
         return null;
@@ -98,7 +81,7 @@ export class AuthService {
   }
 
   getRoles() {
-    var roles = localStorage.getItem('roles');
+    let roles = localStorage.getItem('roles');
     if (roles) {
       return roles.split(',');
     }
@@ -108,9 +91,9 @@ export class AuthService {
   }
 
   tokenHasExpired() {
-    var convertDate = parseInt(localStorage.getItem('expires') || '') * 1000;
-    var expireDate = new Date(convertDate);
-    var currentDate = new Date();
+    let convertDate = parseInt(localStorage.getItem('expires') ?? '') * 1000;
+    let expireDate = new Date(convertDate);
+    let currentDate = new Date();
 
     return currentDate > expireDate;
   }
