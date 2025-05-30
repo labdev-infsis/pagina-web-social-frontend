@@ -1,117 +1,113 @@
 .create-post-container {
-    background-color: #ffffff; 
-    padding: 20px;
-    border-radius: 10px; 
-    margin-bottom: 20px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); 
-    border: 1px solid #e0e0e0;
-    width: 500px;
-    max-width: 500px;
-  
-    .img-profile{
-      width: 50px; 
-      height: 50px;
-      border-radius: 50%; 
-      border: 1px solid #ccc; 
-    }
-  
-    .new-post {
-      align-content: center;
-      background-color: rgb(240, 242, 245);
-      border-radius: 30px;
-      width: 100%;
-      height: 40px;
-      cursor: pointer;
-    }
+	margin-bottom: 40px;
+	padding-bottom: 20px;
+	width: 100%;
+	border-bottom: 1px solid var(--red-color);
 
-    .new-post:hover{
-      background-color: #E4E6E9;
-    }
+	.img-profile {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: 1px solid #ccc;
+	}
 
-    p{
-      font-size: 1.1rem; 
-      font-weight: normal;
-      color: #67696C;
-      margin: 0 15px 0 15px;
-    }
-    
-    @media (max-width: 992px) {
-      width: 356px;
-    }
-  }
+	.new-post {
+		padding-top: 10px;
+		padding-left: 30px;
+		width: 100%;
+		height: 40px;
+		color: var(--blue-color);
+		border-radius: 30px;
+		cursor: pointer;
+		border: 1px solid var(--blue-color);
+
+		p {
+			font-family: var(--primary-font-family);
+			font-size: 14px;
+			font-weight: normal;
+		}
+	}
+
+	.new-post:hover {
+		color: white;
+		background-color: var(--blue-color);
+	}
+
+}
 
 // Modal crear nuevo post
 .modal-title {
-  margin: 0 auto;
+	margin: 0 auto;
 }
 
 .user-post-container {
 
-  .img-profile{
-    width: 42px; 
-    height: 42px;
-    border-radius: 50%; 
-    border: 1px solid #ccc; 
-  }
+	.img-profile {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: 1px solid #ccc;
+	}
 
-  p {
-    margin: 0;
-    align-content: center;
-  }
+	p {
+		margin: 0;
+		align-content: center;
+	}
 
-  #option-comment {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #f8f8f8;
-    cursor: pointer;
-    color: #000;
-  }
+	#option-comment {
+		font-size: 13px;
+		font-weight: 600;
+		padding: 4px;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+		background-color: #f8f8f8;
+		cursor: pointer;
+		color: #000;
+	}
 }
 
-.form > .container {
-  max-height: 250px;
-  overflow-y: auto;
+.form>.container {
+	max-height: 250px;
+	overflow-y: auto;
 
 }
 
 .add-media {
-  border-radius: 10px;
-  box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1); 
-  border: 1.5px solid #e0e0e0;
-  height: 40px;
-  margin: 10px 0;
-  padding: 0 10px;
+	border-radius: 10px;
+	box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1);
+	border: 1.5px solid #e0e0e0;
+	height: 40px;
+	margin: 10px 0;
+	padding: 0 10px;
 
 
-  span {
-    width: 32px;
-    height: 32px;
-    justify-content: center;
-    cursor: pointer;
+	span {
+		width: 32px;
+		height: 32px;
+		justify-content: center;
+		cursor: pointer;
 
-    .bi-image {
-      color: #46bd63;
-    }
+		.bi-image {
+			color: #46bd63;
+		}
 
-    .bi-file-earmark-text-fill {
-      color: #1877F2;
-    }
+		.bi-file-earmark-text-fill {
+			color: #1877F2;
+		}
 
-    
-  }
-  
-  .disabled {
-    i {
-      color: #D9D9D9;
-      cursor: default;
-    }
-  }
-  span:hover {
-    border-radius: 50%;
-    background-color: #F2F2F2;
-    
-  }
+
+	}
+
+	.disabled {
+		i {
+			color: #D9D9D9;
+			cursor: default;
+		}
+	}
+
+	span:hover {
+		border-radius: 50%;
+		background-color: #F2F2F2;
+
+	}
 }

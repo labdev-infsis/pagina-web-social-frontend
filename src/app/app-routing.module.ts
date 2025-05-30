@@ -1,13 +1,19 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './authentication/components/login/login.component';
 import { ViewAllPostsComponent } from './posts/components/view-all-posts/view-all-posts.component';
 import { PhotosGalleryComponent } from './posts/components/photos-gallery/photos-gallery.component';
 import { VideosGalleryComponent } from './posts/components/videos-gallery/videos-gallery.component';
+import { PagesComponent } from './pages/pages.component';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { AgreementsComponent } from './pages/agreements/agreements.component';
+import { ProjectsComponent } from './pages/projects/projects.component';
+import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/scholarships-mobility.component';
+import { MembershipsComponent } from './pages/memberships/memberships.component';
+import { ReportsComponent } from './pages/reports/reports.component';
 
 const routes: Routes = [
-  /* { path: 'login', redirectTo: 'login', pathMatch: 'full' }, */
   {
     path: '', component: HomeComponent,
     children: [
@@ -16,6 +22,19 @@ const routes: Routes = [
         path: 'posts',
         component: ViewAllPostsComponent
       },
+      { path: 'informacion',
+        component: PagesComponent,
+        children: [
+          { path: '', redirectTo: 'presentacion', pathMatch: 'full' },
+          { path: 'presentacion', component: AboutUsComponent },
+          { path: 'convenios', component: AgreementsComponent },
+          { path: 'proyectos', component: ProjectsComponent },
+          { path: 'becas-movilidad', component: ScholarshipsMobilityComponent },
+          { path: 'membresias', component: MembershipsComponent },
+          { path: 'informes-gestion', component: ReportsComponent },
+          { path: '**', redirectTo: 'presentacion', pathMatch: 'full' }
+        ]
+      },
       { path: 'fotos', 
         component: PhotosGalleryComponent
       },
@@ -23,9 +42,7 @@ const routes: Routes = [
         component: VideosGalleryComponent
       }
     ]
-  },
- /*  { path: 'login', component: LoginComponent },
-  { path: '**', component: LoginComponent } */
+  }
 ];
 
 @NgModule({
