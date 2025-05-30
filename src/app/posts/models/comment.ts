@@ -3,7 +3,7 @@ export interface Comment {
     content: string;
     moderated: boolean;
     state: string;
-  date: string;
+    date: string;
     user_name: string;
     user_photo: string;
     userId: string;
@@ -15,9 +15,12 @@ export interface Comment {
 
 // interfaz para las respuestas de los Comentarios
 export interface Reply {
-    uuid: string;
-    content: string;
-    createdDate: string;
-    user_name: string;
-    user_photo: string;
+  uuid: string;
+  content: string;
+  createdDate: string;
+  name: string;
+  lastName: string;
+  user_photo: string;
+  parentReplyUuid?: string;
+  replies: Reply[];
 }

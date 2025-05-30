@@ -29,6 +29,7 @@
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.47",
     "ng2-pdf-viewer": "^10.4.0",
+    "pdfjs-dist": "^5.1.91",
     "primeng": "^17.18.15",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
