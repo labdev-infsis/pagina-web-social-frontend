@@ -2,23 +2,23 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { JwtDecodeService } from './jwt-decode.service';
 import { map } from 'rxjs/operators';
-import { User } from '../models/user';
 import { NewUser } from '../models/new-user';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  
-  private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV_AUTH}`;
 
-  public token : any
+  private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV_AUTH}`;
+  private jwtHelper = new JwtHelperService();
+
+
+  public token: any
   constructor(
     private readonly http: HttpClient,
-    private readonly router: Router,
-    private readonly jwtDecodeService: JwtDecodeService
+    private readonly router: Router
   ) {
   }
 
@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   register(newUser: NewUser) {
-    return this.http.post<{ message: string}>(this.ROOT_URL + '/register', newUser);
+    return this.http.post<{ message: string }>(this.ROOT_URL + '/register', newUser);
   }
 
   getToken() {
@@ -59,25 +59,20 @@ export class AuthService {
 
   getUserId() {
     const token = this.getToken();
-    
+
     if (!token) {
-        console.warn("⚠️ No hay token en localStorage.");
-        return null;
+      console.warn("⚠️ No hay token en localStorage.");
+      return null;
     }
 
     try {
-        // 🔥 Decodificar el token para extraer el userId
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId ?? null;
+      // 🔥 Decodificar el token para extraer el userId
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId ?? null;
     } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        return null;
+      console.error("Error al decodificar el token:", error);
+      return null;
     }
-}
-
-
-  getAdvisorId(){
-    return localStorage.getItem('advisorId');
   }
 
   getRoles() {
@@ -98,13 +93,49 @@ export class AuthService {
     return currentDate > expireDate;
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('roles');
-    localStorage.removeItem('userid');
-    localStorage.removeItem('expires');
-    localStorage.removeItem('doctorId');
-    this.router.navigate(['/login']);
+  // Check if token is expired
+  isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    return this.jwtHelper.isTokenExpired(token);
   }
+
+  // Clean local storage and redirect
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    //window.location.reload();
+    this.router.navigate(['/']);
+    
+  }
+
+  // Method to check token periodically
+  checkTokenExpiration(): void {
+    if (this.isTokenExpired()) {
+      this.logout();
+    }
+  }
+
+  startTokenExpirationTimer(): void {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
+
+    // Add null check here
+    if (!expirationDate) {
+      this.logout();
+      return;
+    }
+
+    const expiresIn = expirationDate.getTime() - Date.now();
+
+    // Set timeout slightly before actual expiration
+    setTimeout(() => {
+      this.logout();
+    }, expiresIn - 5000); // 5 seconds before actual expiration
+  }
+
+
 }

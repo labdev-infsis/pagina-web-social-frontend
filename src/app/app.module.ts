@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './authentication/http-interceptors/auth-interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -24,6 +26,7 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/scholarships-mobility.component';
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +55,13 @@ import { ReportsComponent } from './pages/reports/reports.component';
     PdfViewerModule,
     BrowserAnimationsModule
 ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

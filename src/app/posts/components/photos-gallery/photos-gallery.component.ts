@@ -6,6 +6,7 @@ import { PostComment } from '../../models/post-comment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import moment from 'moment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-photos-gallery',
@@ -26,13 +27,13 @@ export class PhotosGalleryComponent implements OnInit {
   }
 
   ngOnInit() {
-    const uuidIntitutionDric = '93j203b4-f63b-4c4a-be05-eae84cef0c0c';
-    this.postService.getInstitution(uuidIntitutionDric).subscribe({
+
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
+    this.postService.getInstitution(intitutionUUID).subscribe({
       next: (dataInstitution: Institution) => {
         this.institution = dataInstitution;
         this.loadPhotos(); // Llama a loadPhotos después de obtener la institución
 
-        console.log("Instituion: " + JSON.stringify(this.institution));
       },
       error: (error) => {
         console.log(error);
@@ -51,7 +52,6 @@ export class PhotosGalleryComponent implements OnInit {
             postUuid: `${photo.uuid_post}`
           }));
           this.isLoading = false;
-          console.log('Photos loaded:', this.photos);
         },
         error: (error) => {
           console.error('Error loading photos', error);

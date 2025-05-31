@@ -12,18 +12,21 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/scholarships-mobility.component';
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
+import { authGuard } from './authentication/services/auth.guard';
 
 const routes: Routes = [
   {
-    path: '', component: HomeComponent,
+    path: '', component: HomeComponent, 
     children: [
-      { path: '', redirectTo: '/posts', pathMatch: 'full' },
+      { path: '', redirectTo: '/posts', pathMatch: 'full'},
       {
         path: 'posts',
-        component: ViewAllPostsComponent
+        component: ViewAllPostsComponent,
+        //canActivate: [authGuard]  
       },
       { path: 'informacion',
         component: PagesComponent,
+        //canActivate: [authGuard],
         children: [
           { path: '', redirectTo: 'presentacion', pathMatch: 'full' },
           { path: 'presentacion', component: AboutUsComponent },

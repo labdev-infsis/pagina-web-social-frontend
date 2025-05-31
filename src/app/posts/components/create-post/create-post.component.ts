@@ -11,6 +11,7 @@ import { UploadedDocument } from '../../models/uploaded-document';
 import moment from 'moment';
 import { CommentConfig } from '../../models/comment-config';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-create-post',
@@ -38,9 +39,9 @@ export class CreatePostComponent {
   ) { }
 
   ngOnInit() {
-    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
     //Obtener la informacion de la institucion
-    this.postService.getInstitution(uuid).subscribe({
+    this.postService.getInstitution(intitutionUUID).subscribe({
       next: (institutionData: Institution) => {
         this.institution = institutionData
       },
@@ -140,6 +141,38 @@ export class CreatePostComponent {
 
     //Si hay info para postear
     if (valueFormPost.contentPost != '' || this.listFile || this.fileDoc) {
+      if(this.listFile && this.listFile.length > 0){ //Si hay imagenes-videos se los procesa
+        //Convertir las imagenes y videos en Form Data con su key correspondiente
+        Array.from(this.listFile).forEach((file) => {
+          file.type.includes('image')? formData.append('images', file) : formData.append('videos', file);
+        });
+
+        this.postService.uploadMedia(formData).pipe(
+          concatMap((uploadResponse: UploadedMedia[]) => {
+            uploadResponse.forEach((media, index) => {
+              responseMedia.push({
+                number: index + 1,
+                type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
+                name: media.name,
+                path: media.urlResource,
+                fb_media_id: ''
+              });
+            });
+
+            post.content.media = responseMedia;
+
+            return this.postService.createPost(post);
+          })
+        ).subscribe({
+          next: ()=> {
+            window.location.reload()
+          },
+          error: (error) => {
+            console.log('Error al crear el post con contenido media (imagenes y/o videos)',error)
+          }
+        })
+
+/*
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
@@ -207,9 +240,35 @@ export class CreatePostComponent {
             console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
           }
         })
-
+*/
       } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
         //Convertir el archivo en form data
+        //Convertir el archivo en form data
+        formData.append('file', this.fileDoc);
+
+        this.postService.uploadDocument(formData).pipe(
+          concatMap((uploadResponse: UploadedDocument) => {
+            responseDoc = {
+              number: 1,
+              type: 'document',//uploadResponse.type,
+              name: uploadResponse.name,
+              path: uploadResponse.urlResource,
+              fb_media_id: ''
+            }
+
+            post.content.media?.push(responseDoc)
+
+            return this.postService.createPost(post);
+          })
+        ).subscribe({
+          next: ()=> {
+            window.location.reload()
+          },
+          error: (error) => {
+            console.log('Error al crear el post con archivo',error)
+          }
+        })      
+/*
         formData.append('file', this.fileDoc);
         formDataFB.append('url', this.fileDoc);
         this.postService.uploadDocument(formData).pipe(
@@ -246,6 +305,7 @@ export class CreatePostComponent {
             console.log('Error al crear el post con archivo', error)
           }
         })
+*/
       } else if (valueFormPost.contentPost != '') {//Si solo tiene texto
 
         this.postService.createPost(post).subscribe({

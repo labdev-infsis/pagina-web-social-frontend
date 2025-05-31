@@ -88,7 +88,6 @@ export class ReactionsComponent implements OnInit {
 
     getFn(uuid).subscribe({
       next: (reactions) => {
-        console.log('✅ Reacciones recibidas:', reactions);
         this.totalReactions = reactions.length;
         this.updateReactionCounts(reactions);
 
