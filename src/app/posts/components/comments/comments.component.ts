@@ -60,13 +60,14 @@ export class CommentsComponent implements OnInit {
   replyVisibility: { [key: string]: boolean } = {};
   showReplies: { [key: string]: boolean } = {};
 
+
   constructor(
     private postService: PostService,
 
     public modal: NgbModal,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
-  ) {
+  ) {    
     this.authenticated = authService.isAuthenticated();
   }
 
@@ -102,18 +103,19 @@ export class CommentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadComments();
-    console.log('Videos: ' + JSON.stringify(this.postImages));
+    if (this.authenticated) {
+      this.postService.getUser().subscribe({
+        next: (user: UserDetail) => {
+          this.currentUser = user || null;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error al obtener el usuario actual', error);
+          this.currentUser = null;
+        },
+      });
+    }
 
-    this.postService.getUser().subscribe({
-      next: (user: UserDetail) => {
-        this.currentUser = user || null;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error al obtener el usuario actual', error);
-        this.currentUser = null;
-      },
-    });
   }
 
   loadComments(): void {
@@ -183,9 +185,9 @@ export class CommentsComponent implements OnInit {
     });
   }
 
-  likeComment(comment: any): void {}
+  likeComment(comment: any): void { }
 
-  replyToComment(comment: any): void {}
+  replyToComment(comment: any): void { }
 
   calculateTimeFromNow(date: string) {
     const utcDate = moment.utc(date);

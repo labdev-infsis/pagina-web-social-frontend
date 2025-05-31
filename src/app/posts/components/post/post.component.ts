@@ -71,16 +71,17 @@ export class PostComponent {
       }
     });
 
-        this.postService.getUser().subscribe({
+    if (this.authenticated === true) {
+      this.postService.getUser().subscribe({
           next:(user: UserDetail) => {
             this.currentUser = user;
-            console.log('Obteniendo el usuario actual', this.currentUser);
           },
           error:(error) => {
             console.error('Error al obtener el usuario actual', error);
           }
         });
-  
+    }
+
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
       this.recuperarReaccion(); 
@@ -249,7 +250,6 @@ export class PostComponent {
   recuperarReaccion() {
     let reaccionUser = this.post.reactions.my_reaction_emoji;
     //let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
-    console.log(reaccionUser)
     if (reaccionUser) {
       this.like = true;
       if (reaccionUser === 'thumbs-up') {

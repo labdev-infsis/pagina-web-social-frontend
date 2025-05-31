@@ -5,6 +5,7 @@ import { Post } from '../../models/post';
 import { PostComment } from '../../models/post-comment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'home-photos-section',
@@ -25,8 +26,8 @@ export class HomePhotosSectionComponent implements OnInit {
   }
 
   ngOnInit(){
-    const uuidIntitutionDric = '93j203b4-f63b-4c4a-be05-eae84cef0c0c';
-    this.postService.getInstitution(uuidIntitutionDric).subscribe({
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
+    this.postService.getInstitution(intitutionUUID).subscribe({
       
       next: (dataInstitution: Institution) => {
         this.institution = dataInstitution;
@@ -50,7 +51,6 @@ export class HomePhotosSectionComponent implements OnInit {
             postUuid: `${photo.uuid_post}`
           }));
           this.isLoading = false;
-          console.log('Photos loaded:', this.photos);
         },
         error: (error) => {
           console.error('Error loading photos', error);

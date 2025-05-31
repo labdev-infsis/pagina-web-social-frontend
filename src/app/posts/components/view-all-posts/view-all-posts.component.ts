@@ -16,30 +16,29 @@ export class ViewAllPostsComponent implements OnInit {
   selectedPostReactions: any = null;
   selectedPostUuid: string = '';
   loading = false;
+  pageCounter = 0;
 
   constructor(private postService: PostService,
     private authService: AuthService
   ){
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
   }
 
   ngOnInit(){
     // Obtener una cantidad de posts
-    this.postService.getPagedPosts().subscribe({
+    this.postService.getPagedPosts(this.pageCounter).subscribe({
       next:(data: Post[])=>{
         this.posts = data;
-        this.postService.nextPage(); // Avanza a la siguiente página
+        this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
       },
       error:(error) => {
         console.error('Error al obtener los posts paginados', error);
       }
     });
-
-    if(this.authenticated) {
+    if(this.authenticated === true) {
       this.postService.getUser().subscribe({
         next:(user: UserDetail) => {
           this.currentUser = user;
-          console.log('Obteniendo el usuario actual', this.currentUser);
         },
         error:(error) => {
           console.error('Error al obtener el usuario actual', error);
@@ -60,10 +59,10 @@ export class ViewAllPostsComponent implements OnInit {
     if (this.loading) return;
     this.loading = true;
 
-    this.postService.getPagedPosts().subscribe({
+    this.postService.getPagedPosts(this.pageCounter).subscribe({
       next: (data: Post[]) => {
         this.posts = [...this.posts, ...data]; // Agrega nuevos posts a la lista
-        this.postService.nextPage(); // Avanza a la siguiente página
+        this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
         this.loading = false;
       },
       error: (error) => {

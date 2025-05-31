@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../authentication/services/auth.service';
 import { PostService } from '../../posts/services/post.service';
 import { Institution } from '../../posts/models/institution';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -21,8 +22,8 @@ export class NavbarComponent {
   }
 
   ngOnInit(){
-    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
-    this.postService.getInstitution(uuid).subscribe({
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
+    this.postService.getInstitution(intitutionUUID).subscribe({
       next:(institutionData)=>{
         this.institution = institutionData
       },
