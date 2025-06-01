@@ -1,417 +1,3 @@
-.img-profile {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  padding: 20 20 20 20;
-}
-
-.pdf-viewer {
-  height: 100vh;
-  width: 80vw;
-  display: block;
-  margin: 0 auto;
-}
-
-.text-post {
-  font-size: 1rem;
-  /* Ajuste del tamaño para que sea similar al mockup */
-  color: #333;
-  margin-bottom: 15px;
-  line-height: 1.5;
-  /* Espaciado entre líneas para mejor legibilidad */
-  white-space: pre-wrap;
-  font-weight: 500;
-}
-
-.comment-img {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 50%;
-  margin-left: 7px;
-  margin-top: 5px;
-  margin-right: 6px;
-}
-
-.post-description {
-  margin-bottom: 20px;
-  color: #003770;
-  font-size: 1rem;
-}
-
-.info-user {
-  h2 {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #003770;;
-    margin-bottom: 5px;
-    margin-left: 10px;
-  }
-
-  p {
-    font-size: 0.9rem;
-    font-weight: lighter;
-    color: #003770;
-    margin-bottom: 10px;
-    margin-left: 10px;
-  }
-}
-
-.carousel-inner>.carousel-item>img {
-  width: 640px;
-  height: 600px;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  height: 100px;
-  width: 100px;
-  outline: white;
-  background-size: 50%, 50%;
-  border-radius: 50%;
-  border: 0.5px solid ghostwhite;
-  background-image: none;
-}
-
-.carousel-control-next-icon:after {
-  content: '>';
-  font-size: 55px;
-  color: rgb(90, 90, 90);
-}
-
-.carousel-control-prev-icon:after {
-  content: '<';
-  font-size: 55px;
-  color: rgb(90, 90, 90);
-}
-
-.comments-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 900px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-
-  .post-medias {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(2, minmax(100px, 1fr));
-    overflow: hidden;
-    border-radius: 8px;
-    position: relative;
-    background-color: #ffffff;
-    margin: auto;
-    min-height: max-content;
-
-    .media-post {
-      width: 100%;
-      height: 100%;
-      display: block;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid #ddd;
-
-      video {
-        width: 100%;
-        min-height: 100%;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        display: block;
-        border-radius: 8px;
-        object-fit: cover;
-        border: 1px solid #ddd;
-      }
-    }
-
-    .media-post.three {
-      max-height: 220px;
-    }
-  }
-
-  .post-image {
-    flex: 1;
-
-  }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    justify-content: space-around;
-    /* Optional: Space images evenly */
-  }
-
-  .image-box {
-    width: 200px;
-    /* Adjust width as needed */
-    height: 200px;
-    /* Adjust height as needed */
-    border: 1px solid #ccc;
-    margin: 10px;
-    overflow: hidden;
-    /* Hide overflow to prevent image distortion */
-    position: relative;
-  }
-
-  .image-box img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    /* Maintain aspect ratio and cover the entire container */
-  }
-
-  .popup-content {
-    display: flex;
-    gap: 20px;
-
-
-
-    .post-details {
-      flex: 2;
-      display: flex;
-      flex-direction: column;
-
-      .post-header {
-        margin-bottom: 10px;
-
-        h3 {
-          margin: 0;
-          font-size: 1.2rem;
-        }
-
-        .post-time {
-          font-size: 0.9rem;
-          color: gray;
-        }
-      }
-
-
-      .comments-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-
-        h4 {
-          margin-bottom: 10px;
-        }
-
-        .comments-list {
-          flex: 1;
-          overflow-y: auto;
-          max-height: 300px;
-          margin-bottom: 20px;
-
-          .comment {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-
-            strong {
-              display: block;
-              font-weight: bold;
-            }
-
-            p {
-              margin: 5px 0;
-            }
-
-            .comment-actions {
-              display: flex;
-              gap: 10px;
-
-              button {
-                background: none;
-                border: none;
-                color: #007bff;
-                cursor: pointer;
-
-                &:hover {
-                  text-decoration: underline;
-                }
-              }
-            }
-          }
-        }
-
-        .add-comment {
-          display: flex;
-          gap: 10px;
-
-          input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
-
-          button {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-
-            &:hover {
-              background-color: #0056b3;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.create-post-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e0e0e0;
-  width: 900px;
-  max-width: 500px;
-
-  .img-profile {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-  }
-
-  .new-post {
-    align-content: center;
-    background-color: rgb(240, 242, 245);
-    border-radius: 30px;
-    width: 100%;
-    height: 40px;
-    cursor: pointer;
-  }
-
-  .new-post:hover {
-    background-color: #E4E6E9;
-  }
-
-  p {
-    font-size: 1.1rem;
-    font-weight: normal;
-    color: #67696C;
-    margin: 0 15px 0 15px;
-  }
-
-  @media (max-width: 992px) {
-    width: 356px;
-  }
-}
-
-// Modal crear nuevo post
-.modal-title {
-  margin: 0 auto;
-  color: #003770;
-}
-
-.user-post-container {
-
-  .img-profile {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-  }
-
-  p {
-    margin: 0;
-    align-content: center;
-  }
-
-  #option-comment {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #f8f8f8;
-    cursor: pointer;
-    color: #000;
-  }
-}
-
-.form>.container {
-  max-height: 250px;
-  overflow-y: auto;
-
-}
-
-.add-media {
-  border-radius: 10px;
-  box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1);
-  border: 1.5px solid #e0e0e0;
-  height: 40px;
-  margin: 10px 0;
-  padding: 0 10px;
-
-
-  span {
-    width: 32px;
-    height: 32px;
-    justify-content: center;
-    cursor: pointer;
-
-    .bi-image {
-      color: #46bd63;
-    }
-
-    .bi-file-earmark-text-fill {
-      color: #1877F2;
-    }
-
-
-  }
-
-  .disabled {
-    i {
-      color: #D9D9D9;
-      cursor: default;
-    }
-  }
-
-  span:hover {
-    border-radius: 50%;
-    background-color: #F2F2F2;
-
-  }
-}
-
-span:hover {
-  border-radius: 50%;
-  background-color: #F2F2F2;
-  
-}
-
 .comment-button {
   display: flex;
   align-items: center;
@@ -516,64 +102,6 @@ span:hover {
   }
 }
 
-.reply-content {
-  padding: 4px 10px; /* Reducir el espacio interno */
-  background: #f0f2f5;
-  border-radius: 8px;
-  max-width: 50%; /* Evitar que el recuadro sea muy ancho */
-  font-size: 14px;
-  color: #0e0d0d;
-  display: inline-block; /* Evitar que ocupe todo el ancho */
-  word-wrap: break-word;
-  margin-top: 5px; /* Ajuste para acercar el texto al nombre */
-}
-
-.reply-text {
-  margin: 2px 0px; /* Reducir el espacio entre el texto y el contenedor */
-  font-size: 14px;
-}
-
-.reply-name {
-  margin-bottom: 2px; /* Reducir espacio entre el nombre y el texto */
-}
-
-.replies {
-  margin-left: 30px; /* Reducir la indentación */
-  border-left: 1.5px solid #ddd;
-  max-width: 80%;
-  margin-top: 15px;
-}
-
-.reply-img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-}
-
-.nested-reply {
-  padding: 4px 10px; /* Reducir el espacio interno */
-  background: #f0f2f5;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #0e0d0d;
-  display: inline-block; /* Evitar que ocupe todo el ancho */
-  word-wrap: break-word;
-}
-
-.nested-replies {
-  position: relative;
-  padding-left: 20px;
-  border-left: 2px solid #ccc;
-  margin-left: 15px;
-  margin-top: 15px;
-}
-.reply-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-left: 50px;
-  margin-top: 5px;
-}
 
 .reply-btn {
   display: inline-flex;
@@ -684,3 +212,291 @@ span:hover {
 .reply-wrapper {
   margin-bottom: 14px; // Ajusta a tu gusto: 12px, 16px, etc.
 }
+
+/* Puedes agregar esto a tu archivo de estilos del componente */
+.comment-row {
+  margin-bottom: 12px;
+}
+
+.comment-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 2px;
+}
+
+.comment-bubble {
+  background: #f0f2f5;
+  border-radius: 18px;
+  padding: 8px 14px;
+  max-width: 500px;
+  min-width: 120px;
+  box-shadow: none;
+  display: inline-block;
+}
+
+.comment-actions {
+  font-size: 13px;
+  color: #65676b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.like-btn, .reply-btn {
+  background: none;
+  border: none;
+  color: #65676b;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.like-btn:hover, .reply-btn:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor de la respuesta */
+.reply-row {
+  position: relative;
+  margin-left: 40px; /* Espacio para la línea vertical */
+}
+
+/* Línea vertical que conecta los avatares */
+.vertical-line {
+  position: absolute;
+  left: 17px; /* Centrado respecto al avatar */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #d3d6db; /* Color gris claro */
+  z-index: 0;
+}
+
+/* Avatar de la respuesta */
+.reply-img {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Contenido de la respuesta */
+.reply-content {
+  background: #f0f2f5;
+  border-radius: 12px;
+  padding: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 14px;
+  color: #333;
+}
+
+
+
+/* Tiempo de la respuesta */
+.reply-time {
+  font-size: 12px;
+  color: #65676b;
+  margin-top: 5px;
+}
+
+/* Botón de responder */
+.reply-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.reply-btn:hover {
+  text-decoration: underline;
+}
+
+
+.reply-wrapper {
+  position: relative;
+  margin-left: 30px; // Espacio para la línea
+  padding-left: 20px; // Espacio adicional para el avatar
+  
+  // Línea horizontal que conecta con la vertical
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20px; // Centrado verticalmente con el avatar
+    width: 20px;
+    height: 2px;
+    background-color: #d3d6db;
+    z-index: 0;
+  }
+}
+
+.comment-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 8px;
+  position: relative; // Para asegurar que esté sobre la línea
+  z-index: 1; // Para que el avatar esté sobre la línea
+}
+
+/* Mantener consistencia con los estilos de comentarios */
+.comment-actions {
+  font-size: 13px;
+  color: #65676b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.like-btn, .reply-btn {
+  background: none;
+  border: none;
+  color: #65676b;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.like-btn:hover, .reply-btn:hover {
+  text-decoration: underline;
+}
+
+.reply-time {
+  font-size: 12px;
+  color: #65676b;
+}
+
+.view-more-replies, .view-less-replies {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 4px 0;
+  display: block;
+  margin-top: 4px;
+}
+
+.view-more-replies:hover, .view-less-replies:hover {
+  color: #0056b3;
+}
+/* Estilos mejorados para la conexión entre avatares */
+.comment-box {
+  position: relative;
+  padding-bottom: 8px;
+
+  &:has(.replies) {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 25px; /* Alineado con el centro del avatar */
+      top: 48px; /* Comienza al final del avatar del comentario */
+      bottom: calc(100% - 48px - 20px); /* Termina antes del botón */
+      width: 2px;
+      background-color: #d3d6db;
+      z-index: 0;
+    }
+  }
+}
+
+/* Contenedor para alinear el botón a la derecha */
+.view-more-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 15px;
+  margin-top: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.view-more-replies, .view-less-replies {
+  background: none;
+  border: none;
+  color: #65676b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #f0f2f5;
+    text-decoration: none;
+  }
+}
+
+/* Ajuste fino para los avatares */
+.comment-img, .reply-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid white; /* Para que cubra la línea */
+  box-sizing: content-box;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Modifica el contenedor de comentarios para controlar la línea */
+.comment-box {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 25px;
+    top: 50px;
+    /* La altura ahora se calcula dinámicamente */
+    height: calc(100% - 60px); /* Ajusta este valor según necesites */
+    width: 2px;
+    background-color: #d3d6db;
+    z-index: 0;
+    display: none;
+  }
+
+  &:has(.replies)::before {
+    display: block;
+  }
+
+  /* Asegura que la línea no pase por el botón "Ver más respuestas" */
+  .replies {
+    position: relative;
+    
+    .view-more-replies, .view-less-replies {
+      position: relative;
+      z-index: 2; /* Coloca el botón sobre la línea */
+      background-color: white; /* Fondo sólido para tapar la línea */
+      padding-left: 5px;
+      margin-left: -5px;
+    }
+  }
+}
+
+/* Ajusta el margen izquierdo principal de las respuestas */
+.replies {
+  margin-left: 0 !important;  /* Reducido de 30px a 16px */
+  padding-left: 0;
+  border-left: none;
+}
+
+/* Ajusta cada respuesta individual */
+.reply-wrapper {
+  margin-left: 16px !important;  /* Igual que .replies para consistencia */
+  padding-left: 12px;           /* Reducido de 20px */
+}
+
+.reply-wrapper::before {
+  left: -1px;
+  width: 80px;
+}
+

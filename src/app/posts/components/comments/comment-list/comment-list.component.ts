@@ -27,7 +27,7 @@ export class CommentListComponent implements OnChanges {
 
   private initializeReplyLimits(): void {
     this.comments.forEach(comment => {
-      this.replyLimit[comment.uuid] = 2;
+      this.replyLimit[comment.uuid] = 0;
       this.replyVisibility[comment.uuid] = false;
       
       if (comment.replies) {
@@ -39,7 +39,7 @@ export class CommentListComponent implements OnChanges {
   }
 
   private initializeReply(reply: Reply): void {
-    this.replyLimit[reply.uuid] = 2;
+    this.replyLimit[reply.uuid] = 1;
     this.replyVisibility[reply.uuid] = false;
     
     if (reply.replies) {
@@ -69,7 +69,7 @@ export class CommentListComponent implements OnChanges {
   }
 
   showLessReplies(uuid: string): void {
-    this.replyLimit[uuid] = 2;
+    this.replyLimit[uuid] = 0;
     this.replyVisibility[uuid] = false;
   }
 
