@@ -153,58 +153,27 @@ export class CreatePostComponent {
 
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
-
-        // Crear array de observables para Facebook
-          const facebookUploads = uploadResponse.map((media, index) => {
-          const isImage = media.type.includes('image');
-          
-          const fbUpload$ = isImage 
-            ? this.postService.uploadPhotoToFacebook(formDataFB)
-            : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
-
-          this.isFbPosted = isImage ? false : true;
-
-          console.log('is image:' + this.isFbPosted);
-
-          return fbUpload$.pipe(
-            map(fbResponse => ({
-              number: index + 1,
-              type: isImage ? 'image' : 'video',
-              name: media.name,
-              path: media.urlResource,
-              fb_media_id: fbResponse.id,
-              is_fb_posted: this.isFbPosted
-            })),
-            catchError(error => {
-              //console.error(Error uploading ${isImage ? 'photo' : 'video'}, error);
-              return of({
+            uploadResponse.forEach((media, index) => {
+              responseMedia.push({
                 number: index + 1,
-                type: isImage ? 'image' : 'video',
+                type: media.type.includes('image') ? 'image' : 'video', // Asignar 'image' o 'video',
                 name: media.name,
                 path: media.urlResource,
-                fb_media_id: '',
-                is_fb_posted: this.isFbPosted
+                fb_media_id: '', 
               });
-            })
-            
-          );
-        });
+            });
 
-        return forkJoin(facebookUploads).pipe(
-          map(responseMedia => {
             post.content.media = responseMedia;
-            post.is_fb_posted = this.isFbPosted;
+
             return this.postService.createPost(post);
           })
-        );
-      }),
-      concatMap(createPost$ => createPost$)
         ).subscribe({
           next: () => {
             window.location.reload()
           },
           error: (error) => {
             console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
+            window.location.reload()
           }
         })
 

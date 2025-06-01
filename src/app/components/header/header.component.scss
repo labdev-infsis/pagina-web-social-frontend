@@ -27,7 +27,7 @@
 
 		.logo-overlay {
 			position: absolute;
-			bottom: -75px;
+			bottom: 14px;
 			left: 50%;
 			transform: translateX(-50%);
 
@@ -41,7 +41,7 @@
 	}
 
 	.header-details {
-		padding: 75px 0 20px;
+		padding: 0px 0 20px;
 		width: 100%;
 		color: var(--blue-color);
 		text-align: center;
@@ -100,6 +100,10 @@ nav {
 			border-bottom: 10px solid var(--red-color);
 		}
 	}
+}
+
+#ruta-post {
+	cursor: pointer;
 }
 
 @media screen and (max-width: 1020px) {

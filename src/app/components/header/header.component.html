@@ -1,26 +1,30 @@
 <div class="header-container">
     <div class="header-image">
-        <div class="banner-container">
-            <img *ngIf="institution" [src]="institution.background_url" alt="Banner Informática y Sistemas" class="banner-image">
+        <div class="banner-container" style='background-image: url("https://iug.de/wp-content/uploads/2023/09/banner1-3.jpg"); position: relative; background-repeat: no-repeat; background-attachment: fixed; background-size: cover; padding-top: 0px; padding-bottom: 0px; height: 460px;'>
+            <!-- <img *ngIf="institution" [src]="institution.background_url" alt="Banner Informática y Sistemas" class="banner-image"> -->
+            <div class="d-flex flex-row mx-5" style="padding-top: 6%;">
+                <h3 style="color:#fff; font-weight: 700; font-size: xx-large; white-space: nowrap;">BIENVENIDO AL GRUPO <br> DE USUARIOS DE INFORMIX</h3> 
+                <p style="color:#fff; padding: 0 115px;">EL GRUPO DE USUARIOS DE INFORMIX es una asociación independiente cuya misión es reunir a todos aquellos que trabajan con Informix. El objetivo es el intercambio activo de experiencias, la resolución conjunta de problemas y la crítica constructiva dentro de una comunidad fuerte.</p>
+            </div>
         </div>
 
         <div class="logo-overlay">
-            <img *ngIf="institution" [src]="institution.logo_url" alt="Logo Carrera" class="career-logo">
+            <img *ngIf="institution" [src]="'assets/img-perfil-iug.svg'" alt="Logo Carrera" class="career-logo">
         </div>
     </div>
 
     <div class="header-details">
-        <h3>{{ institution ? institution.name : '' }}</h3>
-        <p>{{ totalFollowers }} seguidores</p>
+        <h3>GRUPO DE USUARIOS DE INFORMIX</h3>
+        <p>{{ totalFollowers }} miembros</p>
     </div>
 </div>
 
 <nav>
     <ul>
-        <li><a routerLink="/posts" routerLinkActive="active">Publicaciones</a></li>
+        <li><a (click)="reloadPosts()" routerLinkActive="active" id="ruta-post" [ngClass]="{'active': isPostsRoute}">Publicaciones</a></li>
         <li><a routerLink="/informacion" routerLinkActive="active">Información</a></li>
         <li><a routerLink="/fotos" routerLinkActive="active">Fotos</a></li>
         <li><a routerLink="/videos" routerLinkActive="active">Vídeos</a></li>
-        <li><a href="#">Documentos</a></li>
+        <!-- <li><a href="#">Documentos</a></li> -->
     </ul>
 </nav>

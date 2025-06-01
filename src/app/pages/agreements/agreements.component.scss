@@ -45,7 +45,7 @@
 
 	.page-section {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(50%, 1fr));
+		grid-template-columns: 1fr;
 		gap: 20px;
 		margin-bottom: 40px;
 		padding-bottom: 20px;

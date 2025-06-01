@@ -8,7 +8,7 @@
             <li *ngIf="listEmojiTypeExisting.length > 1" class="nav-item">
               <a class="nav-link active" aria-current="page" data-bs-toggle="tab" [attr.data-bs-target]="'#generalEmoji-tab-pane-'+postReference">Todo</a>
             </li>
-            <ng-container *ngFor="let reactionType of listEmojiTypeExisting">
+            <ng-container *ngFor="let reactionType of listEmojiTypeExisting.slice(0, listEmojiTypeExisting.length/2)">
               <li class="nav-item">
                 <a class="nav-link emoji" [ngClass]="{'active': listEmojiTypeExisting.length == 1}" data-bs-toggle="tab" [attr.data-bs-target]="'#'+reactionType.emoji_type+'-tab-pane-'+postReference">{{ getEmojiReactionType(reactionType.emoji_type) }}</a>
               </li>
