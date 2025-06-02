@@ -1,283 +1,279 @@
 <!-- Modal ver detalle de Post -->
-<div class="modal-dialog modal-dialog-centered">
-  <div class="modal-content">
-    <div class="modal-header text-center">
-      <h4 class="modal-title w-100">Publicación de {{ postAuthor }}</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
-    </div>
+<div class="modal-header text-center">
+  <h4 class="modal-title w-100">Publicación de {{ postAuthor }}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismissAll('Cross click')"></button>
+</div>
 
-    <div class="modal-body">
-      <div class="post-details">
-        <!-- Información del autor -->
-        <div class="d-flex flex-column">
-          <div class="d-flex flex-row justify-content-start" *ngIf="institution">
-            <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
-            <div class="info-user">
-              <h2>{{ institution.name }}</h2>
-              <p>{{ calculateTimePost() }}</p>
-            </div>
-          </div>
+<div class="modal-body">
+  <div class="post-details">
+    <!-- Información del autor -->
+    <div class="d-flex flex-column">
+      <div class="d-flex flex-row justify-content-start" *ngIf="institution">
+        <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+        <div class="info-user">
+          <h2>{{ institution.name }}</h2>
+          <p>{{ calculateTimePost() }}</p>
+        </div>
+      </div>
 
-          <!-- Descripción del post -->
-          <p class="post-description">{{ postDescription }}</p>
+      <!-- Descripción del post -->
+      <p class="post-description">{{ postDescription }}</p>
 
-          <!-- Imagen del post a la izquierda -->
-          <div class="object-fit-md-contain border rounded">
-            @if (postImages) {
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner image-box text-center">
-                <div *ngFor="let image of postImages; let i = index"
-                  class="carousel-item {{ i === 0 ? 'active' : '' }}">
-                  @if (image.type === "image"){
-                  <img src="{{ image.path }}" class="object-fit-scale" alt="..." />
-                  } @else if (image.type === "video") {
-                  <video [src]="image.path" controls class="video" controls video-control="videoControl"></video>
-                  } @else if (image.type === "document") {
-                  <div class="iframe-custom-container allowFullScreen">
-                    <pdf-viewer [src]="image.path" [render-text]="true" [original-size]="false"
-                      style="width: 400px; height: 500px" [autoresize]="true" class="pdf-viewer"></pdf-viewer>
-                  </div>
-
-                  }
-                </div>
+      <!-- Imagen del post a la izquierda -->
+      <div class="object-fit-md-contain border rounded">
+        @if (postImages) {
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner image-box text-center">
+            <div *ngFor="let image of postImages; let i = index"
+              class="carousel-item {{ i === 0 ? 'active' : '' }}">
+              @if (image.type === "image"){
+              <img src="{{ image.path }}" class="object-fit-scale" alt="..." />
+              } @else if (image.type === "video") {
+              <video [src]="image.path" controls class="video" controls video-control="videoControl"></video>
+              } @else if (image.type === "document") {
+              <div class="iframe-custom-container allowFullScreen">
+                <pdf-viewer [src]="image.path" [render-text]="true" [original-size]="false"
+                  style="width: 400px; height: 500px" [autoresize]="true" class="pdf-viewer"></pdf-viewer>
               </div>
-              @if (postImages.length > 1){
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+
               }
-
-            </div>
-            }
-          </div>
-          <div class="d-flex flex-row pt-4">
-            <img *ngIf="currentUser" [src]="
-                currentUser.photo_profile_path
-                  ? currentUser.photo_profile_path
-                  : 'assets/default-avatar.png'
-              " alt="Foto de perfil" class="comment-img" />
-
-            <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
-            <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button"
-              (click)="toggleCommentInput()">
-              <i class="bi bi-chat-left-text"></i> Escribe un comentario...
-            </button>
-
-            <!-- Input para escribir comentario (se muestra solo cuando el usuario lo activa) -->
-            <div *ngIf="showCommentInput && authenticated" class="comment-box">
-              <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input"
-                (keydown.enter)="addComment()" />
-              <button (click)="addComment()" class="send-comment-button">
-                <i class="bi bi-send"></i>
-              </button>
             </div>
           </div>
+          @if (postImages.length > 1){
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+          }
 
-          <!-- Mostrar comentarios -->
-          <div class="comments-section">
-            <div *ngFor="let comment of comments">
-              <div class="comment-box">
-                <!-- 📌 Información del usuario que comentó -->
+        </div>
+        }
+      </div>
+      <div class="d-flex flex-row pt-4">
+        <img *ngIf="currentUser" [src]="
+            currentUser.photo_profile_path
+              ? currentUser.photo_profile_path
+              : 'assets/default-avatar.png'
+          " alt="Foto de perfil" class="comment-img" />
+
+        <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
+        <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button"
+          (click)="toggleCommentInput()">
+          <i class="bi bi-chat-left-text"></i> Escribe un comentario...
+        </button>
+
+        <!-- Input para escribir comentario (se muestra solo cuando el usuario lo activa) -->
+        <div *ngIf="showCommentInput && authenticated" class="comment-box">
+          <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input"
+            (keydown.enter)="addComment()" />
+          <button (click)="addComment()" class="send-comment-button">
+            <i class="bi bi-send"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mostrar comentarios -->
+      <div class="comments-section">
+        <div *ngFor="let comment of comments">
+          <div class="comment-box">
+            <!-- 📌 Información del usuario que comentó -->
+            <div class="d-flex flex-row">
+              <img [src]="comment.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
+                class="comment-img" />
+              <div class="comment-text">
+                <p>
+                  <strong>{{ comment.user_name }}</strong>
+                </p>
+                <p>{{ comment.content }}</p>
+                <span class="comment-time">{{
+                  calculateTimeFromNow(comment.date)
+                  }}</span>
+              </div>
+            </div>
+
+            <!-- Reacciones y botón Responder -->
+            <div class="comment-footer">
+              <div class="comment-actions">
+                <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+                <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">
+                  Responder
+                </button>
+              </div>
+            </div>
+
+            <!-- 📌 Input para escribir respuesta -->
+            <div *ngIf="replyInputVisible[comment.uuid]" class="reply-box">
+              <img [src]="
+                  currentUser?.photo_profile_path ||
+                  'assets/default-avatar.png'
+                " alt="Foto de perfil" class="reply-img" />
+              <div class="reply-input-container">
+                <input id="replyInput-{{ comment.uuid }}" [(ngModel)]="replyText[comment.uuid]"
+                  placeholder="Escribe una respuesta.." class="reply-input" (keydown.enter)="
+                    addReply(comment.uuid, comment.uuid, true)
+                  " />
+                <button class="send-reply-btn" (click)="addReply(comment.uuid, comment.uuid, true)">
+                  <i class="bi bi-send"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sección de respuestas directas a un comentario -->
+            <div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
+              <div *ngFor="
+                  let reply of comment.replies
+                    | slice : 0 : replyLimit[comment.uuid]
+                " class="reply-wrapper">
+                <!-- Imagen del usuario que respondió -->
                 <div class="d-flex flex-row">
-                  <img [src]="comment.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
-                    class="comment-img" />
-                  <div class="comment-text">
-                    <p>
-                      <strong>{{ comment.user_name }}</strong>
-                    </p>
-                    <p>{{ comment.content }}</p>
-                    <span class="comment-time">{{
-                      calculateTimeFromNow(comment.date)
-                      }}</span>
-                  </div>
-                </div>
+                  <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
+                    class="reply-img" />
 
-                <!-- Reacciones y botón Responder -->
-                <div class="comment-footer">
-                  <div class="comment-actions">
-                    <app-reactions [commentUuid]="comment.uuid"></app-reactions>
-                    <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">
+                  <div class="reply-content">
+                    <p class="reply-name">
+                      <strong>{{ reply.name }} {{ reply.lastName }}</strong>
+                    </p>
+                    <p class="reply-text">{{ reply.content }}</p>
+                    <span class="reply-time">{{
+                      calculateTimeFromNow(reply.createdDate)
+                      }}</span>
+
+                    <button class="reply-btn" (click)="toggleReplyInput(reply.uuid)">
                       Responder
                     </button>
                   </div>
                 </div>
-
-                <!-- 📌 Input para escribir respuesta -->
-                <div *ngIf="replyInputVisible[comment.uuid]" class="reply-box">
+                <app-reactions [replyUuid]="reply.uuid"></app-reactions>
+                <!-- Input para escribir respuesta dentro de otra respuesta -->
+                <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
                   <img [src]="
                       currentUser?.photo_profile_path ||
                       'assets/default-avatar.png'
                     " alt="Foto de perfil" class="reply-img" />
                   <div class="reply-input-container">
-                    <input id="replyInput-{{ comment.uuid }}" [(ngModel)]="replyText[comment.uuid]"
-                      placeholder="Escribe una respuesta.." class="reply-input" (keydown.enter)="
-                        addReply(comment.uuid, comment.uuid, true)
+                    <input [(ngModel)]="replyText[reply.uuid]" placeholder="Escribe una respuesta..."
+                      class="reply-input" id="replyInput-{{ reply.uuid }}" (keydown.enter)="
+                        addReply(comment.uuid, reply.uuid, false)
                       " />
-                    <button class="send-reply-btn" (click)="addReply(comment.uuid, comment.uuid, true)">
+
+                    <button class="send-reply-btn" (click)="addReply(comment.uuid, reply.uuid, false)">
+                      <i class="bi bi-send"></i>
+                    </button>
+                  </div>
+                </div>
+                <!--  Mostrar respuestas anidadas -->
+                <div class="nested-replies" *ngIf="reply.replies && reply.replies.length > 0">
+                  <ng-container *ngTemplateOutlet="
+                      recursiveRepliesTemplate;
+                      context: {
+                        replies:
+                          reply.replies | slice : 0 : replyLimit[reply.uuid]
+                      }
+                    ">
+                  </ng-container>
+                  <button class="view-more-replies" *ngIf="
+                      (replyLimit[reply.uuid] || 2) <
+                      (reply.replies?.length || 0)
+                    " (click)="showAllReplies(reply.uuid)">
+                    Ver más respuestas
+                  </button>
+                  <button class="view-less-replies" *ngIf="
+                      (replyLimit[reply.uuid] || 2) ===
+                      (reply.replies?.length || 0)
+                    " (click)="showLessReplies(reply.uuid)">
+                    Ver menos respuestas
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Template Recursivo para manejar respuestas anidadas -->
+            <ng-template #recursiveRepliesTemplate let-replies="replies">
+              <div *ngFor="let reply of replies">
+                <div class="d-flex flex-row">
+                  <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
+                    class="reply-img" />
+                  <div class="nested-reply">
+                    <p class="reply-name">
+                      <strong>{{ reply.name }} {{ reply.lastName }}</strong>
+                    </p>
+                    <p class="reply-text">{{ reply.content }}</p>
+                    <span class="reply-time">{{
+                      calculateTimeFromNow(reply.createdDate)
+                      }}</span>
+
+                    <button class="reply-btn" (click)="toggleReplyInput(reply.uuid)">
+                      Responder
+                    </button>
+                  </div>
+                </div>
+                <app-reactions [replyUuid]="reply.uuid"></app-reactions>
+                <!-- Input para escribir respuesta dentro de otra respuesta -->
+                <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
+                  <img [src]="
+                      currentUser?.photo_profile_path ||
+                      'assets/default-avatar.png'
+                    " alt="Foto de perfil" class="reply-img" />
+                  <div class="reply-input-container">
+                    <input id="replyInput-{{ reply.uuid }}" [(ngModel)]="replyText[reply.uuid]"
+                      placeholder="Escribe una respuesta..." class="reply-input" (keydown.enter)="
+                        addReply(comment.uuid, reply.uuid, false)
+                      " />
+                    <button class="send-reply-btn" (click)="addReply(comment.uuid, reply.uuid, false)">
                       <i class="bi bi-send"></i>
                     </button>
                   </div>
                 </div>
 
-                <!-- Sección de respuestas directas a un comentario -->
-                <div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
-                  <div *ngFor="
-                      let reply of comment.replies
-                        | slice : 0 : replyLimit[comment.uuid]
-                    " class="reply-wrapper">
-                    <!-- Imagen del usuario que respondió -->
-                    <div class="d-flex flex-row">
-                      <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
-                        class="reply-img" />
-
-                      <div class="reply-content">
-                        <p class="reply-name">
-                          <strong>{{ reply.name }} {{ reply.lastName }}</strong>
-                        </p>
-                        <p class="reply-text">{{ reply.content }}</p>
-                        <span class="reply-time">{{
-                          calculateTimeFromNow(reply.createdDate)
-                          }}</span>
-
-                        <button class="reply-btn" (click)="toggleReplyInput(reply.uuid)">
-                          Responder
-                        </button>
-                      </div>
-                    </div>
-                    <app-reactions [replyUuid]="reply.uuid"></app-reactions>
-                    <!-- Input para escribir respuesta dentro de otra respuesta -->
-                    <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
-                      <img [src]="
-                          currentUser?.photo_profile_path ||
-                          'assets/default-avatar.png'
-                        " alt="Foto de perfil" class="reply-img" />
-                      <div class="reply-input-container">
-                        <input [(ngModel)]="replyText[reply.uuid]" placeholder="Escribe una respuesta..."
-                          class="reply-input" id="replyInput-{{ reply.uuid }}" (keydown.enter)="
-                            addReply(comment.uuid, reply.uuid, false)
-                          " />
-
-                        <button class="send-reply-btn" (click)="addReply(comment.uuid, reply.uuid, false)">
-                          <i class="bi bi-send"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <!--  Mostrar respuestas anidadas -->
-                    <div class="nested-replies" *ngIf="reply.replies && reply.replies.length > 0">
-                      <ng-container *ngTemplateOutlet="
-                          recursiveRepliesTemplate;
-                          context: {
-                            replies:
-                              reply.replies | slice : 0 : replyLimit[reply.uuid]
-                          }
-                        ">
-                      </ng-container>
-                      <button class="view-more-replies" *ngIf="
-                          (replyLimit[reply.uuid] || 2) <
-                          (reply.replies?.length || 0)
-                        " (click)="showAllReplies(reply.uuid)">
-                        Ver más respuestas
-                      </button>
-                      <button class="view-less-replies" *ngIf="
-                          (replyLimit[reply.uuid] || 2) ===
-                          (reply.replies?.length || 0)
-                        " (click)="showLessReplies(reply.uuid)">
-                        Ver menos respuestas
-                      </button>
-                    </div>
-                  </div>
+                <!-- recursividad para respuestas más profundas -->
+                <div class="nested-replies" *ngIf="reply.replies && reply.replies.length > 0">
+                  <ng-container *ngTemplateOutlet="
+                      recursiveRepliesTemplate;
+                      context: {
+                        replies:
+                          reply.replies | slice : 0 : replyLimit[reply.uuid]
+                      }
+                    ">
+                  </ng-container>
+                  <button class="view-more-replies" *ngIf="
+                      (replyLimit[reply.uuid] || 2) < reply.replies.length
+                    " (click)="showAllReplies(reply.uuid)">
+                    Ver más respuestas
+                  </button>
+                  <button class="view-less-replies" *ngIf="
+                      (replyLimit[reply.uuid] || 2) === reply.replies.length
+                    " (click)="showLessReplies(reply.uuid)">
+                    Ver menos respuestas
+                  </button>
                 </div>
-
-                <!-- Template Recursivo para manejar respuestas anidadas -->
-                <ng-template #recursiveRepliesTemplate let-replies="replies">
-                  <div *ngFor="let reply of replies">
-                    <div class="d-flex flex-row">
-                      <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil"
-                        class="reply-img" />
-                      <div class="nested-reply">
-                        <p class="reply-name">
-                          <strong>{{ reply.name }} {{ reply.lastName }}</strong>
-                        </p>
-                        <p class="reply-text">{{ reply.content }}</p>
-                        <span class="reply-time">{{
-                          calculateTimeFromNow(reply.createdDate)
-                          }}</span>
-
-                        <button class="reply-btn" (click)="toggleReplyInput(reply.uuid)">
-                          Responder
-                        </button>
-                      </div>
-                    </div>
-                    <app-reactions [replyUuid]="reply.uuid"></app-reactions>
-                    <!-- Input para escribir respuesta dentro de otra respuesta -->
-                    <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
-                      <img [src]="
-                          currentUser?.photo_profile_path ||
-                          'assets/default-avatar.png'
-                        " alt="Foto de perfil" class="reply-img" />
-                      <div class="reply-input-container">
-                        <input id="replyInput-{{ reply.uuid }}" [(ngModel)]="replyText[reply.uuid]"
-                          placeholder="Escribe una respuesta..." class="reply-input" (keydown.enter)="
-                            addReply(comment.uuid, reply.uuid, false)
-                          " />
-                        <button class="send-reply-btn" (click)="addReply(comment.uuid, reply.uuid, false)">
-                          <i class="bi bi-send"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- recursividad para respuestas más profundas -->
-                    <div class="nested-replies" *ngIf="reply.replies && reply.replies.length > 0">
-                      <ng-container *ngTemplateOutlet="
-                          recursiveRepliesTemplate;
-                          context: {
-                            replies:
-                              reply.replies | slice : 0 : replyLimit[reply.uuid]
-                          }
-                        ">
-                      </ng-container>
-                      <button class="view-more-replies" *ngIf="
-                          (replyLimit[reply.uuid] || 2) < reply.replies.length
-                        " (click)="showAllReplies(reply.uuid)">
-                        Ver más respuestas
-                      </button>
-                      <button class="view-less-replies" *ngIf="
-                          (replyLimit[reply.uuid] || 2) === reply.replies.length
-                        " (click)="showLessReplies(reply.uuid)">
-                        Ver menos respuestas
-                      </button>
-                    </div>
-                  </div>
-                </ng-template>
-
-                <!--  Botón para Ver Más Respuestas -->
-                <button class="view-more-replies" *ngIf="
-                    (replyLimit[comment.uuid] || 2) <
-                    (comment.replies?.length || 0)
-                  " (click)="showAllReplies(comment.uuid)">
-                  Ver más respuestas
-                </button>
-
-                <!--  Botón para Ver Menos Respuestas -->
-                <button class="view-less-replies" *ngIf="
-                    (replyLimit[comment.uuid] || 2) ===
-                    (comment.replies?.length || 0)
-                  " (click)="showLessReplies(comment.uuid)">
-                  Ver menos respuestas
-                </button>
               </div>
-            </div>
+            </ng-template>
+
+            <!--  Botón para Ver Más Respuestas -->
+            <button class="view-more-replies" *ngIf="
+                (replyLimit[comment.uuid] || 2) <
+                (comment.replies?.length || 0)
+              " (click)="showAllReplies(comment.uuid)">
+              Ver más respuestas
+            </button>
+
+            <!--  Botón para Ver Menos Respuestas -->
+            <button class="view-less-replies" *ngIf="
+                (replyLimit[comment.uuid] || 2) ===
+                (comment.replies?.length || 0)
+              " (click)="showLessReplies(comment.uuid)">
+              Ver menos respuestas
+            </button>
           </div>
         </div>
-        <!--  ÚNICO input de comentarios -->
       </div>
     </div>
+    <!--  ÚNICO input de comentarios -->
   </div>
 </div>
