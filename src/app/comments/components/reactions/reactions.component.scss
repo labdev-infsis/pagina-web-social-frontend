@@ -80,6 +80,7 @@
 
 /* 🔥 Resumen de reacciones debajo del botón */
 .reaction-summary {
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -95,7 +96,7 @@
 
 .reaction-detail-popup {
   position: absolute;
-  top: -110%; // aparece arriba del resumen
+  top: 95%;
   left: 0;
   background: white;
   border: 1px solid #ccc;

@@ -25,6 +25,7 @@
   <!-- Contador de reacciones agrupadas -->
   <div
     class="reaction-summary"
+    (click)="openModalReactionsComments()"
     *ngIf="reactionCounts.length > 0"
     (mouseenter)="showReactionDetails = true"
     (mouseleave)="showReactionDetails = false"
@@ -33,7 +34,7 @@
       {{ reaction.emoji }} {{ reaction.count }}
     </span>
 
-    <!-- 🔥 Popup de detalles -->
+    <!-- Popup de detalles -->
     <div class="reaction-detail-popup" *ngIf="showReactionDetails">
       <div class="reaction-detail-item" *ngFor="let user of detailedReactions">
         <img
