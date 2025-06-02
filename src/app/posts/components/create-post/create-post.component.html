@@ -32,6 +32,7 @@
 					</ng-container>
 				</div>
 				<form [formGroup]="postForm" class="form d-flex flex-column">
+
 					<div class="container">
 						<!-- Texto del post -->
 						<app-text-editor (textChangeEvent)="getTextPost($event)"></app-text-editor>
@@ -45,6 +46,18 @@
 						<app-document-uploader [showAreaDoc]="visibleAreaMediaDoc"
 							(closeAreaDocEvent)="closeAreaDoc($event)"
 							(loadFileDoc)="getFileDocPost($event)"></app-document-uploader>
+					</div>
+
+					<!-- Seleccionar redes sociales para compartir publicacion -->
+					<div class="add-media d-flex flex-row align-items-center justify-content-between">
+						<p class="fw-semibold">Redes Sociales para compartir</p>
+						<div class="add-post d-flex ">
+							<div class=" form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch"
+									id="flexSwitchCheckDefault" formControlName="switchControl">
+								<i class="bi bi-facebook custom-facebook-color"></i>
+							</div>
+						</div>
 					</div>
 
 					<!-- Añadir a la publicacion -->
