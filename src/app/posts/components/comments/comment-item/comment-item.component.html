@@ -1,0 +1,36 @@
+<div class="comment-box">
+  <div class="d-flex flex-row">
+    <img [src]="comment.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="comment-img" />
+    <div class="comment-text">
+      <p><strong>{{ comment.user_name }}</strong></p>
+      <p>{{ comment.content }}</p>
+      <span class="comment-time">{{ calculateTimeFromNow(comment.date) }}</span>
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="comment-actions">
+      <!-- Aquí puedes agregar un componente de reacciones si lo tienes -->
+      <button class="reply-btn" (click)="onToggleReplyInput(comment.uuid)">Responder</button>
+    </div>
+  </div>
+  <app-comment-input
+    *ngIf="replyInputVisible && replyInputVisible[comment.uuid]"
+    [currentUser]="currentUser"
+    [isReply]="true"
+    [replyText]="replyText && replyText[comment.uuid]"
+    (send)="onAddReply(comment.uuid, comment.uuid, true)">
+  </app-comment-input>
+  <app-reply-list
+    [replies]="comment.replies"
+    [parentUuid]="comment.uuid" 
+    [currentUser]="currentUser"
+    [replyInputVisible]="replyInputVisible"
+    [replyText]="replyText"
+    [replyLimit]="replyLimit"
+    [authenticated]="authenticated"
+    (toggleReplyInput)="toggleReplyInput.emit($event)"
+    (addReply)="addReply.emit($event)"
+    (showAllReplies)="showAllReplies.emit($event)"
+    (showLessReplies)="showLessReplies.emit($event)">
+  </app-reply-list>
+</div>

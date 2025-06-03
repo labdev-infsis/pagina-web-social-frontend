@@ -28,6 +28,11 @@ import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { PopupInfoUserComponent } from './components/popup-info-user/popup-info-user.component';
+import { CommentListComponent } from './components/comments/comment-list/comment-list.component';
+import { CommentItemComponent } from './components/comments/comment-item/comment-item.component';
+import { ReplyListComponent } from './components/comments/reply-list/reply-list.component';
+import { ReplyItemComponent } from './components/comments/reply-item/reply-item.component';
+import { CommentInputComponent } from './components/comments/comment-input/comment-input.component';
 
 
 @NgModule({
@@ -52,7 +57,12 @@ import { PopupInfoUserComponent } from './components/popup-info-user/popup-info-
     PhotosGalleryComponent,
     VideosGalleryComponent,
     HomePhotosSectionComponent,
-    PopupInfoUserComponent
+    PopupInfoUserComponent,
+    CommentListComponent,
+    CommentItemComponent,
+    ReplyListComponent,
+    ReplyItemComponent,
+    CommentInputComponent
   ],
   imports: [
     CommonModule,
