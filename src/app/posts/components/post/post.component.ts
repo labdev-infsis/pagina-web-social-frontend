@@ -1,16 +1,13 @@
-import { Component, EventEmitter, Input, Output, signal, WritableSignal, inject, TemplateRef, ViewEncapsulation} from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal, inject } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
-import { Modal } from 'bootstrap';
 import { Institution } from '../../models/institution';
-import { UploadedDocument } from '../../models/uploaded-document';
 import { ReactionsByType } from '../../models/reactions-by-type';
 import { Media } from '../../models/media';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import { PostComment } from '../../models/post-comment';
-import { User } from '../../../authentication/models/user';
 import { UserDetail } from '../../models/user-detail';
 import { AuthService } from '../../../authentication/services/auth.service';
 
@@ -132,7 +129,7 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
-    }
+  }
 
   getGridClass(media: Media[]): string {
     if (media.length === 1) return 'single';
