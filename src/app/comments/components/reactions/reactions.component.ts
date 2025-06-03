@@ -1,16 +1,13 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Comment, Reply } from '../../../posts/models/comment';
 import { ChangeDetectorRef } from '@angular/core';
 import { ViewCommentsComponent } from '../../../posts/components/view-comments/view-comments.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalListReactionsCommentsComponent } from './../modal-list-reactions-comments/modal-list-reactions-comments.component';
+import { PostService } from '../../../posts/services/post.service';
+import { EmojiType } from '../../../posts/models/emoji-type';
 
 @Component({
   selector: 'app-reactions',
@@ -18,6 +15,7 @@ import { ViewCommentsComponent } from '../../../posts/components/view-comments/v
   styleUrls: ['./reactions.component.scss'],
 })
 export class ReactionsComponent implements OnInit {
+  private modalService = inject(NgbModal);
   @Input() commentUuid!: string;
   @Input() replyUuid!: string;
 
@@ -33,7 +31,7 @@ export class ReactionsComponent implements OnInit {
   showReactions = false;
   showReactionDetails = false;
   emojis: string[] = ['👍', '❤️', '😢', '😡', '😆', '😲'];
-  reactionCounts: { emoji: string; count: number }[] = [];
+  reactionCounts: {  emojiTypeId:string; emoji: string; count: number }[] = [];
   detailedReactions: { userName: string; userPhoto: string; emoji: string }[] =
     [];
 
@@ -61,11 +59,13 @@ export class ReactionsComponent implements OnInit {
     Object.entries(this.emojiMap).map(([emoji, uuid]) => [uuid, emoji])
   );
   isMouseOverReactions: any;
+  listEmojiType!: EmojiType[];
 
   constructor(
     private readonly commentService: CommentService,
     private readonly authService: AuthService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private postService: PostService
   ) {}
 
   ngOnInit() {
@@ -74,6 +74,15 @@ export class ReactionsComponent implements OnInit {
     if (!this.userId) {
       this.userId = localStorage.getItem('userid') || '';
     }
+
+    this.postService.getEmojisType().subscribe({
+      next: (response: EmojiType[]) => {
+        this.listEmojiType = response;
+      },
+      error: (error) => {
+        console.log('Error al obtener los tipos de emojis', error);
+      }
+    });
 
     this.loadTotalReactions();
   }
@@ -118,7 +127,7 @@ export class ReactionsComponent implements OnInit {
   }
 
   updateReactionCounts(reactions: any[]) {
-    const countsMap = new Map<string, number>();
+    const countsMap = new Map<string, { emojiTypeId: string; emoji: string; count: number }>();
     const userReactions = new Map<string, string>();
 
     reactions.forEach((reaction) => {
@@ -131,14 +140,29 @@ export class ReactionsComponent implements OnInit {
       const emoji = this.getEmojiByUuid(emojiTypeId);
 
       userReactions.set(userId, emoji);
-      countsMap.set(emoji, (countsMap.get(emoji) || 0) + 1);
+      const current = countsMap.get(emojiTypeId);
+      if (current) {
+        current.count++;
+      } else {
+        countsMap.set(emojiTypeId, {
+          emojiTypeId,
+          emoji,
+          count: 1
+        });
+      }
     });
 
     this.selectedReaction = userReactions.get(this.userId) || null;
 
-    this.reactionCounts = Array.from(countsMap.entries()).map(
-      ([emoji, count]) => ({ emoji, count })
-    );
+    this.reactionCounts = Array.from(countsMap.values());
+  }
+
+  openModalReactionsComments(){
+    const modalRef = this.modalService.open(ModalListReactionsCommentsComponent, { centered: true });
+    modalRef.componentInstance.reactionsCount = this.reactionCounts;
+    modalRef.componentInstance.detailReactions = this.detailedReactions;
+    modalRef.componentInstance.listEmojiType = this.listEmojiType;
+    modalRef.componentInstance.commentOrReplyUuid = this.commentUuid || this.replyUuid;
   }
 
   getEmojiByUuid(uuid: string): string {

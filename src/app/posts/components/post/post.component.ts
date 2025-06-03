@@ -121,7 +121,7 @@ export class PostComponent {
   }
 
   openViewPostComments(post: Post) {
-    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
+    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl', centered: true });
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = post;
     modalRef.componentInstance.postUuid = post.uuid;
