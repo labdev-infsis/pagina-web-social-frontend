@@ -6,7 +6,6 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<h1>{{ totalModeratedComments }}</h1>
 				<div class="comment-content" *ngFor="let comment of listComments">
 					<img src="{{ comment.user_photo }}" alt="" class="avatar">
 					<div class="content">

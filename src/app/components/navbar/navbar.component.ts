@@ -15,40 +15,15 @@ export class NavbarComponent {
   institution!: Institution
   isMenuOpen = false;
   user: any
-  counterModeratedComments: number = 0;
+  counterModeratedComments!: number;
 
   @ViewChild('moderateCommentModal') modalElement!: ElementRef;
 
-  constructor(private authService: AuthService,
-    private postService: PostService,
-    private commentService: CommentService
-  ){
+  constructor(private authService: AuthService, private postService: PostService, private commentService: CommentService) {
     this.authenticated = authService.isAuthenticated()
   }
-
+  
   ngOnInit() {
-    /*
-    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
-    this.postService.getInstitution(uuid).subscribe({
-      next:(institutionData)=>{
-        this.institution = institutionData
-      },
-      error: (error)=>{
-        console.log(error)
-      }
-    });
-    if(this.authenticated){
-      this.postService.getUser().subscribe({
-        next: (infoUser) => {
-          this.user = infoUser;
-        },
-        error: (error) => {
-          console.log('Error al obtener al user',error)
-        }
-      })
-    }
-    */
-
     this.getInstitution();
     this.getUser();
     this.totalModeratedComments();
@@ -92,7 +67,6 @@ export class NavbarComponent {
 
   totalModeratedComments() {
     this.commentService.countModeratedComments().subscribe((total) => {
-      console.log(total);
       this.counterModeratedComments = total;
     });
   }
