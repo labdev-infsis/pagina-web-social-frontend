@@ -1,6 +1,6 @@
 .navbar-custom {
   margin: 0 15px;
-  padding: 15px 10% 0;
+  padding: 15px 7% 0;
   height: 80px;
   position: relative;
   display: flex;
@@ -8,6 +8,12 @@
   border-bottom: 2px solid var(--blue-color);
 
   .logo {
+    height: 50px;
+  }
+
+  .navbar-brand {
+    display: flex;
+    gap: 15px;
     height: 50px;
   }
 
@@ -21,10 +27,15 @@
     }
   }
 
+  .show {
+    display: block;
+  }
+
   .avatar-user {
     display: flex;
-    gap: 10px;
+    gap: 30px;
     align-items: center;
+    height: 50px;
 
     .icon-up-number {
       position: relative;
@@ -58,24 +69,51 @@
   .dropdown-menu {
     position: absolute;
     top: 80px;
-    right: 15%;
-    width: 180px;
+    right: 7%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
     border: none;
-    
+
     .dropdown-item {
-      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+      height: 40px;
       font-size: 1rem;
       text-decoration: none;
       color: var(--blue-color);
       cursor: pointer;
     }
+  }
 
-    // .dropdown-item:hover {
-    // }
+}
+
+@media screen and (max-width: 768px) {
+
+  .navbar-custom {
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 70px;
+
+    .navbar-brand {
+      gap: 10px;
+    }
+
+    .logo {
+      height: 40px;
+    }
+
+    .logo-small {
+      height: 30px;
+    }
+
+    .avatar-user {
+      gap: 20px;
+    }
+  }
+
+  .dropdown-menu {
+    right: 0px !important;
   }
 
 }
