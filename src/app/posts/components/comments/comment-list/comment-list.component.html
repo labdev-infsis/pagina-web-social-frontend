@@ -15,11 +15,11 @@
             <span class="mx-1">·</span>
             <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
             <!-- Reaccionar y mostrar opciones de tipos de mojis -->
-            <div class="fb-reaction-btn-wrapper" (mouseleave)="showEmojiOptions[comment.uuid]=false">
-              <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(comment.uuid)"
+            <div class="fb-reaction-btn-wrapper" 
                 (mouseenter)="showEmojiOptions[comment.uuid]=true"
+                (mouseleave)="showEmojiOptions[comment.uuid]=false">
+              <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(comment.uuid)"
                 (click)="reactToComment(comment.uuid, getSelectedEmoji(comment.uuid)?.uuid || defaultEmoji.uuid)">
-                <!-- ...resto igual... -->
                 <ng-container *ngIf="getSelectedEmoji(comment.uuid); else defaultLike">
                   <span class="emoji">{{ getSelectedEmoji(comment.uuid)?.emoji_code }}</span>
                   <span class="label">{{ getEmojiLabel(getSelectedEmoji(comment.uuid)?.emoji_name) }}</span>
