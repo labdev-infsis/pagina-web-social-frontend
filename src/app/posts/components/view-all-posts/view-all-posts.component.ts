@@ -11,7 +11,7 @@ import { UserDetail } from '../../models/user-detail';
 })
 export class ViewAllPostsComponent implements OnInit {
   posts!: Post[];
-  authenticated: boolean;
+  authenticated: boolean = false;
   currentUser!: UserDetail;
   selectedPostReactions: any = null;
   selectedPostUuid: string = '';
@@ -21,10 +21,10 @@ export class ViewAllPostsComponent implements OnInit {
   constructor(private postService: PostService,
     private authService: AuthService
   ){
-    this.authenticated = authService.isAuthenticated();
   }
-
+  
   ngOnInit(){
+    this.authenticated = this.authService.isAuthenticated();
     // Obtener una cantidad de posts
     this.postService.getPagedPosts(this.pageCounter).subscribe({
       next:(data: Post[])=>{
