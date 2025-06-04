@@ -93,12 +93,17 @@ export class CommentListComponent implements OnChanges {
     return this.emojis.find(e => e.uuid === emojiUuid);
   }
 
-  // ...existing code...
   constructor(private postService: PostService,
     private authService: AuthService
   ) { }
 
-  reactToComment(commentUuid: string, emojiTypeUuid: string) {
+  reactToComment(commentUuid: string, emojiTypeUuid: string, forceChange: boolean = false) {
+    // Si ya hay reacción y NO es un cambio forzado (click en botón principal), elimina la reacción
+    if (this.selectedReactions[commentUuid] && !forceChange) {
+      this.removeReaction(commentUuid);
+      return;
+    }
+    // Si ya hay reacción y es un cambio forzado (click en emoji diferente), actualiza la reacción
     const body = {
       emojiTypeId: emojiTypeUuid,
       reactionDate: new Date().toISOString()
@@ -192,7 +197,7 @@ export class CommentListComponent implements OnChanges {
   }
 
   loadUserReactionsForComments() {
-    const userId = this.authService.getUserId(); 
+    const userId = this.authService.getUserId();
     if (!userId || !this.comments) return;
 
     // Llama a getCommentsReactions para cada comentario

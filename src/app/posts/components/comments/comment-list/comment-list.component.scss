@@ -543,6 +543,14 @@
       color: #dd6b0e;
       .emoji { font-size: 20px; }
     }
+    &.grinning-squinting-face {
+      color: #f7b928;
+      .emoji { font-size: 20px; }
+    }
+    &.astonished-face {
+      color: #f0b90b;
+      .emoji { font-size: 20px; }
+    }
     &:hover {
       background: #f0f2f5;
     }
@@ -553,7 +561,7 @@
     gap: 8px;
     position: absolute;
     left: 0;
-    bottom: 100%; // <-- Cambiado aquí
+    bottom: 100%;
     background: #fff;
     border-radius: 30px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -571,16 +579,4 @@
       }
     }
   }
-
-  .remove-reaction-btn {
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 12px;
-    margin-left: 8px;
-    cursor: pointer;
-    &:hover { text-decoration: underline; }
-  }
-
-
 }

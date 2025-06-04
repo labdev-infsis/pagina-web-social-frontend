@@ -15,9 +15,8 @@
             <span class="mx-1">·</span>
             <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
             <!-- Reaccionar y mostrar opciones de tipos de mojis -->
-            <div class="fb-reaction-btn-wrapper" 
-                (mouseenter)="showEmojiOptions[comment.uuid]=true"
-                (mouseleave)="showEmojiOptions[comment.uuid]=false">
+            <div class="fb-reaction-btn-wrapper" (mouseenter)="showEmojiOptions[comment.uuid]=true"
+              (mouseleave)="showEmojiOptions[comment.uuid]=false">
               <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(comment.uuid)"
                 (click)="reactToComment(comment.uuid, getSelectedEmoji(comment.uuid)?.uuid || defaultEmoji.uuid)">
                 <ng-container *ngIf="getSelectedEmoji(comment.uuid); else defaultLike">
@@ -32,16 +31,14 @@
               <!-- Opciones de emojis al hacer hover -->
               <div class="fb-emoji-options" *ngIf="showEmojiOptions[comment.uuid]">
                 <ng-container *ngFor="let emoji of emojis">
+                  <!-- ...existing code... -->
                   <span class="emoji-option" [title]="emoji.emoji_name"
-                    (click)="reactToComment(comment.uuid, emoji.uuid); showEmojiOptions[comment.uuid]=false">
+                    (click)="reactToComment(comment.uuid, emoji.uuid, true); showEmojiOptions[comment.uuid]=false">
                     {{ emoji.emoji_code }}
                   </span>
+                  <!-- ...existing code... -->
                 </ng-container>
               </div>
-              <button *ngIf="getSelectedEmoji(comment.uuid)" class="remove-reaction-btn"
-                (click)="removeReaction(comment.uuid)">
-                Quitar reacción
-              </button>
             </div>
           </div>
         </div>
