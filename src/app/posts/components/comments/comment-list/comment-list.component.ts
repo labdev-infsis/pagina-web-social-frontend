@@ -2,6 +2,9 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { Comment, Reply } from '../../../models/comment';
 import { UserDetail } from '../../../models/user-detail';
 import moment from 'moment-timezone';
+import { PostService } from '../../../services/post.service';
+import { EmojiType } from '../../../models/emoji-type';
+import { CreateReaction } from '../../../models/create-reaction';
 
 @Component({
   selector: 'app-comment-list',
@@ -18,7 +21,94 @@ export class CommentListComponent implements OnChanges {
   replyText: { [key: string]: string } = {};
   replyLimit: { [key: string]: number } = {};
   replyVisibility: { [key: string]: boolean } = {};
+   emojis: EmojiType[] = [];
+  selectedReactions: { [key: string]: string } = {}; // Guarda el emoji seleccionado por comentario
+// ...existing code...
 
+showEmojiOptions: { [uuid: string]: boolean } = {};
+defaultEmoji: any = {
+  uuid: '',
+  emoji_code: '👍',
+  emoji_name: 'thumbs-up',
+  class: 'thumbs-up'
+};
+
+// Mapea emoji_name a una clase CSS para estilos tipo Facebook
+emojiClassMap: { [key: string]: string } = {
+  'thumbs-up': 'thumbs-up',
+  'red-heart': 'red-heart',
+  'crying-face': 'crying-face',
+  'angry-face': 'angry-face',
+  'grinning-squinting-face': 'grinning-squinting-face',
+  'astonished-face': 'astonished-face'
+};
+
+ngOnInit() {
+  this.loadEmojis();
+}
+getEmojiLabel(emojiName?: string): string {
+  switch (emojiName) {
+    case 'thumbs-up': return 'Me gusta';
+    case 'red-heart': return 'Me encanta';
+    case 'crying-face': return 'Me entristece';
+    case 'angry-face': return 'Me enoja';
+    case 'grinning-squinting-face': return 'Me divierte';
+    case 'astonished-face': return 'Me asombra';
+    default: return 'Me gusta';
+  }
+}
+loadEmojis() {
+  this.postService.getEmojisType().subscribe(emojis => {
+    // Agrega la clase a cada emoji para usar en el botón
+    this.emojis = emojis.map(e => ({
+      ...e,
+      class: this.emojiClassMap[e.emoji_name] || 'default'
+    }));
+    // El primer emoji será el default (👍)
+    if (this.emojis.length) {
+      this.defaultEmoji = { ...this.emojis[0], class: this.emojiClassMap[this.emojis[0].emoji_name] };
+    }
+    console.log('Emojis loaded:', this.emojis);
+  });
+}
+
+getEmojiClass(commentUuid: string): string {
+  const emoji = this.getSelectedEmoji(commentUuid);
+  if (!emoji) return 'default';
+  switch (emoji.emoji_name) {
+    case 'thumbs-up': return 'thumbs-up';
+    case 'red-heart': return 'red-heart';
+    case 'crying-face': return 'crying-face';
+    case 'angry-face': return 'angry-face';
+    case 'grinning-squinting-face': return 'grinning-squinting-face';
+    case 'astonished-face': return 'astonished-face';
+    default: return 'default';
+  }
+}
+// Devuelve el objeto emoji seleccionado para el comentario
+getSelectedEmoji(commentUuid: string) {
+  const emojiUuid = this.selectedReactions[commentUuid];
+  return this.emojis.find(e => e.uuid === emojiUuid);
+}
+
+// ...existing code...
+  constructor(private postService: PostService) {}
+
+  reactToComment(commentUuid: string, emojiTypeUuid: string) {
+  const body = { 
+    emojiTypeId: emojiTypeUuid,
+    reactionDate: new Date().toISOString()
+  };
+  this.postService.reactToComment(commentUuid, body).subscribe(() => {
+    this.selectedReactions[commentUuid] = emojiTypeUuid;
+  });
+}
+
+  removeReaction(commentUuid: string) {
+    this.postService.deleteCommentReaction(commentUuid).subscribe(() => {
+      this.selectedReactions[commentUuid] = '';
+    });
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['comments']) {
       this.initializeReplyLimits();

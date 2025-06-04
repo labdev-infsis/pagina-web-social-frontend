@@ -14,8 +14,35 @@
             <span class="comment-time">{{ calculateTimeFromNow(comment.date) }}</span>
             <span class="mx-1">·</span>
             <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
-            <!-- Reacciones y contador -->
-            <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+            <!-- Reaccionar y mostrar opciones de tipos de mojis -->
+            <div class="fb-reaction-btn-wrapper" (mouseleave)="showEmojiOptions[comment.uuid]=false">
+              <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(comment.uuid)"
+                (mouseenter)="showEmojiOptions[comment.uuid]=true"
+                (click)="reactToComment(comment.uuid, getSelectedEmoji(comment.uuid)?.uuid || defaultEmoji.uuid)">
+                <!-- ...resto igual... -->
+                <ng-container *ngIf="getSelectedEmoji(comment.uuid); else defaultLike">
+                  <span class="emoji">{{ getSelectedEmoji(comment.uuid)?.emoji_code }}</span>
+                  <span class="label">{{ getEmojiLabel(getSelectedEmoji(comment.uuid)?.emoji_name) }}</span>
+                </ng-container>
+                <ng-template #defaultLike>
+                  <i class="fa-regular fa-thumbs-up"></i>
+                  <span class="label">Me gusta</span>
+                </ng-template>
+              </button>
+              <!-- Opciones de emojis al hacer hover -->
+              <div class="fb-emoji-options" *ngIf="showEmojiOptions[comment.uuid]">
+                <ng-container *ngFor="let emoji of emojis">
+                  <span class="emoji-option" [title]="emoji.emoji_name"
+                    (click)="reactToComment(comment.uuid, emoji.uuid); showEmojiOptions[comment.uuid]=false">
+                    {{ emoji.emoji_code }}
+                  </span>
+                </ng-container>
+              </div>
+              <button *ngIf="getSelectedEmoji(comment.uuid)" class="remove-reaction-btn"
+                (click)="removeReaction(comment.uuid)">
+                Quitar reacción
+              </button>
+            </div>
           </div>
         </div>
       </div>
