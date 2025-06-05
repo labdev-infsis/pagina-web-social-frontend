@@ -580,3 +580,15 @@
     }
   }
 }
+
+.comment-reactions-count {
+  margin-left: 8px;
+  color: #003770;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  .icon {
+    margin-left: 3px;
+    font-size: 16px;
+  }
+}

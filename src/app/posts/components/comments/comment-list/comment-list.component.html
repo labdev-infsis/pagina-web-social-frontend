@@ -28,6 +28,10 @@
                   <span class="label">Me gusta</span>
                 </ng-template>
               </button>
+              <span class="comment-reactions-count" *ngIf="getCommentReactionsCount(comment) > 0">
+                {{ getCommentReactionsCount(comment) }}
+                <i class="bi bi-hand-thumbs-up icon"></i>
+              </span>
               <!-- Opciones de emojis al hacer hover -->
               <div class="fb-emoji-options" *ngIf="showEmojiOptions[comment.uuid]">
                 <ng-container *ngFor="let emoji of emojis">
@@ -36,6 +40,7 @@
                     (click)="reactToComment(comment.uuid, emoji.uuid, true); showEmojiOptions[comment.uuid]=false">
                     {{ emoji.emoji_code }}
                   </span>
+
                   <!-- ...existing code... -->
                 </ng-container>
               </div>

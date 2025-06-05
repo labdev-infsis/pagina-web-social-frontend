@@ -17,7 +17,7 @@ export class CommentListComponent implements OnChanges {
   @Input() currentUser: UserDetail | null = null;
   @Input() authenticated: boolean = false;
   @Output() onAddReply = new EventEmitter<{ parentUuid: string, replyText: string, isTopLevel: boolean }>();
-
+  commentReactionsCount: { [commentUuid: string]: number } = {};
   replyInputVisible: { [key: string]: boolean } = {};
   replyText: { [key: string]: string } = {};
   replyLimit: { [key: string]: number } = {};
@@ -215,4 +215,12 @@ export class CommentListComponent implements OnChanges {
       });
     });
   }
+
+  getCommentReactionsCount(comment: Comment): number {
+    this.postService.getCommentsReactions(comment.uuid).subscribe(reactions => {
+      this.commentReactionsCount[comment.uuid] = reactions.length;
+    });
+    return this.commentReactionsCount[comment.uuid] || 0;
+  }
+
 }
