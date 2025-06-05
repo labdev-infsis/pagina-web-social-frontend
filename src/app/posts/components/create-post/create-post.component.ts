@@ -3,7 +3,7 @@ import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Media } from '../../models/media';
-import { concatMap, of, forkJoin, map, catchError } from 'rxjs';
+import { concatMap, of, forkJoin, map, catchError, Observable, mergeMap, from, reduce, tap, concat } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
@@ -11,6 +11,7 @@ import { UploadedDocument } from '../../models/uploaded-document';
 import moment from 'moment';
 import { CommentConfig } from '../../models/comment-config';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-create-post',
@@ -31,6 +32,7 @@ export class CreatePostComponent {
   listFile!: File[];
   fileDoc!: File;
   isFbPosted!: boolean;
+  isFbSwitchOn: boolean = false;
 
   constructor(
     private postService: PostService,
@@ -38,9 +40,9 @@ export class CreatePostComponent {
   ) { }
 
   ngOnInit() {
-    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
     //Obtener la informacion de la institucion
-    this.postService.getInstitution(uuid).subscribe({
+    this.postService.getInstitution(intitutionUUID).subscribe({
       next: (institutionData: Institution) => {
         this.institution = institutionData
       },
@@ -65,8 +67,26 @@ export class CreatePostComponent {
     this.postForm = this.formBuilder.group({
       contentPost: ['', [Validators.maxLength(1000)]],
       media: [[]],
-      mediaDoc: [[]]
+      mediaDoc: [[]],
+      switchControl: [false]
     });
+    // Optional: Listen to value changes
+    this.postForm.get('switchControl')?.valueChanges.subscribe(value => {
+      console.log('Switch value changed:', value);
+      this.onSwitchChange(value);
+    });
+  }
+
+
+  onSwitchChange(value: boolean) {
+    this.isFbSwitchOn = value;
+    if (value) {
+      console.log('Switch is ON: ' + this.isFbSwitchOn);
+      // Your ON logic
+    } else {
+      console.log('Switch is OFF: ' + this.isFbSwitchOn);
+      // Your OFF logic
+    }
   }
 
   openModalCreatePost() {
@@ -121,6 +141,14 @@ export class CreatePostComponent {
     this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
+  showLoading() {
+    document.getElementById('loadingBackdrop')!.style.display = 'flex';
+  }
+
+  hideLoading() {
+    document.getElementById('loadingBackdrop')!.classList.add('hide');
+  }
+
   post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
@@ -140,6 +168,8 @@ export class CreatePostComponent {
 
     //Si hay info para postear
     if (valueFormPost.contentPost != '' || this.listFile || this.fileDoc) {
+
+      this.showLoading();
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
@@ -153,106 +183,143 @@ export class CreatePostComponent {
 
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
-
-        // Crear array de observables para Facebook
-          const facebookUploads = uploadResponse.map((media, index) => {
-          const isImage = media.type.includes('image');
-          
-          const fbUpload$ = isImage 
-            ? this.postService.uploadPhotoToFacebook(formDataFB)
-            : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
-
-          this.isFbPosted = isImage ? false : true;
-
-          console.log('is image:' + this.isFbPosted);
-
-          return fbUpload$.pipe(
-            map(fbResponse => ({
-              number: index + 1,
-              type: isImage ? 'image' : 'video',
-              name: media.name,
-              path: media.urlResource,
-              fb_media_id: fbResponse.id,
-              is_fb_posted: this.isFbPosted
-            })),
-            catchError(error => {
-              //console.error(Error uploading ${isImage ? 'photo' : 'video'}, error);
-              return of({
+            // Only process Facebook uploads if switch is on
+            const processMedia$ = uploadResponse.map((media, index) => {
+              const isImage = media.type.includes('image');
+              const baseMedia = {
                 number: index + 1,
                 type: isImage ? 'image' : 'video',
                 name: media.name,
-                path: media.urlResource,
-                fb_media_id: '',
-                is_fb_posted: this.isFbPosted
-              });
-            })
-            
-          );
-        });
+                path: media.urlResource
+              };
 
-        return forkJoin(facebookUploads).pipe(
-          map(responseMedia => {
-            post.content.media = responseMedia;
-            post.is_fb_posted = this.isFbPosted;
-            return this.postService.createPost(post);
+              // Skip Facebook upload if disabled
+              if (!this.isFbSwitchOn) {
+                return of({
+                  ...baseMedia,
+                  fb_media_id: '',
+                  is_fb_posted: false
+                });
+              }
+
+              const uploadService$ = isImage
+                ? this.postService.uploadPhotoToFacebook(formDataFB)
+                : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
+
+              return uploadService$.pipe(
+                map(fbResponse => ({
+                  ...baseMedia,
+                  fb_media_id: fbResponse ? fbResponse.id : '',
+                  is_fb_posted: isImage ? false : true
+                })),
+                catchError(error => {
+                  console.error(`Error uploading ${isImage ? 'photo' : 'video'} to Facebook`, error);
+                  return of({
+                    ...baseMedia,
+                    fb_media_id: '',
+                    is_fb_posted: false
+                  });
+                })
+              );
+            });
+
+            // Process media sequentially instead of in parallel
+            return concat(...processMedia$).pipe(
+              reduce((acc: any[], media) => [...acc, media], []),
+              tap((responseMedia) => {
+                this.isFbPosted = this.isFbSwitchOn &&
+                  responseMedia.some(media => media.is_fb_posted);
+              }),
+              concatMap(responseMedia => {
+                post.content.media = responseMedia;
+                post.is_fb_posted = this.isFbPosted;
+                return this.postService.createPost(post);
+              })
+            );
           })
-        );
-      }),
-      concatMap(createPost$ => createPost$)
+
         ).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
           }
         })
 
       } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
-        //Convertir el archivo en form data
         formData.append('file', this.fileDoc);
         formDataFB.append('url', this.fileDoc);
+
+        if (this.isFbSwitchOn) {
+          //call uploadDocument
+        } else {
+          //build response
+        }
         this.postService.uploadDocument(formData).pipe(
           concatMap((uploadResponse: UploadedDocument) => {
-            this.postService.publishDocumentToFacebook(formDataFB, valueFormPost.contentPost, uploadResponse.urlResource).subscribe({
-              next: (fbDocument: FbUploadedMedia) => {
-                this.fbMediaResponse = fbDocument;
-                this.isFbPosted = true;
-                console.log('Facebook Media ID:', this.fbMediaResponse);
-              },
-              error: (error) => {
-                console.error('Error uploading document', error);
-              }
-            });
-
-            responseDoc = {
+            // Initialize response object
+            const responseDoc = {
               number: 1,
-              type: 'document',//uploadResponse.type,
+              type: 'document',
               name: uploadResponse.name,
               path: uploadResponse.urlResource,
-              fb_media_id: this.fbMediaResponse ? this.fbMediaResponse.id : ''
-            }
+              fb_media_id: '',
+              is_fb_posted: false
+            };
 
-            post.content.media?.push(responseDoc);
-            post.is_fb_posted = true;
-            return this.postService.createPost(post);
+            // Prepare the Facebook upload observable (only if switch is on)
+            const facebookUpload$ = this.isFbSwitchOn
+              ? this.postService.publishDocumentToFacebook(
+                formDataFB,
+                valueFormPost.contentPost,
+                uploadResponse.urlResource
+              ).pipe(
+                tap((fbDocument: FbUploadedMedia) => {
+                  responseDoc.fb_media_id = fbDocument.id;
+                  responseDoc.is_fb_posted = true;
+                }),
+                catchError(error => {
+                  console.error('Error uploading document to Facebook', error);
+                  return of(null); // Continue flow even if Facebook upload fails
+                })
+              )
+              : of(null); // Skip if switch is off
+
+            return facebookUpload$.pipe(
+              concatMap(() => {
+                // Ensure media array exists
+                post.content.media = post.content.media || [];
+                post.content.media.push(responseDoc);
+                post.is_fb_posted = responseDoc.is_fb_posted;
+
+                return this.postService.createPost(post);
+              })
+            );
           })
-             
+
         ).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con archivo', error)
           }
         })
+
       } else if (valueFormPost.contentPost != '') {//Si solo tiene texto
 
         this.postService.createPost(post).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al subir post solo texto', error)
           }
         })

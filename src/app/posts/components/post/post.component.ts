@@ -1,18 +1,14 @@
-import { Component, EventEmitter, Input, Output, signal, WritableSignal, inject, TemplateRef, ViewEncapsulation} from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, WritableSignal, inject } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { CreateReaction } from '../../models/create-reaction';
 import { Post } from '../../models/post';
-import { Modal } from 'bootstrap';
 import { Institution } from '../../models/institution';
-import { UploadedDocument } from '../../models/uploaded-document';
 import { ReactionsByType } from '../../models/reactions-by-type';
 import { Media } from '../../models/media';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import { PostComment } from '../../models/post-comment';
-import { User } from '../../../authentication/models/user';
 import { UserDetail } from '../../models/user-detail';
-import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -23,11 +19,11 @@ export class PostComponent {
   private modalService = inject(NgbModal);
   @Input() post: any;
   @Output() reactionChanged = new EventEmitter<void>(); // Nuevo Output para emitir eventos de cambio de reacción
+  @Input() currentUser!: UserDetail;
+  @Input() authenticated: boolean = false;
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
-  currentUser !: UserDetail;
-  authenticated: boolean;
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
@@ -53,12 +49,9 @@ export class PostComponent {
 
 
   constructor(
-    private postService: PostService,
-    private authService: AuthService
-  ) {
-    this.authenticated = authService.isAuthenticated()
-  }
-
+    private postService: PostService
+  ) {}
+  
   ngOnInit() {
     this.listMediaPost = this.loadMediaPost();
   
@@ -71,16 +64,6 @@ export class PostComponent {
       }
     });
 
-        this.postService.getUser().subscribe({
-          next:(user: UserDetail) => {
-            this.currentUser = user;
-            console.log('Obteniendo el usuario actual', this.currentUser);
-          },
-          error:(error) => {
-            console.error('Error al obtener el usuario actual', error);
-          }
-        });
-  
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
       this.recuperarReaccion(); 
@@ -123,7 +106,7 @@ export class PostComponent {
   }
 
   openViewPostComments(post: Post) {
-    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl' });
+    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl', centered: true });
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = post;
     modalRef.componentInstance.postUuid = post.uuid;
@@ -131,7 +114,7 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
-    }
+  }
 
   getGridClass(media: Media[]): string {
     if (media.length === 1) return 'single';
@@ -249,7 +232,6 @@ export class PostComponent {
   recuperarReaccion() {
     let reaccionUser = this.post.reactions.my_reaction_emoji;
     //let reaccionUser = this.post.reactions.reactions_by_user[0]?.user_reaction
-    console.log(reaccionUser)
     if (reaccionUser) {
       this.like = true;
       if (reaccionUser === 'thumbs-up') {

@@ -24,8 +24,15 @@ import { PhotosGalleryComponent } from './components/photos-gallery/photos-galle
 import { VideosGalleryComponent } from './components/videos-gallery/videos-gallery.component';
 import { HomePhotosSectionComponent} from './components/home-photos-section/home-photos-section.component';
 import { CommentsModule } from '../comments/comments.module';
-import { NgbCarouselConfig, NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PopupInfoUserComponent } from './components/popup-info-user/popup-info-user.component';
+import { CommentListComponent } from './components/comments/comment-list/comment-list.component';
+import { CommentItemComponent } from './components/comments/comment-item/comment-item.component';
+import { ReplyListComponent } from './components/comments/reply-list/reply-list.component';
+import { ReplyItemComponent } from './components/comments/reply-item/reply-item.component';
+import { CommentInputComponent } from './components/comments/comment-input/comment-input.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +55,13 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ViewPostDetailComponent,
     PhotosGalleryComponent,
     VideosGalleryComponent,
-    HomePhotosSectionComponent
+    HomePhotosSectionComponent,
+    PopupInfoUserComponent,
+    CommentListComponent,
+    CommentItemComponent,
+    ReplyListComponent,
+    ReplyItemComponent,
+    CommentInputComponent
   ],
   imports: [
     CommonModule,
@@ -56,7 +69,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     FormsModule,
     CommentsModule,
     NgbCarouselModule,
-    PdfViewerModule
+    PdfViewerModule,
+    OverlayPanelModule,
   ],
   exports: [
     ViewAllPostsComponent,

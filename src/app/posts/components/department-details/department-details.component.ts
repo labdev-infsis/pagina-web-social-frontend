@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PostService } from '../../services/post.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-department-details',
@@ -12,9 +13,9 @@ export class DepartmentDetailsComponent {
   constructor(private postService: PostService) {}
 
   ngOnInit(): void {
-    const uuid = "93j203b4-f63b-4c4a-be05-eae84cef0c0c";
+    const intitutionUUID = `${environment.INSTITUTION_ID}`;
 
-    this.postService.getInstitution(uuid).subscribe(
+    this.postService.getInstitution(intitutionUUID).subscribe(
       (data) => {
         this.institution = data;
       },

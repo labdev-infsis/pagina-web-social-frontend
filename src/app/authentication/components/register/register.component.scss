@@ -74,6 +74,10 @@ input {
     color: var(--blue-color);
 }
 
+.hide {
+    display: none !important;
+}
+
 @media (max-width: 576px) {
     .botones {
         min-width: 100%;

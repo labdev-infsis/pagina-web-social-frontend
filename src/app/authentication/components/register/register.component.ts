@@ -1,25 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
-
+import { NewUser } from '../../models/new-user';
+import { MessageService } from 'primeng/api';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
+  providers: [MessageService]
 })
 export class RegisterComponent implements OnInit {
   public registerForm!: FormGroup;
   public hide = true;
   public inputType: string = 'password';
   public passwordMismatch: boolean = false;
+  public modal?: Modal | null;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router
+    private readonly formBuilder: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -28,10 +30,11 @@ export class RegisterComponent implements OnInit {
 
   private buildForm() {
     this.registerForm = this.formBuilder.group({
-      fullName: ['', [Validators.required]], 
+      name: ['', [Validators.required]], 
+      lastName: ['', [Validators.required]], 
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      repeat_password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     // Detecta cuando las contraseñas no coinciden
@@ -42,15 +45,27 @@ export class RegisterComponent implements OnInit {
 
   register() {
     if (this.registerForm.valid) {
-      const formData = this.registerForm.value;
-      this.authService.register(formData.email, formData.password).subscribe(
-        (response) => {
-          this.router.navigate(['/login']);
+      const newUser: NewUser = this.registerForm.value;
+      
+      this.authService.register(newUser).subscribe({
+        next: (response) => {
+          console.log('Usuario registrado:', response.message);
+          this.showLoading();
+          setTimeout(()=>{
+            this.hideLoading()
+            this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'El usuario ha sido registrado con éxito. Inicie sesión', sticky: true });
+          },2000)
+          setTimeout(()=> {
+            this.resetForm();
+            this.closeModalRegister();
+            this.showModalLogin();
+          },5000);
         },
-        (error) => {
-          console.error(error);
+        error:(error) => {
+          console.log('Error al registar',error);
+          this.messageService.add({ severity: 'error', summary: 'Error al registrar', detail: 'Intentelo mas tarde.', sticky: true });
         }
-      );
+      });
     }
   }
 
@@ -66,5 +81,34 @@ export class RegisterComponent implements OnInit {
   resetForm() {
     this.registerForm.reset();
     this.passwordMismatch = false;
+  }
+
+  closeModalRegister(){
+    const modalRegister = document.getElementById('registerModal') as HTMLElement;
+    let modal = Modal.getInstance(modalRegister)
+    modal?.hide();
+    setTimeout(() => {
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }, 300);
+  }
+
+  showModalLogin(){
+    const modalLogin = document.getElementById('loginModal') as HTMLElement;
+    let modal = new Modal(modalLogin)
+    modal?.show();
+  }
+
+  showLoading() {
+    document.getElementById('loadingBackdrop')!.style.display = 'flex';
+  }
+
+  hideLoading() {
+    document.getElementById('loadingBackdrop')!.classList.add('hide');
   }
 }

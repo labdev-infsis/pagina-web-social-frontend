@@ -214,8 +214,6 @@ export class ModalEditPostComponent {
           concatMap((uploadResponse: UploadedMedia[]) => {
             uploadResponse.forEach((media, index) => {
 
-
-
               responseMedia.push({
                 number: index + 1 + amountImagesPost,
                 type: media.type,

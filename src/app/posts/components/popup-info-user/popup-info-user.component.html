@@ -1,0 +1,11 @@
+<p-overlayPanel #op [showCloseIcon]="closeIcon">
+  <div class="content">
+    <div class="img-profile">
+      <img [src]="urlImage" [alt]="alternativeText">
+    </div>
+    <div class="d-flex flex-column text">
+      <h5 class="fw-bold" *ngIf="nameUser">{{ nameUser }}</h5>
+      <a class="email" *ngIf="email" [href]="'mailto:'+email">{{ email }}</a>
+    </div>
+  </div>
+</p-overlayPanel>

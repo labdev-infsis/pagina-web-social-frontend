@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, Input, QueryList, signal, ViewChildren, WritableSignal } from '@angular/core';
 import { Reactions } from '../../models/reactions';
 import { PostService } from '../../services/post.service';
 import { EmojiType } from '../../models/emoji-type';
@@ -15,6 +15,8 @@ export class ModalListReactionsComponent {
   listEmojiType!: EmojiType[]; //Lista de los tipos de emojis guardados en el back
   listEmojiTypeExisting!: ReactionsByType[];//Lista de las reacciones existentes en el post
   @ViewChildren('modal') modalElements!: QueryList<ElementRef>;
+
+  public showPopupUser: WritableSignal<boolean> = signal(false);
 
   constructor(private postService: PostService) { }
 

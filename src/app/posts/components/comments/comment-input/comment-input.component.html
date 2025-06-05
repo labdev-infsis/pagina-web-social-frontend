@@ -1,0 +1,11 @@
+<div class="comment-box" *ngIf="showInput || isReply">
+  <input
+    [(ngModel)]="inputText"
+    [placeholder]="isReply ? 'Escribe una respuesta...' : 'Escribe un comentario...'"
+    class="comment-input"
+    (keydown.enter)="sendInput()"
+  />
+  <button (click)="sendInput()" class="send-comment-button">
+    <i class="bi bi-send"></i>
+  </button>
+</div>

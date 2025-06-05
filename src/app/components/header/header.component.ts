@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Institution } from '../../posts/models/institution';
 import { PostService } from '../../posts/services/post.service';
+import { Follower } from '../../posts/models/follower';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +10,9 @@ import { PostService } from '../../posts/services/post.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  uuidIntitutionDric = '93j203b4-f63b-4c4a-be05-eae84cef0c0c';
+
+  uuidIntitutionDric = `${environment.INSTITUTION_ID}`;
+
   
   institution!: Institution
   totalFollowers!: number;
@@ -36,6 +40,8 @@ export class HeaderComponent {
     this.postService.getNumberFollowers(uuid).subscribe({
       next: (numberFollowers: number) => {
         this.totalFollowers = numberFollowers;
+      //next: (followers: Follower) => {
+       // this.totalFollowers = followers.total_followers;
       }, error(error) {
         console.log(error);
       }

@@ -1,13 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PrimeNGConfig } from 'primeng/api';
+import { AuthService } from './authentication/services/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'pagina-web-social-frontend';
-  constructor() {
-    // console.log("Token en localStorage:", localStorage.getItem('token'));
+export class AppComponent implements OnInit {
+  constructor(private primengConfig: PrimeNGConfig, private authService: AuthService) {}
+
+  ngOnInit(): void{
+    this.primengConfig.ripple = true;
+    setInterval(() => {
+      this.authService.checkTokenExpiration();
+    }, 60000);
+
+     this.authService.checkTokenExpiration();
   }
 }

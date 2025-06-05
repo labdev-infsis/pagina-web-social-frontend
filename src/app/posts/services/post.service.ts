@@ -48,7 +48,8 @@ export class PostService {
 
   // Método para obtener el número de seguidores de una institución
   getNumberFollowers(uuid: string): Observable<any> {
-    return this.http.get<number>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);;
+    return this.http.get<number>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
+    //return this.http.get<any>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
   }
 
   // Método para obtener un post por uuid
@@ -65,8 +66,8 @@ export class PostService {
     }
 
   //Metodo para obtener posts paginados
-  getPagedPosts(): Observable<Post[]>{
-    const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${this.page}&size=${this.size}`;
+  getPagedPosts(pageNumber : number): Observable<Post[]>{
+    const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${pageNumber}&size=5`;
     return this.http.get<Post[]>(urlPagedPosts);
   }
   // Avanzar a la siguiente pagina de los posts
@@ -105,14 +106,12 @@ export class PostService {
       return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?description=${description}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
-  //Método para subir imagenes a facebook
+  //Método para subir documentos a facebook
    publishDocumentToFacebook(formData: FormData, description: string, linkDoc: string): Observable<FbUploadedMedia> {
         const resource = 'feed';
-        linkDoc = 'http://imagenes.fcyt.umss.edu.bo/Calendario%20academico-2025.pdf';
+        //linkDoc = 'http://imagenes.fcyt.umss.edu.bo/Calendario%20academico-2025.pdf';
         return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?message=${description}&link=${linkDoc}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
     }
-
-
 
   //Método para subir media (imagenes y videos)
   uploadMedia(formData: FormData): Observable<UploadedMedia[]> {
@@ -173,7 +172,7 @@ export class PostService {
   //Método para obtener configuraciones de comentarios
   getCommentsConfiguration(): Observable<CommentConfig[]> {
     const commentConfigUrl = 'comment-config'
-    return this.http.get<CommentConfig[]>(`${this.ROOT_URL}/${commentConfigUrl}`, this.reqHeader);
+    return this.http.get<CommentConfig[]>(`${this.ROOT_URL}/${commentConfigUrl}`);
   }
 
   //Método para eliminar un post

@@ -1,164 +1,173 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../../authentication/services/auth.service';
-import { Comment } from '../../../posts/models/comment';
+import { Comment, Reply } from '../../../posts/models/comment';
 import { ChangeDetectorRef } from '@angular/core';
 import { ViewCommentsComponent } from '../../../posts/components/view-comments/view-comments.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalListReactionsCommentsComponent } from './../modal-list-reactions-comments/modal-list-reactions-comments.component';
+import { PostService } from '../../../posts/services/post.service';
+import { EmojiType } from '../../../posts/models/emoji-type';
 
 @Component({
   selector: 'app-reactions',
   templateUrl: './reactions.component.html',
-  styleUrls: ['./reactions.component.scss']
+  styleUrls: ['./reactions.component.scss'],
 })
 export class ReactionsComponent implements OnInit {
-  @Input() commentUuid!: string; // ID del comentario
-  userId: string = "";
-  @ViewChild(ViewCommentsComponent) viewCommentsComponent!: ViewCommentsComponent;
-  @Output() reactionUpdated = new EventEmitter<string>(); // 🔥 Emitir UUID cuando hay una reacción nueva
+  private modalService = inject(NgbModal);
+  @Input() commentUuid!: string;
+  @Input() replyUuid!: string;
 
- comments: Comment[] = []; 
+  userId: string = '';
+  @ViewChild(ViewCommentsComponent)
+  viewCommentsComponent!: ViewCommentsComponent;
+  @Output() reactionUpdated = new EventEmitter<string>();
+
+  comments: Comment[] = [];
+  reply: Reply[] = [];
   selectedReaction: string | null = null;
   totalReactions = 0;
   showReactions = false;
-  emojis: string[] = ['👍', '❤️',  '😢', '😡'];
+  showReactionDetails = false;
+  emojis: string[] = ['👍', '❤️', '😢', '😡', '😆', '😲'];
+  reactionCounts: {  emojiTypeId:string; emoji: string; count: number }[] = [];
+  detailedReactions: { userName: string; userPhoto: string; emoji: string }[] =
+    [];
 
-  // Devuelve el texto adecuado según la reacción seleccionada
-getReactionText(reaction: string | null): string {
-  const reactionTexts: Record<string, string> = {
-    '👍': 'Me gusta',
-    '❤️': 'Me encanta',
-    '😢': 'Me entristece',
-    '😡': 'Me enoja'
-  };
-  return reaction ? reactionTexts[reaction] || 'Me gusta' : 'Me gusta';
-}
-
-  // Mapeo de emojis a UUIDs 
+  getReactionText(reaction: string | null): string {
+    const reactionTexts: Record<string, string> = {
+      '👍': 'Me gusta',
+      '❤️': 'Me encanta',
+      '😢': 'Me entristece',
+      '😡': 'Me enoja',
+      '😆': 'Me divierte',
+      '😲': 'Me sorprende',
+    };
+    return reaction ? reactionTexts[reaction] || 'Me gusta' : 'Me gusta';
+  }
   emojiMap: Record<string, string> = {
     '👍': '3f696a78-c73f-475c-80a6-f5a858648af1',
     '❤️': '7v236a78-c73f-475c-80a6-f5a858648af1',
-     '😢': 'n1596a78-c73f-475c-80a6-f5a858648af1',
-    '😡': '4c806a78-c73f-475c-80a6-f5a858648af1'
+    '😢': 'n1596a78-c73f-475c-80a6-f5a858648af1',
+    '😡': '4c806a78-c73f-475c-80a6-f5a858648af1',
+    '😆': 'l6m3bd82-c73f-475c-80a6-f5a858648af1',
+    '😲': 'c5n1m4f0-c73f-475c-80a6-f5a858648af1',
   };
 
-  // Mapeo inverso UUID → Emoji
   emojiUuidMap: Record<string, string> = Object.fromEntries(
     Object.entries(this.emojiMap).map(([emoji, uuid]) => [uuid, emoji])
   );
   isMouseOverReactions: any;
+  listEmojiType!: EmojiType[];
 
   constructor(
-    private commentService: CommentService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef // 👈 Inyectar ChangeDetectorRef
+    private readonly commentService: CommentService,
+    private readonly authService: AuthService,
+    private readonly cdr: ChangeDetectorRef,
+    private postService: PostService
   ) {}
 
   ngOnInit() {
-    this.userId = this.authService.getUserId() || "";
+    this.userId = this.authService.getUserId() || '';
 
     if (!this.userId) {
-      console.warn("⚠️ No se encontró el ID del usuario en AuthService.");
-      this.userId = localStorage.getItem('userid') || "";
+      this.userId = localStorage.getItem('userid') || '';
     }
 
-    
+    this.postService.getEmojisType().subscribe({
+      next: (response: EmojiType[]) => {
+        this.listEmojiType = response;
+      },
+      error: (error) => {
+        console.log('Error al obtener los tipos de emojis', error);
+      }
+    });
 
-    this.loadTotalReactions(); // 🔥 Cargar total de reacciones al inicializar
+    this.loadTotalReactions();
   }
 
-
-
   loadTotalReactions() {
-    if (!this.commentUuid) {
-      console.error("❌ No se puede cargar reacciones: `commentUuid` es undefined.");
-      return;
-    }
+    const uuid = this.replyUuid || this.commentUuid;
+    if (!uuid) return;
 
-    this.commentService.getCommentReactions(this.commentUuid).subscribe({
+    const getFn = this.replyUuid
+      ? this.commentService.getReplyReactions.bind(this.commentService)
+      : this.commentService.getCommentReactions.bind(this.commentService);
+
+    getFn(uuid).subscribe({
       next: (reactions) => {
-       
-
         this.totalReactions = reactions.length;
         this.updateReactionCounts(reactions);
 
-        const userReaction = reactions.find(r => r.userId === this.userId);
-        if (userReaction) {
-          this.selectedReaction = this.getEmojiByUuid(userReaction.emojiTypeId); 
-        } else {
-          this.selectedReaction = null;
-        }
+        this.detailedReactions = reactions.map((r) => ({
+          userName: r.userName,
+          userPhoto: r.userPhoto,
+          emoji: this.getEmojiByUuid(
+            this.replyUuid ? r.emoji_type_id : r.emojiTypeId
+          ),
+        }));
+
+        const userReaction = reactions.find((r) =>
+          this.replyUuid ? r.user_id === this.userId : r.userId === this.userId
+        );
+
+        this.selectedReaction = userReaction
+          ? this.getEmojiByUuid(
+              this.replyUuid
+                ? userReaction.emoji_type_id
+                : userReaction.emojiTypeId
+            )
+          : null;
 
         this.cdr.detectChanges();
       },
-      error: (error) => {
-        console.error('❌ Error al obtener reacciones del comentario:', error);
-      }
+      error: (error) => console.error('Error al cargar reacciones:', error),
     });
   }
 
+  updateReactionCounts(reactions: any[]) {
+    const countsMap = new Map<string, { emojiTypeId: string; emoji: string; count: number }>();
+    const userReactions = new Map<string, string>();
 
-  loadReactions(comment: Comment) {
-    if (!comment || !comment.uuid) {
-      console.error("❌ No se puede cargar reacciones porque `comment` es undefined.");
-      return;
-    }
-  
-    this.commentService.getCommentReactions(comment.uuid).subscribe({
-      next: (reactions) => {
-       
-        
-        this.totalReactions = reactions.length; // 🔄 Actualizar el contador
-        this.updateReactionCounts(reactions); // 🔥 Actualizar el resumen de reacciones
+    reactions.forEach((reaction) => {
+      const emojiTypeId = this.replyUuid
+        ? reaction.emoji_type_id
+        : reaction.emojiTypeId;
 
-        Object.assign(comment, { totalReactions: reactions.length });
+      const userId = this.replyUuid ? reaction.user_id : reaction.userId;
 
-        this.cdr.detectChanges(); // 👈 Forzar actualización en la UI
+      const emoji = this.getEmojiByUuid(emojiTypeId);
 
-        console.log("🔄 Total de reacciones actualizado:", comment.totalReactions);
-      },
-      error: (error) => {
-        console.error('❌ Error al obtener reacciones del comentario:', error);
+      userReactions.set(userId, emoji);
+      const current = countsMap.get(emojiTypeId);
+      if (current) {
+        current.count++;
+      } else {
+        countsMap.set(emojiTypeId, {
+          emojiTypeId,
+          emoji,
+          count: 1
+        });
       }
     });
-}
 
+    this.selectedReaction = userReactions.get(this.userId) || null;
 
-
-  
-  reactionCounts: { emoji: string, count: number }[] = [];
-
-updateReactionCounts(reactions: any[]) {
-  const countsMap = new Map<string, number>();
-  const userReactions = new Map<string, string>(); // Mapear userId → emoji
-
-  reactions.forEach(reaction => {
-    const emoji = this.getEmojiByUuid(reaction.emojiTypeId);
-    
-    // 🔥 Solo se guarda la última reacción del usuario
-    userReactions.set(reaction.userId, emoji);
-    
-    // 📌 Contar reacciones por tipo de emoji
-    countsMap.set(emoji, (countsMap.get(emoji) || 0) + 1);
-  });
-
-  // 🔄 Actualizar la reacción del usuario en la interfaz
-  if (userReactions.has(this.userId)) {
-    this.selectedReaction = userReactions.get(this.userId)!;
-  } else {
-    this.selectedReaction = null; // Si el usuario no reaccionó
+    this.reactionCounts = Array.from(countsMap.values());
   }
 
-  this.reactionCounts = Array.from(countsMap.entries()).map(([emoji, count]) => ({ emoji, count }));
-}
+  openModalReactionsComments(){
+    const modalRef = this.modalService.open(ModalListReactionsCommentsComponent, { centered: true });
+    modalRef.componentInstance.reactionsCount = this.reactionCounts;
+    modalRef.componentInstance.detailReactions = this.detailedReactions;
+    modalRef.componentInstance.listEmojiType = this.listEmojiType;
+    modalRef.componentInstance.commentOrReplyUuid = this.commentUuid || this.replyUuid;
+  }
 
-
-
-getEmojiByUuid(uuid: string): string {
-
-  return this.emojiUuidMap[uuid];
-}
-
-
+  getEmojiByUuid(uuid: string): string {
+    return this.emojiUuidMap[uuid];
+  }
 
   toggleReactions(show: boolean) {
     this.showReactions = show;
@@ -171,64 +180,92 @@ getEmojiByUuid(uuid: string): string {
       }
     }, 300);
   }
-// ✅ Nuevo método para mantener abierto el popup si el usuario hace clic en él
-keepPopupOpen(event: Event) {
-  event.stopPropagation();
-}
 
-  reactToComment(commentUuid: string, emoji: string) {
-    const userId = this.authService.getUserId();
-  
-    if (!userId) {
-      console.error("❌ No se encontró el ID del usuario. Asegúrate de que el usuario ha iniciado sesión.");
-      return;
-    }
-  
+  keepPopupOpen(event: Event) {
+    event.stopPropagation();
+  }
+
+  reactToTarget(emoji: string) {
+    const userId =
+      this.authService.getUserId() || localStorage.getItem('userid');
+    const targetUuid = this.replyUuid || this.commentUuid;
+    if (!userId || !targetUuid) return;
+
     const emojiUuid = this.emojiMap[emoji] || emoji;
-    console.log("🎯 UUID de la reacción:", emojiUuid);
-  
-    // 🔍 Verificar si el usuario ya reaccionó antes
-    this.commentService.getCommentReactions(commentUuid).subscribe({
+
+    const isReply = !!this.replyUuid;
+
+    const getReactions = isReply
+      ? this.commentService.getReplyReactions.bind(this.commentService)
+      : this.commentService.getCommentReactions.bind(this.commentService);
+
+    const postReaction = isReply
+      ? this.commentService.reactToReply.bind(this.commentService)
+      : this.commentService.reactToComment.bind(this.commentService);
+
+    const updateReaction = isReply
+      ? this.commentService.updateReplyReaction.bind(this.commentService)
+      : this.commentService.updateReaction.bind(this.commentService);
+
+    getReactions(targetUuid).subscribe({
       next: (reactions) => {
-        const existingReaction = reactions.find(r => r.userId === userId);
-        
+        const existingReaction = reactions.find((r) =>
+          isReply ? r.user_id === userId : r.userId === userId
+        );
+
         if (existingReaction) {
-          // 📌 Si el usuario ya reaccionó, actualizar el emoji en lugar de eliminarlo
-          console.log("🔄 Actualizando reacción...");
-          existingReaction.emojiTypeId = emojiUuid;
-          this.commentService.updateReaction(existingReaction.uuid, existingReaction).subscribe({
+          const cleanedReaction = isReply
+            ? {
+                user_id: userId,
+                reply_id: targetUuid,
+                emoji_type_id: emojiUuid,
+                reaction_date: new Date().toISOString(),
+              }
+            : {
+                userId: userId,
+                commentId: targetUuid,
+                emojiTypeId: emojiUuid,
+                reactionDate: new Date().toISOString(),
+              };
+
+          updateReaction(existingReaction.uuid, cleanedReaction).subscribe({
             next: () => {
-              console.log("✅ Reacción actualizada correctamente.");
-              this.selectedReaction = this.getEmojiByUuid(emojiUuid);
-              this.loadTotalReactions(); // 🔄 Recargar contador
-            },
-            error: (err) => console.error("❌ Error al actualizar la reacción:", err)
-          });
-        } else {
-          // 📌 Si el usuario nunca reaccionó, agregar una nueva reacción
-          const reactionData = {
-            userId: userId,
-            commentId: commentUuid,
-            emojiTypeId: emojiUuid,
-            reactionDate: new Date().toISOString()
-          };
-  
-        // console.log("🔥 Enviando nueva reacción...", reactionData);
-  
-          this.commentService.reactToComment(commentUuid, reactionData).subscribe({
-            next: (response) => {
-              //console.log("✅ Nueva reacción agregada correctamente:", response);
               this.selectedReaction = this.getEmojiByUuid(emojiUuid);
               this.loadTotalReactions();
             },
-            error: (err) => console.error("❌ Error al agregar la reacción:", err)
+            error: (err) => {
+              console.error('❌ Error al actualizar la reacción:', err);
+            },
+          });
+        } else {
+          const newReaction = isReply
+            ? {
+                user_id: userId,
+                reply_id: targetUuid,
+                emoji_type_id: emojiUuid,
+                reaction_date: new Date().toISOString(),
+              }
+            : {
+                userId: userId,
+                commentId: targetUuid,
+                emojiTypeId: emojiUuid,
+                reactionDate: new Date().toISOString(),
+              };
+
+          postReaction(targetUuid, newReaction).subscribe({
+            next: () => {
+              this.selectedReaction = this.getEmojiByUuid(emojiUuid);
+              this.loadTotalReactions();
+            },
+            error: (err) => {
+              console.error('❌ Error al agregar la reacción:', err);
+            },
           });
         }
       },
-      error: (err) => console.error("❌ Error al verificar reacciones existentes:", err)
+      error: (err) => {
+        console.error('❌ Error al cargar reacciones existentes:', err);
+      },
     });
   }
-  
-  
-
 }

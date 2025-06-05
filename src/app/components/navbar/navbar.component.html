@@ -18,7 +18,11 @@
     }
 
     @if (authenticated && user) {
-      <img src="{{ user.photo_profile_path }}" alt="Foto de perfil" (click)="toggleMenu()" class="logo user-image">
+      @if(user.photo_profile_path){
+        <img src="{{ user.photo_profile_path }}" alt="Foto de perfil" (click)="toggleMenu()" class="logo user-image">
+      }@else {
+        <img src="assets/user-icon.png" alt="" (click)="toggleMenu()" class="logo user-image">
+      }
     } @else {
       <img src="../../../assets/user-icon-1.png" alt="" (click)="toggleMenu()" class="logo user-image">
     }

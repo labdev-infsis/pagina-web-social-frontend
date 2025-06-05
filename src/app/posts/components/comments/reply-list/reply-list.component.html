@@ -1,0 +1,26 @@
+<div class="replies" *ngIf="replies && replies.length > 0">
+  <app-reply-item
+    *ngFor="let reply of replies | slice:0:getLimit(parentUuid)"
+    [reply]="reply"
+    [currentUser]="currentUser"
+    [replyInputVisible]="replyInputVisible"
+    [replyText]="replyText"
+    [replyLimit]="replyLimit"
+    [authenticated]="authenticated"
+    (toggleReplyInput)="toggleReplyInput.emit($event)"
+    (addReply)="addReply.emit($event)"
+    (showAllReplies)="showAllReplies.emit($event)"
+    (showLessReplies)="showLessReplies.emit($event)">
+  </app-reply-item>
+  <!-- Botones para ver más/menos respuestas -->
+  <button class="view-more-replies"
+    *ngIf="getLimit(parentUuid) < (replies?.length || 0)"
+    (click)="showAllReplies.emit(parentUuid)">
+    Ver más respuestas
+  </button>
+  <button class="view-less-replies"
+    *ngIf="getLimit(parentUuid) === (replies?.length || 0)"
+    (click)="showLessReplies.emit(parentUuid)">
+    Ver menos respuestas
+  </button>
+</div>
