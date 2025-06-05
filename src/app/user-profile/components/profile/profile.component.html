@@ -1,0 +1,15 @@
+<div class="header-container">
+    <div class="header-image">
+        <div class="banner-container">
+            <img *ngIf="currentUser" [src]="currentUser.photo_cover_path" alt="Foto cubierta ususario" class="banner-image">
+        </div>
+
+        <div class="logo-overlay">
+            <img [src]="currentUser.photo_profile_path" alt="Foto ususario" class="career-logo">
+        </div>
+    </div>
+
+    <div class="header-details">
+        <h3>{{ currentUser.name + ' ' + currentUser.lastName }}</h3>
+    </div>
+</div>

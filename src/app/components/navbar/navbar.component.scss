@@ -28,13 +28,13 @@
   .dropdown-menu {
     position: absolute;
     top: 80px;
-    right: 15%;
+    right: 10%;
     width: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    border: none;
+    border: 0.5px solid var(--blue-color);
     
     .dropdown-item {
       margin: 8px 0;

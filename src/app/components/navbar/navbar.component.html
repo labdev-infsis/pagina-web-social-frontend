@@ -60,7 +60,7 @@
   @if (isMenuOpen) {
     <div class="dropdown-menu">
       <ng-container *ngIf="authenticated">
-        <a class="dropdown-item">Ver perfil</a>
+        <a class="dropdown-item" routerLink="profile">Ver perfil</a>
         <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
       </ng-container>
       <ng-container *ngIf="!authenticated">

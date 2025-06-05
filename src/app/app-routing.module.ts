@@ -13,6 +13,7 @@ import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/sch
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { authGuard } from './authentication/services/auth.guard';
+import { ProfileComponent } from './user-profile/components/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -45,7 +46,11 @@ const routes: Routes = [
         component: VideosGalleryComponent
       }
     ]
-  }
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
 ];
 
 @NgModule({

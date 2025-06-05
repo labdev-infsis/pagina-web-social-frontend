@@ -1,0 +1,66 @@
+.header-container {
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #f8f9fa;
+
+	.header-image {
+		position: relative;
+		width: 100%;
+
+		.banner-container {
+			width: 100%;
+			height: 312px;
+			overflow: hidden;
+			position: relative;
+
+			.banner-image {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				-o-object-fit: cover;
+				object-position: center;
+				-o-object-position: center;
+			}
+		}
+
+		.logo-overlay {
+			position: absolute;
+			bottom: -75px;
+			left: 50%;
+			transform: translateX(-50%);
+
+			.career-logo {
+				width: 150px;
+				height: 150px;
+				border-radius: 50%;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			}
+		}
+	}
+
+	.header-details {
+		padding: 75px 0 20px;
+		width: 100%;
+		color: var(--blue-color);
+		text-align: center;
+
+		h3 {
+			margin: 0;
+			padding: 20px 0;
+			font-family: var(--secondary-font-family);
+			font-optical-sizing: auto;
+			font-weight: bold;
+			font-size: 24px;
+		}
+
+		p {
+			margin: 0;
+			font-family: var(--primary-font-family);
+			font-optical-sizing: auto;
+			font-weight: normal;
+			font-size: 20px;
+		}
+	}
+}
