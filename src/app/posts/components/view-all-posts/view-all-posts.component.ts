@@ -10,7 +10,7 @@ import { UserDetail } from '../../models/user-detail';
   styleUrl: './view-all-posts.component.scss'
 })
 export class ViewAllPostsComponent implements OnInit {
-  posts!: Post[];
+  posts: Post[] = [];
   authenticated: boolean;
   currentUser!: UserDetail;
   selectedPostReactions: any = null;
