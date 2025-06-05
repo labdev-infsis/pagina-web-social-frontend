@@ -54,7 +54,7 @@ import { CommentsModule } from "./comments/comments.module";
     FontAwesomeModule,
     NgbModule,
     PdfViewerModule,
-    CommentsModule
+    CommentsModule,
     BrowserAnimationsModule
 ],
   providers: [
