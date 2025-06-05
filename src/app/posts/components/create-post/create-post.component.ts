@@ -141,6 +141,14 @@ export class CreatePostComponent {
     this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
+  showLoading() {
+    document.getElementById('loadingBackdrop')!.style.display = 'flex';
+  }
+
+  hideLoading() {
+    document.getElementById('loadingBackdrop')!.classList.add('hide');
+  }
+
   post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
@@ -161,6 +169,7 @@ export class CreatePostComponent {
     //Si hay info para postear
     if (valueFormPost.contentPost != '' || this.listFile || this.fileDoc) {
 
+      this.showLoading();
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
@@ -231,9 +240,11 @@ export class CreatePostComponent {
 
         ).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
           }
         })
@@ -291,9 +302,11 @@ export class CreatePostComponent {
 
         ).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con archivo', error)
           }
         })
@@ -302,9 +315,11 @@ export class CreatePostComponent {
 
         this.postService.createPost(post).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al subir post solo texto', error)
           }
         })
