@@ -1,9 +1,22 @@
 <nav class="navbar-custom">
   <a class="navbar-brand">
-    <img src="assets/umss-logo.png" alt="Logo" class="logo">
+    <img src="../../../assets/logo-umss.png" alt="Logo UMSS" class="logo">
+    @if (institution) {
+    <img src="{{ institution.logo_url }}" alt="Logo" class="logo">
+    }
   </a>
 
+  <img src="../../../assets/logo-umss-horizontal.jpg" alt="Logo UMSS" class="logo">
+
   <div class="avatar-user">
+  
+    @if (counterModeratedComments > 0) {
+    <div class="icon-up-number" (click)="showModeratedComments()">
+      <img src="../../../assets/moderate-messages.png" alt="Ícono mensajes para moderar" class="logo-small">
+      <span class="number-up">{{ counterModeratedComments }}</span>
+    </div>
+    }
+
     @if (authenticated && user) {
       @if(user.photo_profile_path){
         <img src="{{ user.photo_profile_path }}" alt="Foto de perfil" (click)="toggleMenu()" class="logo user-image">
@@ -11,27 +24,27 @@
         <img src="assets/user-icon.png" alt="" (click)="toggleMenu()" class="logo user-image">
       }
     } @else {
-      <img src="assets/user-icon-1.png" alt="" (click)="toggleMenu()" class="logo user-image">
+      <img src="../../../assets/user-icon-1.png" alt="" (click)="toggleMenu()" class="logo user-image">
     }
-    @if (institution) {
-      <img src="{{ institution.logo_url }}" alt="" class="logo">
-    }
+
   </div>
 
   @if (isMenuOpen) {
-    <div class="dropdown-menu">
-      <ng-container *ngIf="authenticated">
-        <a class="dropdown-item">Ver perfil</a>
-        <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
-      </ng-container>
-      <ng-container *ngIf="!authenticated">
-        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
-        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
-      </ng-container>
-    </div>
+  <div class="dropdown-menu">
+    <ng-container *ngIf="authenticated">
+      <a class="dropdown-item">Ver perfil</a>
+      <a class="dropdown-item" (click)="logout()">Cerrar Sesión</a>
+    </ng-container>
+    <ng-container *ngIf="!authenticated">
+      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
+      <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
+    </ng-container>
+  </div>
   }
 </nav>
 
 <app-login></app-login>
 
 <app-register></app-register>
+
+<app-moderate-comments></app-moderate-comments>

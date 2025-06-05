@@ -38,6 +38,19 @@ const routes: Routes = [
           { path: '**', redirectTo: 'presentacion', pathMatch: 'full' }
         ]
       },
+      { path: 'informacion',
+        component: PagesComponent,
+        children: [
+          { path: '', redirectTo: 'presentacion', pathMatch: 'full' },
+          { path: 'presentacion', component: AboutUsComponent },
+          { path: 'convenios', component: AgreementsComponent },
+          { path: 'proyectos', component: ProjectsComponent },
+          { path: 'becas-movilidad', component: ScholarshipsMobilityComponent },
+          { path: 'membresias', component: MembershipsComponent },
+          { path: 'informes-gestion', component: ReportsComponent },
+          { path: '**', redirectTo: 'presentacion', pathMatch: 'full' }
+        ]
+      },
       { path: 'fotos', 
         component: PhotosGalleryComponent
       },

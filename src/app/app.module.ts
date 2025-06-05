@@ -26,6 +26,7 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/scholarships-mobility.component';
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
+import { CommentsModule } from "./comments/comments.module";
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { ReportsComponent } from './pages/reports/reports.component';
     FontAwesomeModule,
     NgbModule,
     PdfViewerModule,
+    CommentsModule,
     BrowserAnimationsModule
 ],
   providers: [
