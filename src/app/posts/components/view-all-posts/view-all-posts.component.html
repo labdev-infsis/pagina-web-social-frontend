@@ -1,7 +1,7 @@
 <div class="container">
   <app-department-details></app-department-details>
   <div *ngIf="posts" class="main-container">
-    @if (authenticated) {
+    @if (authenticated && currentUser) {
       <app-create-post *ngIf="currentUser.role === 'ADMIN'"></app-create-post>
     }
     <app-post *ngFor="let post of posts" 
