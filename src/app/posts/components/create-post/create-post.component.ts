@@ -77,16 +77,8 @@ export class CreatePostComponent {
     });
   }
 
-
   onSwitchChange(value: boolean) {
     this.isFbSwitchOn = value;
-    if (value) {
-      console.log('Switch is ON: ' + this.isFbSwitchOn);
-      // Your ON logic
-    } else {
-      console.log('Switch is OFF: ' + this.isFbSwitchOn);
-      // Your OFF logic
-    }
   }
 
   openModalCreatePost() {
@@ -152,7 +144,7 @@ export class CreatePostComponent {
   post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
-    const formDataFB = new FormData();
+    const formDataFBdoc = new FormData();
     const responseMedia: Media[] = []; //Respuesta de imagenes y videos guardados
     let responseDoc: Media;
     const post: CreatePost = {
@@ -178,7 +170,6 @@ export class CreatePostComponent {
           } else if (file.type.includes('video')) {
             formData.append('videos', file);
           }
-          formDataFB.append('source', file);
         });
 
         this.postService.uploadMedia(formData).pipe(
@@ -202,11 +193,15 @@ export class CreatePostComponent {
                 });
               }
 
+              const formDataFB = new FormData();
+              formDataFB.append('source', this.listFile[index]);
+
               const uploadService$ = isImage
                 ? this.postService.uploadPhotoToFacebook(formDataFB)
                 : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
 
               return uploadService$.pipe(
+                
                 map(fbResponse => ({
                   ...baseMedia,
                   fb_media_id: fbResponse ? fbResponse.id : '',
@@ -220,7 +215,9 @@ export class CreatePostComponent {
                     is_fb_posted: false
                   });
                 })
+                
               );
+              
             });
 
             // Process media sequentially instead of in parallel
@@ -251,7 +248,7 @@ export class CreatePostComponent {
 
       } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
         formData.append('file', this.fileDoc);
-        formDataFB.append('url', this.fileDoc);
+        formDataFBdoc.append('url', this.fileDoc);
 
         if (this.isFbSwitchOn) {
           //call uploadDocument
@@ -273,7 +270,7 @@ export class CreatePostComponent {
             // Prepare the Facebook upload observable (only if switch is on)
             const facebookUpload$ = this.isFbSwitchOn
               ? this.postService.publishDocumentToFacebook(
-                formDataFB,
+                formDataFBdoc,
                 valueFormPost.contentPost,
                 uploadResponse.urlResource
               ).pipe(
@@ -303,7 +300,8 @@ export class CreatePostComponent {
         ).subscribe({
           next: () => {
             this.hideLoading();
-            window.location.reload()
+            window.location.reload();
+            
           },
           error: (error) => {
             this.hideLoading();
