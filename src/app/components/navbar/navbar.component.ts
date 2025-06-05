@@ -3,6 +3,7 @@ import { AuthService } from '../../authentication/services/auth.service';
 import { PostService } from '../../posts/services/post.service';
 import { Institution } from '../../posts/models/institution';
 import { environment } from '../../../environments/environment';
+import { UserDetail } from '../../posts/models/user-detail';
 
 @Component({
   selector: 'app-navbar',
@@ -10,18 +11,17 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  authenticated: boolean
+  authenticated: boolean = false;
   institution!: Institution
   isMenuOpen = false;
-  user: any
+  user!: UserDetail;
 
   constructor(private authService: AuthService,
     private postService: PostService
-  ){
-    this.authenticated = authService.isAuthenticated()
-  }
-
+  ){}
+  
   ngOnInit(){
+    this.authenticated = this.authService.isAuthenticated();
     const intitutionUUID = `${environment.INSTITUTION_ID}`;
     this.postService.getInstitution(intitutionUUID).subscribe({
       next:(institutionData)=>{
@@ -33,7 +33,7 @@ export class NavbarComponent {
     });
     if(this.authenticated){
       this.postService.getUser().subscribe({
-        next: (infoUser) => {
+        next: (infoUser: UserDetail) => {
           this.user = infoUser;
         },
         error: (error) => {
