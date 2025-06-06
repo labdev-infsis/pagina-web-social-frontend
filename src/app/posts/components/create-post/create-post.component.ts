@@ -155,7 +155,8 @@ export class CreatePostComponent {
         text: valueFormPost.contentPost.trim(),
         media: []
       },
-      is_fb_posted: false
+      is_fb_posted: false,
+      fb_post_enable: false
     }
 
     //Si hay info para postear
@@ -163,6 +164,7 @@ export class CreatePostComponent {
 
       this.showLoading();
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
+        console.log("Publicando texto en opcion 1: " + (this.listFile && this.listFile.length > 0) )
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
           if (file.type.includes('image')) {
@@ -172,6 +174,7 @@ export class CreatePostComponent {
           }
         });
 
+        var isVideo = false;
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             // Only process Facebook uploads if switch is on
@@ -188,8 +191,7 @@ export class CreatePostComponent {
               if (!this.isFbSwitchOn) {
                 return of({
                   ...baseMedia,
-                  fb_media_id: '',
-                  is_fb_posted: false
+                  fb_media_id: ''
                 });
               }
 
@@ -200,19 +202,18 @@ export class CreatePostComponent {
                 ? this.postService.uploadPhotoToFacebook(formDataFB)
                 : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
 
+              isVideo = !isImage;
               return uploadService$.pipe(
                 
                 map(fbResponse => ({
                   ...baseMedia,
-                  fb_media_id: fbResponse ? fbResponse.id : '',
-                  is_fb_posted: isImage ? false : true
+                  fb_media_id: fbResponse ? fbResponse.id : ''
                 })),
                 catchError(error => {
                   console.error(`Error uploading ${isImage ? 'photo' : 'video'} to Facebook`, error);
                   return of({
                     ...baseMedia,
-                    fb_media_id: '',
-                    is_fb_posted: false
+                    fb_media_id: ''
                   });
                 })
                 
@@ -225,11 +226,12 @@ export class CreatePostComponent {
               reduce((acc: any[], media) => [...acc, media], []),
               tap((responseMedia) => {
                 this.isFbPosted = this.isFbSwitchOn &&
-                  responseMedia.some(media => media.is_fb_posted);
+                  responseMedia.some(media => (media.fb_media_id != ''));
               }),
               concatMap(responseMedia => {
                 post.content.media = responseMedia;
-                post.is_fb_posted = this.isFbPosted;
+                post.is_fb_posted = isVideo ? true : false;
+                post.fb_post_enable =  this.isFbSwitchOn;
                 return this.postService.createPost(post);
               })
             );
@@ -310,7 +312,9 @@ export class CreatePostComponent {
         })
 
       } else if (valueFormPost.contentPost != '') {//Si solo tiene texto
-
+        console.log("Publicando texto en opcion correcta: " + valueFormPost.contentPost )
+        post.fb_post_enable = this.isFbSwitchOn;
+        post.is_fb_posted = false;
         this.postService.createPost(post).subscribe({
           next: () => {
             this.hideLoading();
