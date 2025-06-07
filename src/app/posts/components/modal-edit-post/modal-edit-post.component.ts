@@ -11,6 +11,7 @@ import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { Modal } from 'bootstrap';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-modal-edit-post',
@@ -185,7 +186,8 @@ export class ModalEditPostComponent {
         text: valueFormPost.contentPost,
         media: []
       },
-      is_fb_posted: false
+      is_fb_posted: false,
+      fb_post_enable: false
     }
 
     //Si hay info para postear (texto, imagen o video, documento)
@@ -261,6 +263,7 @@ export class ModalEditPostComponent {
 
             editedPost.content.media?.push(responseDoc)
             editedPost.is_fb_posted = false;
+            editedPost.fb_post_enable = false;
             return this.postService.updatePost(this.postToEdit.uuid, editedPost);
           })
         ).subscribe({

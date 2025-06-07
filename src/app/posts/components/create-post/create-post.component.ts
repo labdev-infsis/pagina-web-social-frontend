@@ -77,16 +77,8 @@ export class CreatePostComponent {
     });
   }
 
-
   onSwitchChange(value: boolean) {
     this.isFbSwitchOn = value;
-    if (value) {
-      console.log('Switch is ON: ' + this.isFbSwitchOn);
-      // Your ON logic
-    } else {
-      console.log('Switch is OFF: ' + this.isFbSwitchOn);
-      // Your OFF logic
-    }
   }
 
   openModalCreatePost() {
@@ -141,10 +133,18 @@ export class CreatePostComponent {
     this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
+  showLoading() {
+    document.getElementById('loadingBackdrop')!.style.display = 'flex';
+  }
+
+  hideLoading() {
+    document.getElementById('loadingBackdrop')!.classList.add('hide');
+  }
+
   post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
-    const formDataFB = new FormData();
+    const formDataFBdoc = new FormData();
     const responseMedia: Media[] = []; //Respuesta de imagenes y videos guardados
     let responseDoc: Media;
     const post: CreatePost = {
@@ -155,13 +155,16 @@ export class CreatePostComponent {
         text: valueFormPost.contentPost.trim(),
         media: []
       },
-      is_fb_posted: false
+      is_fb_posted: false,
+      fb_post_enable: false
     }
 
     //Si hay info para postear
     if (valueFormPost.contentPost != '' || this.listFile || this.fileDoc) {
 
+      this.showLoading();
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
+        console.log("Publicando texto en opcion 1: " + (this.listFile && this.listFile.length > 0) )
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
           if (file.type.includes('image')) {
@@ -169,9 +172,9 @@ export class CreatePostComponent {
           } else if (file.type.includes('video')) {
             formData.append('videos', file);
           }
-          formDataFB.append('source', file);
         });
 
+        var isVideo = false;
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             // Only process Facebook uploads if switch is on
@@ -188,30 +191,34 @@ export class CreatePostComponent {
               if (!this.isFbSwitchOn) {
                 return of({
                   ...baseMedia,
-                  fb_media_id: '',
-                  is_fb_posted: false
+                  fb_media_id: ''
                 });
               }
+
+              const formDataFB = new FormData();
+              formDataFB.append('source', this.listFile[index]);
 
               const uploadService$ = isImage
                 ? this.postService.uploadPhotoToFacebook(formDataFB)
                 : this.postService.publishVideoToFacebook(formDataFB, valueFormPost.contentPost);
 
+              isVideo = !isImage;
               return uploadService$.pipe(
+                
                 map(fbResponse => ({
                   ...baseMedia,
-                  fb_media_id: fbResponse ? fbResponse.id : '',
-                  is_fb_posted: isImage ? false : true
+                  fb_media_id: fbResponse ? fbResponse.id : ''
                 })),
                 catchError(error => {
                   console.error(`Error uploading ${isImage ? 'photo' : 'video'} to Facebook`, error);
                   return of({
                     ...baseMedia,
-                    fb_media_id: '',
-                    is_fb_posted: false
+                    fb_media_id: ''
                   });
                 })
+                
               );
+              
             });
 
             // Process media sequentially instead of in parallel
@@ -219,11 +226,12 @@ export class CreatePostComponent {
               reduce((acc: any[], media) => [...acc, media], []),
               tap((responseMedia) => {
                 this.isFbPosted = this.isFbSwitchOn &&
-                  responseMedia.some(media => media.is_fb_posted);
+                  responseMedia.some(media => (media.fb_media_id != ''));
               }),
               concatMap(responseMedia => {
                 post.content.media = responseMedia;
-                post.is_fb_posted = this.isFbPosted;
+                post.is_fb_posted = isVideo ? true : false;
+                post.fb_post_enable =  this.isFbSwitchOn;
                 return this.postService.createPost(post);
               })
             );
@@ -231,16 +239,18 @@ export class CreatePostComponent {
 
         ).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con contenido media (imagenes y/o videos)', error)
           }
         })
 
       } else if (this.fileDoc && this.fileDoc.size > 0) {//Si hay un archivo
         formData.append('file', this.fileDoc);
-        formDataFB.append('url', this.fileDoc);
+        formDataFBdoc.append('url', this.fileDoc);
 
         if (this.isFbSwitchOn) {
           //call uploadDocument
@@ -262,7 +272,7 @@ export class CreatePostComponent {
             // Prepare the Facebook upload observable (only if switch is on)
             const facebookUpload$ = this.isFbSwitchOn
               ? this.postService.publishDocumentToFacebook(
-                formDataFB,
+                formDataFBdoc,
                 valueFormPost.contentPost,
                 uploadResponse.urlResource
               ).pipe(
@@ -291,20 +301,27 @@ export class CreatePostComponent {
 
         ).subscribe({
           next: () => {
-            window.location.reload()
+            this.hideLoading();
+            window.location.reload();
+            
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al crear el post con archivo', error)
           }
         })
 
       } else if (valueFormPost.contentPost != '') {//Si solo tiene texto
-
+        console.log("Publicando texto en opcion correcta: " + valueFormPost.contentPost )
+        post.fb_post_enable = this.isFbSwitchOn;
+        post.is_fb_posted = false;
         this.postService.createPost(post).subscribe({
           next: () => {
+            this.hideLoading();
             window.location.reload()
           },
           error: (error) => {
+            this.hideLoading();
             console.log('Error al subir post solo texto', error)
           }
         })

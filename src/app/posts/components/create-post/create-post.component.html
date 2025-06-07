@@ -32,7 +32,6 @@
 					</ng-container>
 				</div>
 				<form [formGroup]="postForm" class="form d-flex flex-column">
-
 					<div class="container">
 						<!-- Texto del post -->
 						<app-text-editor (textChangeEvent)="getTextPost($event)"></app-text-editor>
@@ -47,6 +46,7 @@
 							(closeAreaDocEvent)="closeAreaDoc($event)"
 							(loadFileDoc)="getFileDocPost($event)"></app-document-uploader>
 					</div>
+
 
 					<!-- Seleccionar redes sociales para compartir publicacion -->
 					<div class="add-media d-flex flex-row align-items-center justify-content-between">
@@ -77,4 +77,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="d-flex justify-content-center align-items-center bg-dark bg-opacity-50 position-fixed top-0 start-0 w-100 h-100" id="loadingBackdrop" style="z-index: 1080; display: none !important;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
 </div>

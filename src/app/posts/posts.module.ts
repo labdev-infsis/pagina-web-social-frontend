@@ -34,7 +34,6 @@ import { ReplyListComponent } from './components/comments/reply-list/reply-list.
 import { ReplyItemComponent } from './components/comments/reply-item/reply-item.component';
 import { CommentInputComponent } from './components/comments/comment-input/comment-input.component';
 
-
 @NgModule({
   declarations: [
     ViewAllPostsComponent,

@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:host {
+	--blue-color: #003770;
+	--red-color: #E30613;
+	--bg-color-comment: #f0f7ff;
+	--primary-font: "Montserrat", sans-serif;
+	--secondary-font: "Roboto", sans-serif;
+}
+
+.modal {
+	--bs-modal-width: 768px;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--blue-color);
+}
+
+.modal-title {
+	font-family: var(--secondary-font);
+	font-size: 24px !important;
+	color: var(--blue-color);
+}
+
+.comment-content {
+	display: flex;
+	gap: 5px;
+	margin-bottom: 10px;
+
+	.avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 20px;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		padding: 10px;
+		width: 100%;
+		color: var(--blue-color);
+		border-radius: 15px;
+		background-color: #eee;
+		/*background-color: var(--bg-color-comment);*/
+		
+		.header-comment {
+			display: flex;
+			justify-content: space-between;
+
+			h2 {
+				margin: 0;
+				padding: 0;
+				font-family: var(--secondary-font);
+				font-optical-sizing: auto;
+				font-size: 14px;
+				font-weight: 700;
+				font-style: normal;
+			}
+
+			.action {
+				display: flex;
+				gap: 10px;
+
+				.toggle {
+					padding: 2px;
+					width: 30px;
+					height: 18px;
+					border-radius: 20px;
+					background: #f8f8f8;
+					/*border: 1px solid #d8d8d8;*/
+					border: 1px solid var(--blue-color);
+
+					label {
+						width: 12px;
+						height: 12px;
+						background: var(--red-color);
+						display: flex;
+						cursor: pointer;
+						border-radius: 10px;
+						transition: all 0.25s ease 0s;
+					}
+					
+					input {
+						display: none;
+					}
+					
+					input:checked+label {
+						margin-left: 12px;
+						background: var(--blue-color);
+					}
+				}
+
+				.icon-delete {
+					width: 17px;
+					height: 17px;
+					transition: all 0.25s ease 0s;
+					border: none;
+					background: url("../../../../assets/trush.png") center center no-repeat;
+					background-size: contain;
+					
+					&:hover {
+						cursor: pointer;
+						background: url("../../../../assets/trush-hover.png") center center no-repeat;
+						background-size: contain;
+					}
+				}
+
+			}
+		}
+
+		.comment {
+			margin: 0;
+			padding: 0;
+			font-family: var(--primary-font);
+			font-optical-sizing: auto;
+			font-size: 0.9rem;
+			font-style: normal;
+		}
+
+		.date {
+			font-family: var(--primary-font);
+			font-size: 0.8rem;
+			text-align: right;
+		}
+	}
+}

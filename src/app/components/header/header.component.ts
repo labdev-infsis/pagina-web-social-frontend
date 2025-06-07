@@ -10,7 +10,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  uuidIntitutionUUID = `${environment.INSTITUTION_ID}`;
+
+  uuidIntitutionDric = `${environment.INSTITUTION_ID}`;
+
   
   institution!: Institution
   totalFollowers!: number;
@@ -18,9 +20,9 @@ export class HeaderComponent {
   constructor(private postService: PostService){
   }
 
-  ngOnInit (){
-    this.getInstitutionData(this.uuidIntitutionUUID);
-    this.getNumberFollowers(this.uuidIntitutionUUID);
+  ngOnInit() {
+    this.getInstitutionData(this.uuidIntitutionDric);
+    this.getNumberFollowers(this.uuidIntitutionDric);
   }
 
   getInstitutionData(uuid: string) {
@@ -36,8 +38,10 @@ export class HeaderComponent {
 
   getNumberFollowers(uuid: string) {
     this.postService.getNumberFollowers(uuid).subscribe({
-      next: (followers: Follower) => {
-        this.totalFollowers = followers.total_followers;
+      next: (numberFollowers: number) => {
+        this.totalFollowers = numberFollowers;
+      //next: (followers: Follower) => {
+       // this.totalFollowers = followers.total_followers;
       }, error(error) {
         console.log(error);
       }
