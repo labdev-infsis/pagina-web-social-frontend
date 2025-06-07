@@ -24,7 +24,6 @@ export class CommentListComponent implements OnChanges {
   replyVisibility: { [key: string]: boolean } = {};
   emojis: EmojiType[] = [];
   selectedReactions: { [key: string]: string } = {}; // Guarda el emoji seleccionado por comentario
-  // ...existing code...
 
   showEmojiOptions: { [uuid: string]: boolean } = {};
   defaultEmoji: any = {
@@ -47,6 +46,7 @@ export class CommentListComponent implements OnChanges {
   ngOnInit() {
     this.loadEmojis();
     this.loadUserReactionsForComments();
+    this.loadCommentsReactionsCount();
   }
   getEmojiLabel(emojiName?: string): string {
     switch (emojiName) {
@@ -110,18 +110,21 @@ export class CommentListComponent implements OnChanges {
     };
     this.postService.reactToComment(commentUuid, body).subscribe(() => {
       this.selectedReactions[commentUuid] = emojiTypeUuid;
+      this.loadCommentsReactionsCount();
     });
   }
 
   removeReaction(commentUuid: string) {
     this.postService.deleteCommentReaction(commentUuid).subscribe(() => {
       this.selectedReactions[commentUuid] = '';
+      this.loadCommentsReactionsCount();
     });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['comments']) {
       this.initializeReplyLimits();
       this.loadUserReactionsForComments();
+      this.loadCommentsReactionsCount();
     }
   }
 
@@ -216,10 +219,15 @@ export class CommentListComponent implements OnChanges {
     });
   }
 
-  getCommentReactionsCount(comment: Comment): number {
-    this.postService.getCommentsReactions(comment.uuid).subscribe(reactions => {
-      this.commentReactionsCount[comment.uuid] = reactions.length;
+  loadCommentsReactionsCount() {
+    if (!this.comments) return;
+    this.comments.forEach(comment => {
+      this.postService.getCommentsReactions(comment.uuid).subscribe(reactions => {
+        this.commentReactionsCount[comment.uuid] = reactions.length;
+      });
     });
+  }
+  getCommentReactionsCount(comment: Comment): number {
     return this.commentReactionsCount[comment.uuid] || 0;
   }
 
