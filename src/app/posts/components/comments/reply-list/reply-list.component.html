@@ -1,26 +1,48 @@
-<div class="replies" *ngIf="replies && replies.length > 0">
-  <app-reply-item
-    *ngFor="let reply of replies | slice:0:getLimit(parentUuid)"
-    [reply]="reply"
-    [currentUser]="currentUser"
-    [replyInputVisible]="replyInputVisible"
-    [replyText]="replyText"
-    [replyLimit]="replyLimit"
-    [authenticated]="authenticated"
-    (toggleReplyInput)="toggleReplyInput.emit($event)"
-    (addReply)="addReply.emit($event)"
-    (showAllReplies)="showAllReplies.emit($event)"
-    (showLessReplies)="showLessReplies.emit($event)">
-  </app-reply-item>
-  <!-- Botones para ver más/menos respuestas -->
-  <button class="view-more-replies"
-    *ngIf="getLimit(parentUuid) < (replies?.length || 0)"
-    (click)="showAllReplies.emit(parentUuid)">
-    Ver más respuestas
-  </button>
-  <button class="view-less-replies"
-    *ngIf="getLimit(parentUuid) === (replies?.length || 0)"
-    (click)="showLessReplies.emit(parentUuid)">
-    Ver menos respuestas
-  </button>
+<div class="replies">
+  <div *ngFor="let reply of replies | slice:0:getLimit(parentUuid)" class="reply-wrapper">
+    <!-- Contenido de la respuesta -->
+    <div class="d-flex align-items-start reply-row">
+      <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
+      <div class="comment-bubble">
+        <p class="mb-1"><strong>{{ reply.name }} {{ reply.lastName }}</strong></p>
+        <p class="mb-1">{{ reply.content }}</p>
+        <div class="comment-actions mt-1">
+          <span class="reply-time">{{ calculateTimeFromNow(reply.createdDate) }}</span>
+          <span class="mx-1">·</span>
+          <button class="reply-btn" (click)="toggleReplyInput.emit(reply.uuid)">Responder</button>
+          <app-reactions [commentUuid]="reply.uuid"></app-reactions>
+        </div>
+      </div>
+    </div>
+    <!-- Input para responder a esta respuesta -->
+    <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
+      <img [src]="currentUser?.photo_profile_path || 'assets/default-avatar.png'" alt="Foto de perfil"
+        class="reply-img" />
+      <div class="reply-input-container">
+        <input [(ngModel)]="replyText[reply.uuid]" placeholder="Escribe una respuesta..." class="reply-input"
+          (keydown.enter)="addReply.emit({ replyUuid: reply.uuid, isTopLevel: false })" />
+        <button class="send-reply-btn" (click)="addReply.emit({ replyUuid: reply.uuid, isTopLevel: false })">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Respuestas anidadas -->
+    <div *ngIf="reply.replies && reply.replies.length > 0">
+      <app-reply-list [parentUuid]="reply.uuid" [replies]="reply.replies" [currentUser]="currentUser"
+        [replyInputVisible]="replyInputVisible" [replyText]="replyText" [replyLimit]="replyLimit"
+        [authenticated]="authenticated" (toggleReplyInput)="toggleReplyInput.emit($event)"
+        (addReply)="addReply.emit($event)" (showAllReplies)="showAllReplies.emit($event)"
+        (showLessReplies)="showLessReplies.emit($event)">
+      </app-reply-list>
+      <button class="view-more-replies" *ngIf="getLimit(reply.uuid) < (reply.replies?.length || 0)"
+        (click)="showAllReplies.emit(reply.uuid)">
+        Ver más respuestas
+      </button>
+      <button class="view-less-replies"
+        *ngIf="getLimit(reply.uuid) === (reply.replies?.length || 0) && (reply.replies?.length || 0) > 1"
+        (click)="showLessReplies.emit(reply.uuid)">
+        Ver menos respuestas
+      </button>
+    </div>
+  </div>
 </div>
