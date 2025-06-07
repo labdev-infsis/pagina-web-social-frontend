@@ -61,9 +61,7 @@
 
       <!-- Sección de respuestas -->
       <div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
-
-
-        <!-- Sección de respuestas -->
+        
         <app-reply-list *ngIf="comment.replies && comment.replies.length > 0" [parentUuid]="comment.uuid"
           [replies]="comment.replies" [currentUser]="currentUser" [replyInputVisible]="replyInputVisible"
           [replyText]="replyText" [replyLimit]="replyLimit" [authenticated]="authenticated"
