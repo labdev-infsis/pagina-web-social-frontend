@@ -6,12 +6,39 @@
       <div class="comment-bubble">
         <p class="mb-1"><strong>{{ reply.name }} {{ reply.lastName }}</strong></p>
         <p class="mb-1">{{ reply.content }}</p>
+        <!-- ...existing code... -->
         <div class="comment-actions mt-1">
-          <span class="reply-time">{{ calculateTimeFromNow(reply.createdDate) }}</span>
+          <span class="comment-time">{{ calculateTimeFromNow(reply.date) }}</span>
           <span class="mx-1">·</span>
           <button class="reply-btn" (click)="toggleReplyInput.emit(reply.uuid)">Responder</button>
-          <app-reactions [commentUuid]="reply.uuid"></app-reactions>
+          <div class="fb-reaction-btn-wrapper" (mouseenter)="showEmojiOptions[reply.uuid]=true"
+            (mouseleave)="showEmojiOptions[reply.uuid]=false">
+            <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(reply.uuid)"
+              (click)="reactToReply(reply.uuid, getSelectedEmoji(reply.uuid)?.uuid || defaultEmoji.uuid)">
+              <ng-container *ngIf="getSelectedEmoji(reply.uuid); else defaultLike">
+                <span class="emoji">{{ getSelectedEmoji(reply.uuid)?.emoji_code }}</span>
+                <span class="label">{{ getEmojiLabel(getSelectedEmoji(reply.uuid)?.emoji_name) }}</span>
+              </ng-container>
+              <ng-template #defaultLike>
+                <i class="fa-regular fa-thumbs-up"></i>
+                <span class="label">Me gusta</span>
+              </ng-template>
+            </button>
+            <div class="fb-emoji-options" *ngIf="showEmojiOptions[reply.uuid]">
+              <ng-container *ngFor="let emoji of emojis">
+                <span class="emoji-option" [title]="emoji.emoji_name"
+                  (click)="reactToReply(reply.uuid, emoji.uuid, true); showEmojiOptions[reply.uuid]=false">
+                  {{ emoji.emoji_code }}
+                </span>
+              </ng-container>
+            </div>
+          </div>
+          <span class="comment-reactions-count" *ngIf="getReplyReactionsCount(reply) > 0">
+            {{ getReplyReactionsCount(reply) }}
+            <i class="bi bi-hand-thumbs-up icon"></i>
+          </span>
         </div>
+        <!-- ...existing code... -->
       </div>
     </div>
     <!-- Input para responder a esta respuesta -->

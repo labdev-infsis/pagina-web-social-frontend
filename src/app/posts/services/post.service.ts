@@ -294,4 +294,32 @@ export class PostService {
       `${this.ROOT_URL}/comment/${commentUuid}/reactions`
     );
   }
+
+   /* Reacciones a respuestas (replies) */
+  reactToReply(replyUuid: string, body: { emoji_type_id: string; reaction_date: string }): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) return throwError(() => new Error('No autorizado'));
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post<any>(
+      `${this.ROOT_URL}/reply-reactions/${replyUuid}`,
+      body,
+      { headers }
+    );
+  }
+
+  getReplyReactions(replyUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.ROOT_URL}/reply-reactions/${replyUuid}`
+    );
+  }
+
+  deleteReplyReaction(replyUuid: string): Observable<any> {
+    return this.http.delete<any>(`${this.ROOT_URL}/reply-reactions/${replyUuid}/reactions`, this.reqHeader);
+  }
+
 }
