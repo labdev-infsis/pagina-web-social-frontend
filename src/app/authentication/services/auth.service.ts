@@ -107,7 +107,7 @@ export class AuthService {
 
     //window.location.reload();
     this.router.navigate(['/']);
-    
+
   }
 
   // Method to check token periodically
