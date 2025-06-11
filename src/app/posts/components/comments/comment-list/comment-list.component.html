@@ -38,7 +38,8 @@
                 </ng-container>
               </div>
             </div>
-            <span class="comment-reactions-count" *ngIf="getCommentReactionsCount(comment) > 0">
+            <span class="comment-reactions-count" *ngIf="getCommentReactionsCount(comment) > 0"
+              (click)="openCommentReactionsModal(comment)" style="cursor:pointer">
               {{ getCommentReactionsCount(comment) }}
               <i class="bi bi-hand-thumbs-up icon"></i>
             </span>
@@ -61,7 +62,7 @@
 
       <!-- Sección de respuestas -->
       <div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
-        
+
         <app-reply-list *ngIf="comment.replies && comment.replies.length > 0" [parentUuid]="comment.uuid"
           [replies]="comment.replies" [currentUser]="currentUser" [replyInputVisible]="replyInputVisible"
           [replyText]="replyText" [replyLimit]="replyLimit" [authenticated]="authenticated"
