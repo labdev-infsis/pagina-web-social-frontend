@@ -33,12 +33,12 @@
               </ng-container>
             </div>
           </div>
-          <span class="comment-reactions-count" *ngIf="getReplyReactionsCount(reply) > 0">
+          <span class="comment-reactions-count" *ngIf="getReplyReactionsCount(reply) > 0"
+            (click)="openReplyReactionsModal(reply.uuid)" style="cursor:pointer">
             {{ getReplyReactionsCount(reply) }}
             <i class="bi bi-hand-thumbs-up icon"></i>
           </span>
         </div>
-        <!-- ...existing code... -->
       </div>
     </div>
     <!-- Input para responder a esta respuesta -->
