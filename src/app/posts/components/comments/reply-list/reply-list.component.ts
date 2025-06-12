@@ -4,6 +4,8 @@ import { PostService } from '../../../services/post.service';
 import { EmojiType } from '../../../models/emoji-type';
 import { AuthService } from '../../../../authentication/services/auth.service';
 import { forkJoin } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalListReactionsRepliesComponent } from '../modal-list-reactions-replies/modal-list-reactions-replies.component'; // Ajusta la ruta si es necesario
 
 @Component({
   selector: 'app-reply-list',
@@ -44,7 +46,8 @@ export class ReplyListComponent {
 
   constructor(
     private postService: PostService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -103,7 +106,6 @@ export class ReplyListComponent {
       this.loadRepliesReactionsCount();
     });
   }
-  // ...existing code...
 
   removeReplyReaction(replyUuid: string) {
     this.postService.deleteReplyReaction(replyUuid).subscribe(() => {
@@ -153,5 +155,29 @@ export class ReplyListComponent {
   calculateTimeFromNow(date: string): string {
     return moment.utc(date).local().fromNow();
   }
+  openReplyReactionsModal(replyUuid: string) {
+    this.postService.getReplyReactions(replyUuid).subscribe(reactions => {
+      // Mapea los datos para el modal
+      const detailReactions = reactions.map((r: any) => ({
+        userName: r.userName,
+        userPhoto: r.userPhoto,
+        emoji: this.emojis.find(e => e.uuid === r.emoji_type_id)?.emoji_code || ''
+      }));
 
+      // Calcula el conteo de reacciones por tipo de emoji
+      const reactionsCount = this.emojis
+        .map(e => ({
+          emojiTypeId: e.uuid,
+          emoji: e.emoji_code,
+          count: reactions.filter((r: any) => r.emoji_type_id === e.uuid).length
+        }))
+        .filter(rc => rc.count > 0);
+
+      const modalRef = this.modalService.open(ModalListReactionsRepliesComponent, { size: 'md' });
+      modalRef.componentInstance.detailReactions = detailReactions;
+      modalRef.componentInstance.listEmojiType = this.emojis;
+      modalRef.componentInstance.commentOrReplyUuid = replyUuid;
+      modalRef.componentInstance.reactionsCount = reactionsCount; 
+    });
+  }
 }

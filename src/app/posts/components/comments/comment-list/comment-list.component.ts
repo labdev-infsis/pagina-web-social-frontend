@@ -7,6 +7,9 @@ import { EmojiType } from '../../../models/emoji-type';
 import { CreateReaction } from '../../../models/create-reaction';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../../authentication/services/auth.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalListReactionsRepliesComponent } from '../modal-list-reactions-replies/modal-list-reactions-replies.component'; // Ajusta la ruta si es necesario
+
 @Component({
   selector: 'app-comment-list',
   templateUrl: './comment-list.component.html',
@@ -93,8 +96,10 @@ export class CommentListComponent implements OnChanges {
     return this.emojis.find(e => e.uuid === emojiUuid);
   }
 
-  constructor(private postService: PostService,
-    private authService: AuthService
+  constructor(
+    private postService: PostService,
+    private authService: AuthService,
+    private modalService: NgbModal
   ) { }
 
   reactToComment(commentUuid: string, emojiTypeUuid: string, forceChange: boolean = false) {
@@ -230,5 +235,29 @@ export class CommentListComponent implements OnChanges {
   getCommentReactionsCount(comment: Comment): number {
     return this.commentReactionsCount[comment.uuid] || 0;
   }
+  openCommentReactionsModal(comment: Comment) {
+    this.postService.getCommentsReactions(comment.uuid).subscribe(reactions => {
+      // Mapea los datos para el modal
+      const detailReactions = reactions.map((r: any) => ({
+        userName: r.userName || r.user_name, // Ajusta según tu backend
+        userPhoto: r.userPhoto || r.user_photo,
+        emoji: this.emojis.find(e => e.uuid === (r.emojiTypeId || r.emoji_type_id))?.emoji_code || ''
+      }));
 
+      // Calcula el conteo de reacciones por tipo de emoji
+      const reactionsCount = this.emojis
+        .map(e => ({
+          emojiTypeId: e.uuid,
+          emoji: e.emoji_code,
+          count: reactions.filter((r: any) => (r.emojiTypeId || r.emoji_type_id) === e.uuid).length
+        }))
+        .filter(rc => rc.count > 0);
+
+      const modalRef = this.modalService.open(ModalListReactionsRepliesComponent, { size: 'md' });
+      modalRef.componentInstance.detailReactions = detailReactions;
+      modalRef.componentInstance.listEmojiType = this.emojis;
+      modalRef.componentInstance.commentOrReplyUuid = comment.uuid;
+      modalRef.componentInstance.reactionsCount = reactionsCount;
+    });
+  }
 }
