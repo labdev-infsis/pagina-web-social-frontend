@@ -24,8 +24,7 @@
         @if (postImages) {
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner image-box text-center">
-            <div *ngFor="let image of postImages; let i = index"
-              class="carousel-item {{ i === 0 ? 'active' : '' }}">
+            <div *ngFor="let image of postImages; let i = index" class="carousel-item {{ i === 0 ? 'active' : '' }}">
               @if (image.type === "image"){
               <img src="{{ image.path }}" class="object-fit-scale" alt="..." />
               } @else if (image.type === "video") {
@@ -55,12 +54,12 @@
         </div>
         }
       </div>
-      <div class="d-flex flex-row pt-4">
+      <div class="comment-section d-flex flex-row align-items-center pt-4">
         <img *ngIf="currentUser" [src]="
-            currentUser.photo_profile_path
-              ? currentUser.photo_profile_path
-              : 'assets/default-avatar.png'
-          " alt="Foto de perfil" class="comment-img" />
+      currentUser.photo_profile_path
+        ? currentUser.photo_profile_path
+        : 'assets/default-avatar.png'
+    " alt="Foto de perfil" class="comment-img" />
 
         <!-- Botón para escribir un comentario (solo si el input NO está abierto) -->
         <button *ngIf="!showCommentInput && authenticated" type="button" class="comment-button"
@@ -69,7 +68,7 @@
         </button>
 
         <!-- Input para escribir comentario (se muestra solo cuando el usuario lo activa) -->
-        <div *ngIf="showCommentInput && authenticated" class="comment-box">
+        <div *ngIf="showCommentInput && authenticated" class="comment-box d-flex align-items-center">
           <input #commentInput [(ngModel)]="newComment" placeholder="Escribe un comentario..." class="comment-input"
             (keydown.enter)="addComment()" />
           <button (click)="addComment()" class="send-comment-button">
@@ -79,10 +78,7 @@
       </div>
 
       <!-- Componente de lista de comentarios -->
-      <app-comment-list 
-        [comments]="comments" 
-        [currentUser]="currentUser" 
-        [authenticated]="authenticated"
+      <app-comment-list [comments]="comments" [currentUser]="currentUser" [authenticated]="authenticated"
         (onAddReply)="handleAddReply($event)">
       </app-comment-list>
     </div>

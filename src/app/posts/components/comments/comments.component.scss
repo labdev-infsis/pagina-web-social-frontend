@@ -9,10 +9,34 @@ $font-size-small: 0.9rem;
 $font-size-medium: 1rem;
 $font-size-large: 1.2rem;
 
+// Mixins
+@mixin flex-center($direction: row, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  gap: $gap;
+}
+
+@mixin button-style($bg-color, $text-color, $hover-bg-color) {
+  background: $bg-color;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: $font-size-medium;
+  color: $text-color;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background: $hover-bg-color;
+  }
+}
+
 // General styles
 .img-profile, .comment-img, .reply-img {
   border-radius: 50%;
   border: 1px solid $border-color;
+  object-fit: cover;
 }
 
 .img-profile {
@@ -21,8 +45,8 @@ $font-size-large: 1.2rem;
 }
 
 .comment-img {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
 }
 
 .reply-img {
@@ -139,63 +163,86 @@ $font-size-large: 1.2rem;
 }
 
 // Comments section
-.comment-box {
-  padding: 10px;
-  border-bottom: 1px solid $border-color;
-}
+.comment-section {
+  @include flex-center(row, 10px); // Espaciado entre elementos
+  padding-top: 16px;
 
-.comment-input {
-  flex: 1;
-  border: none;
-  padding: 10px;
-  border-radius: 20px;
-  font-size: 14px;
-  outline: none;
-  background: $hover-color;
-}
+  .comment-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid $border-color;
+  }
 
-.send-comment-button {
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: #65676b;
+  .comment-button {
+    @include button-style($background-color, $text-color, $hover-color);
 
-  &:hover {
-    color: $secondary-color;
+    i {
+      font-size: 1.2rem;
+    }
+  }
+
+  .comment-box {
+    @include flex-center(row, 8px); // Espaciado entre input y botón
+    background: $background-color;
+    border-radius: 20px;
+    padding: 8px 12px;
+    width: 100%;
+
+    .comment-input {
+      flex-grow: 1;
+      border: none;
+      background: transparent;
+      padding: 8px;
+      border-radius: 20px;
+      font-size: $font-size-medium;
+      outline: none;
+
+      &::placeholder {
+        color: $text-color;
+        opacity: 0.6;
+      }
+    }
+
+    .send-comment-button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: $secondary-color;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: darken($secondary-color, 10%);
+      }
+    }
   }
 }
 
 // Reply styles
 .reply-container {
-  display: flex;
-  align-items: center;
+  @include flex-center(row, 10px);
   margin-left: 50px;
   margin-top: 5px;
 }
 
 .reply-btn {
+  @include button-style(transparent, #65676b, rgba(24, 119, 242, 0.12));
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  color: #65676b;
   padding: 6px 12px;
   border-radius: 16px;
 
   &:hover {
-    background: rgba(24, 119, 242, 0.12);
     color: $secondary-color;
   }
 }
 
 .reply-input-container {
-  display: flex;
-  align-items: center;
+  @include flex-center(row, 8px);
   background: $background-color;
   border-radius: 20px;
   padding: 8px;
@@ -234,5 +281,24 @@ $font-size-large: 1.2rem;
 
   .comments-popup {
     width: 95%;
+  }
+
+  .comment-section {
+    @include flex-center(column, 10px); 
+    align-items: flex-start;
+
+    .comment-img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .comment-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .comment-box {
+      width: 100%; 
+    }
   }
 }
