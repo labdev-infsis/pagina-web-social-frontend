@@ -38,7 +38,6 @@ export class CommentsComponent implements OnInit {
   comments: Comment[] = [];
   authenticated: boolean;
   currentUser: UserDetail | null = null;
-  showCommentInput: boolean = false;
 
   constructor(
     private postService: PostService,
@@ -70,7 +69,7 @@ export class CommentsComponent implements OnInit {
   
 
   toggleCommentInput(): void {
-    this.showCommentInput = true;
+
     setTimeout(() => {
       this.commentInput?.nativeElement.focus();
     }, 100);
@@ -104,7 +103,6 @@ export class CommentsComponent implements OnInit {
           };
           this.comments.unshift(commentToAdd);
           this.newComment = '';
-          this.showCommentInput = false;
         }
       },
       error: (err) => {
