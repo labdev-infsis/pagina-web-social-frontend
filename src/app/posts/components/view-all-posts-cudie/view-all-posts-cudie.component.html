@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="details-container">
+
+	<div class="section-title">
+		<h3>Información de la CUDIE</h3>
+	</div>
+
+	<div class="info-item">
+		<img src="assets/info.png" alt="" class="icon-detail">
+		<span>Publicaciones de la Comisión Universitaria de Internacionalización Educativa (CUDIE)</span>
+	</div>
+
+</div>
+  <div *ngIf="posts" class="main-container">
+    @if (authenticated && currentUser) {
+      <app-create-post *ngIf="currentUser.role === 'ADMIN'"></app-create-post>
+    }
+    <app-post *ngFor="let post of posts" 
+      [post]="post" 
+      [currentUser]="currentUser"
+      [authenticated]="authenticated"
+      (requestDeletePost)="deletePost($event)"
+      (requestUpdatePost)="updatePost($event)" 
+      (reactionChanged)="updateReactions(post.uuid)">
+    </app-post>
+  </div>
+</div>
