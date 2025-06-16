@@ -1,11 +1,10 @@
 <div class="page-container">
 
 	<div class="header-post">
-		<div class="data-user">
-			<img src="../../../assets/dric/dric-logo.png" alt="'Foto de perfil'" class="img-profile">
+		<div *ngIf="institution$ | async as institution" class="data-user">
+			<img [src]="institution.logo_url" alt="'Foto de perfil'" class="img-profile">
 			<div class="info-user">
 				<h2>Presentación</h2>
-				<p></p>
 			</div>
 		</div>
 	</div>
@@ -25,15 +24,41 @@
 				fortalecimiento institucional.</p>
 		</div>
 		<div class="section-content">
-			<h3>Propósito</h3>
-			<p>Es propósito fundamental de la Dirección de Relaciones Internacionales y Convenios de la
-				Universidad Mayor de San Simón, explotar de manera organizada y sistemática las
-				oportunidades de Cooperación Internacional y de Coordinación Interinstitucional (local,
-				nacional e internacional), coadyuvar a la movilidad docente/estudiantil/administrativa, a la
-				otorgación de becas, la gestión de proyectos internacionales y la implementación de un
-				programa de internacionalización universitaria para dinamizar el desarrollo institucional,
-				académico y científico de la UMSS y mejorar su contribución al desarrollo regional y
-				nacional.</p>
+			@if(isAuthenticated && currentUser.role === 'ADMIN'){
+				@if(edit === 'proposito'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content">
+						<h3 *ngIf="articleProposito">{{ articleProposito.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleProposito.title, 'proposito')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentProposito'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content">
+						<p *ngIf="articleProposito">{{ articleProposito.text }}</p>
+						<div class="edit-info" (click)="editInfo(articleProposito.text, 'contentProposito')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+			}@else{
+				<h3 *ngIf="articleProposito">{{ articleProposito.title }}</h3>
+				<p *ngIf="articleProposito">{{ articleProposito.text }}</p>
+			}
 		</div>
 	</div>
 
@@ -77,3 +102,4 @@
 	</div>
 
 </div>
+<p-toast />

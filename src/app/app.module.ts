@@ -27,6 +27,11 @@ import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/sch
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { CommentsModule } from "./comments/comments.module";
+import { EditorModule } from 'primeng/editor';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { EditInfoComponent } from './pages/edit-info/edit-info.component';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -41,7 +46,8 @@ import { CommentsModule } from "./comments/comments.module";
     ProjectsComponent,
     ScholarshipsMobilityComponent,
     MembershipsComponent,
-    ReportsComponent
+    ReportsComponent,
+    EditInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +61,11 @@ import { CommentsModule } from "./comments/comments.module";
     NgbModule,
     PdfViewerModule,
     CommentsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    EditorModule,
+    FormsModule,
+    InputTextModule,
+    ToastModule
 ],
   providers: [
     // {

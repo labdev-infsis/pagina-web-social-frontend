@@ -1,0 +1,13 @@
+<div class="editor-text" [ngClass]="{ 'flex-column': typeText === 'paragraph'}">
+    @if(typeText === 'title'){
+        <!-- Editor de titulos de articulo -->
+        <input type="text" pInputText [(ngModel)]="contentEdited" class="edit-input-text"/>
+    }@else if(typeText === 'paragraph'){
+        <!-- Editor de texto -->
+        <p-editor [(ngModel)]="contentEdited" [style]="{ height: 'auto' }" />
+    }
+    <div class="buttons d-inline-flex gap-3 justify-content-center mb-2">
+        <button type="submit" class="btn btn-primary boton" (click)="saveEdit()" ><i class="bi bi-check"></i></button>
+        <button type="button" class="btn btn-primary boton" (click)="cancelEdit()"><i class="bi bi-x"></i></button>
+    </div>
+</div>
