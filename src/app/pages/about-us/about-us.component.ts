@@ -94,7 +94,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   saveEdit(textEdited: string){
-    this.articleProposito.title = textEdited;
+    this.articleProposito.text = textEdited;  //add condicional
     const articleEdited: Omit<Article, 'uuid' | 'user_id'> = {
       section_id: this.articleProposito.section_id,
       date: this.articleProposito.date,

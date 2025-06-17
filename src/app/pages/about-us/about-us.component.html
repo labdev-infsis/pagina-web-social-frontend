@@ -48,8 +48,8 @@
 						(onSaveEdit)="saveEdit($event)"
 					></app-edit-info>
 				}@else{
-					<div class="content">
-						<p *ngIf="articleProposito">{{ articleProposito.text }}</p>
+					<div class="content" >
+						<div class="text" *ngIf="articleProposito" [innerHTML]="articleProposito.text"></div>
 						<div class="edit-info" (click)="editInfo(articleProposito.text, 'contentProposito')">
 							<i class="bi bi-pencil-fill"></i>
 						</div>

@@ -89,6 +89,14 @@ div.p-toast.p-component {
 			height: 30px;
 			align-content: center;
 		}
+		.text {
+				p {
+
+					text-align: justify;
+					white-space: wrap;
+					overflow-wrap: anywhere;
+				}
+			}
 		.edit-info {
 			width: 30px; 
 			height: 30px; 

@@ -51,16 +51,24 @@
 		padding-bottom: 20px;
 		border-bottom: 1px solid var(--blue-color);
 
-		h3 {
-			font-size: 14px;
-			font-weight: 700;
-		}
-
-		p {
-			text-align: justify;
-		}
-
+		
 		.section-content {
+			h3 {
+				font-size: 14px;
+				font-weight: 700;
+			}
+	
+			p {
+				text-align: justify;
+			}
+
+			.text {
+				p {
+
+					text-align: justify;
+					white-space: wrap;
+				}
+			}
 
 			.media-container {
 				padding-bottom: 20px;
