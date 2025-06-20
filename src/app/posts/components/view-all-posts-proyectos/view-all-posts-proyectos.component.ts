@@ -26,10 +26,10 @@ export class ViewAllPostsProyectosComponent {
       ngOnInit(){
         this.authenticated = this.authService.isAuthenticated();
         // Obtener una cantidad de posts
-        this.postService.getPagedPosts(this.pageCounter).subscribe({
+        this.postService.getPostsByType('PROYECTOS').subscribe({
           next:(data: Post[])=>{
             this.posts = data;
-            this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
+            //this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
           },
           error:(error) => {
             console.error('Error al obtener los posts paginados', error);
@@ -51,7 +51,7 @@ export class ViewAllPostsProyectosComponent {
       onScroll(): void {
     
         if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
-          this.loadPosts(); // Cargar más posts al llegar al final
+          //this.loadPosts(); // Cargar más posts al llegar al final
         }
       }
     
@@ -59,10 +59,10 @@ export class ViewAllPostsProyectosComponent {
         if (this.loading) return;
         this.loading = true;
     
-        this.postService.getPagedPosts(this.pageCounter).subscribe({
+        this.postService.getPostsByType('PROYECTOS').subscribe({
           next: (data: Post[]) => {
             this.posts = [...this.posts, ...data]; // Agrega nuevos posts a la lista
-            this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
+            //this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
             this.loading = false;
           },
           error: (error) => {

@@ -65,6 +65,11 @@ export class PostService {
     return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
   }
 
+  getPostsByType(postType: String): Observable<Post[]> {
+    const urlByType = `${this.ROOT_URL}/posts?type=${postType}`;
+    return this.http.get<Post[]>(urlByType);
+  }
+
   //Metodo para obtener posts paginados
   getPagedPosts(pageNumber: number): Observable<Post[]> {
     const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${pageNumber}&size=5`;
