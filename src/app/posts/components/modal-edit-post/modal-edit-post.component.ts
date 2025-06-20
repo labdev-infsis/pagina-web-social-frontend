@@ -11,6 +11,7 @@ import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { Modal } from 'bootstrap';
+import { UserDetail } from '../../models/user-detail';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -37,6 +38,8 @@ export class ModalEditPostComponent {
   listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
   fileDoc!: File;  //Doc añadido en edicion
   fbMediaResponse!: FbUploadedMedia;
+  currentUser!: UserDetail;
+  currentPostType!: string;
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -58,6 +61,7 @@ export class ModalEditPostComponent {
         console.log('Error al obtener la configuracion de comentarios', error)
       }
     })
+    this.getTypeByRol()
     this.buildForm()
     //No deshabilitar boton Guardar si el post viene con info
     this.disabledSaveButton.set(!(this.postToEdit.content.text != '' || this.postToEdit.content.media.length > 0));
@@ -171,6 +175,34 @@ export class ModalEditPostComponent {
       }, 10);
     }
   }
+
+  getTypeByRol() {
+    this.postService.getUser().subscribe({
+      next:(user: UserDetail) => {
+        this.currentUser = user;
+        
+        this.currentPostType = this.determinePostType(this.currentUser.role);
+        
+    },
+    error:(error) => {
+      console.error('Error al obtener el usuario actual', error);
+      }
+    });
+   
+  }
+
+  private determinePostType(role: string): string {
+    switch (role) {
+      case 'ADMIN_BECAS':
+        return 'BECAS';
+      case 'ADMIN_CONVENIOS':
+        return 'CONVENIOS';
+      case 'ADMIN_PROYECTOS':
+        return 'PROYECTOS';
+      default:
+        return 'GENERAL';
+    }
+  }
   
   updatePost(){
     const valueFormPost = this.postForm.value;
@@ -182,6 +214,7 @@ export class ModalEditPostComponent {
       institution_id: this.institution.uuid,
       date: this.postToEdit.date,
       comment_config_id: this.selectedCommentConfig,
+      post_type: this.currentPostType,
       content: {
         text: valueFormPost.contentPost,
         media: []

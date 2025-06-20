@@ -12,6 +12,7 @@ import moment from 'moment';
 import { CommentConfig } from '../../models/comment-config';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { environment } from '../../../../environments/environment';
+import { UserDetail } from '../../models/user-detail';
 
 @Component({
   selector: 'app-create-post',
@@ -33,6 +34,8 @@ export class CreatePostComponent {
   fileDoc!: File;
   isFbPosted!: boolean;
   isFbSwitchOn: boolean = false;
+  currentUser!: UserDetail;
+  currentPostType!: string;
 
   constructor(
     private postService: PostService,
@@ -60,6 +63,7 @@ export class CreatePostComponent {
         console.log('Error al obtener la configuracion de comentarios', error)
       }
     })
+    this.getTypeByRol()
     this.buildForm()
   }
 
@@ -141,6 +145,34 @@ export class CreatePostComponent {
     document.getElementById('loadingBackdrop')!.classList.add('hide');
   }
 
+  getTypeByRol() {
+    this.postService.getUser().subscribe({
+      next:(user: UserDetail) => {
+        this.currentUser = user;
+        
+        this.currentPostType = this.determinePostType(this.currentUser.role);
+        
+    },
+    error:(error) => {
+      console.error('Error al obtener el usuario actual', error);
+      }
+    });
+   
+  }
+
+  private determinePostType(role: string): string {
+    switch (role) {
+      case 'ADMIN_BECAS':
+        return 'BECAS';
+      case 'ADMIN_CONVENIOS':
+        return 'CONVENIOS';
+      case 'ADMIN_PROYECTOS':
+        return 'PROYECTOS';
+      default:
+        return 'GENERAL';
+    }
+  }
+
   post() {
     const valueFormPost = this.postForm.value;
     const formData = new FormData();
@@ -151,6 +183,7 @@ export class CreatePostComponent {
       institution_id: this.institution.uuid,
       date: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
       comment_config_id: this.selectedCommentConfig,
+      post_type: this.currentPostType,
       content: {
         text: valueFormPost.contentPost.trim(),
         media: []
@@ -229,6 +262,7 @@ export class CreatePostComponent {
                   responseMedia.some(media => (media.fb_media_id != ''));
               }),
               concatMap(responseMedia => {
+                this.currentPostType,
                 post.content.media = responseMedia;
                 post.is_fb_posted = isVideo ? true : false;
                 post.fb_post_enable =  this.isFbSwitchOn;
