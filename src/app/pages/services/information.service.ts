@@ -51,8 +51,8 @@ export class InformationService {
   }
 
   // PUT articles
-  updatePresentationArticle(uuid: string, updatedArticle: Omit<Article, 'uuid' | 'user_id'>): Observable<Article> {
-    return this.http.put<Article>(`${this.ROOT_URL}/${this.articlesUrl}/${uuid}`, updatedArticle ,this.reqHeader)
+  updateArticle(uuidArticle: string, updatedArticle: Omit<Article, 'uuid' | 'user_id'>): Observable<Article> {
+    return this.http.put<Article>(`${this.ROOT_URL}/${this.articlesUrl}/${uuidArticle}`, updatedArticle ,this.reqHeader)
   }
 
   // POST article

@@ -84,19 +84,23 @@ div.p-toast.p-component {
 	
 	.content {
 		display: flex;
-		gap: 1rem;
+		gap: 5px;
 		h3 {
 			height: 30px;
 			align-content: center;
 		}
 		.text {
-				p {
+			white-space: pre-wrap;
+			word-wrap: break-word; 
+			word-break: normal; 
+			min-width: 100%; 
+			text-align: justify;
+			p {
 
-					text-align: justify;
-					white-space: wrap;
-					overflow-wrap: anywhere;
-				}
+				text-align: justify;
+				white-space: wrap;
 			}
+		}
 		.edit-info {
 			width: 30px; 
 			height: 30px; 
@@ -105,6 +109,8 @@ div.p-toast.p-component {
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			z-index: 1;
+			cursor: pointer;
 			
 			&:hover {
 				background-color: #F2F2F2;

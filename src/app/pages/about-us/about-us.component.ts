@@ -26,12 +26,12 @@ export class AboutUsComponent implements OnInit {
 
   institution$: Observable<Institution | null> = this.institutionStateService.currentInstitution$;
 
-  public articleIni!: Article;
-  public articleProposito!: Article;
-  public articleMision!: Article;
-  public articleEstructura!: Article;
-  public articleDptoInterac!: Article;
-  public articleDptoConvenios!: Article;
+  public articleIni!: Article;  // "819ab4e8-0856-4aad-b3aa-747e2dba76d9"
+  public articleProposito!: Article; // '839db4e8-0856-4aad-b3aa-747e2dba76d9'
+  public articleMision!: Article;   // "823ab4e8-0856-4aad-b3aa-747e2dba76d9"
+  public articleEstructura!: Article; // "842ib4e8-0856-4aad-b3aa-747e2dba76d9"
+  public articleDptoInterac!: Article; //  "846ib4e8-0856-4aad-b3aa-747e2dba76d9"
+  public articleDptoConvenios!: Article; // "845ib4e8-0856-4aad-b3aa-747e2dba76d9"
 
   public contentEdited: string = ''
   public edit: IdentifierEdit = '';
@@ -66,7 +66,12 @@ export class AboutUsComponent implements OnInit {
       next: (responseArticles: Article[]) => {
         this.articles = responseArticles;
         console.log('articulos', this.articles);
+        this.articleIni = this.articles.find(art => art.uuid === '819ab4e8-0856-4aad-b3aa-747e2dba76d9')!;
         this.articleProposito = this.articles.find(art => art.uuid === '839db4e8-0856-4aad-b3aa-747e2dba76d9')!;
+        this.articleMision = this.articles.find(art => art.uuid === '823ab4e8-0856-4aad-b3aa-747e2dba76d9')!;
+        this.articleEstructura = this.articles.find(art => art.uuid === '842ib4e8-0856-4aad-b3aa-747e2dba76d9')!;
+        this.articleDptoInterac = this.articles.find(art => art.uuid === '846ib4e8-0856-4aad-b3aa-747e2dba76d9')!;
+        this.articleDptoConvenios = this.articles.find(art => art.uuid === '845ib4e8-0856-4aad-b3aa-747e2dba76d9')!;
       },
       error: (err) => {
         console.log('Error al obetener los articulos', err);
@@ -89,30 +94,22 @@ export class AboutUsComponent implements OnInit {
     this.edit = idEdit;
   }
 
-  get safeText(): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(this.articleProposito.title);
+  public safeText(textToSanitizer: string): SafeHtml {
+    const normalizedHtml = this.normalizeLineBreaks(textToSanitizer);
+    return this.sanitizer.bypassSecurityTrustHtml(normalizedHtml);
   }
 
-  saveEdit(textEdited: string){
-    this.articleProposito.text = textEdited;  //add condicional
-    const articleEdited: Omit<Article, 'uuid' | 'user_id'> = {
-      section_id: this.articleProposito.section_id,
-      date: this.articleProposito.date,
-      title: this.articleProposito.title,
-      text: this.articleProposito.text,
-      medias: this.articleProposito.medias
+  private normalizeLineBreaks(html: string): string {
+    return html.replace(/\n/g, '<br>').replace(/&nbsp;/g, ' ');
+  }
+
+  saveEdit(isUpdatedArticle: boolean){
+    if(isUpdatedArticle){
+      this.edit = ''
+      this.messageService.add({ severity: 'success', summary: 'Exitoso', detail: 'Articulo editado exitosamente' });
+    }else{
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al editar artículo' });
     }
-    this.informationService.updatePresentationArticle(this.articleProposito.uuid, articleEdited).subscribe({
-      next: (resArticleEdited: Article) => {
-        console.log('articulo editado', resArticleEdited);
-        this.messageService.add({ severity: 'success', summary: 'Exitoso', detail: 'Articulo editado exitosamente' });
-        this.edit = '';
-      },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al editar artículo' });
-        console.log('Error al editar el artículo', err);
-      }
-    });
   }
 
   cancelEdit(){
