@@ -1,79 +1,254 @@
 <div class="page-container">
 
 	<div class="header-post">
-		<div class="data-user">
-			<img src="../../../assets/dric/dric-logo.png" alt="'Foto de perfil'" class="img-profile">
+		<div *ngIf="institution$ | async as institution" class="data-user">
+			<img [src]="institution.logo_url" alt="'Foto de perfil'" class="img-profile">
 			<div class="info-user">
 				<h2>Presentación</h2>
-				<p></p>
 			</div>
 		</div>
 	</div>
 
 	<div class="page-section">
 		<div class="section-content">
-			<p>La Dirección de Relaciones Internacionales y Convenios fue creada el 7 de enero de 1988, con
-				el rango de Secretaría. El año 1995 se instituye como Departamento y en noviembre de 1997 se
-				crea la actual Dirección.</p>
-			<div class="media-container">
-				<img src="../../../assets/dric/dric-team-2025.jpg" alt="">
-			</div>
-			<h3>Misión</h3>
-			<p>Promover, coordinar y canalizar la cooperación internacional y nacional, así como la
-				coordinación interinstitucional de la UMSS, en beneficio de los procesos de
-				enseñanza-aprendizaje, investigación científica y tecnológica, interacción social y
-				fortalecimiento institucional.</p>
+			<!-- Initial Article -->
+			<!-- Mision Article -->
+			@if(isAuthenticated && currentUser.role === 'ADMIN'){
+				@if(edit === 'contentPresentacion'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleIni"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content">
+						<div class="text" *ngIf="articleIni" [innerHTML]="safeText(articleIni.text)"></div>
+						<div class="edit-info" (click)="editInfo(articleIni.text, 'contentPresentacion')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				<!-- Image article ini-->
+				<div class="media-container">
+					<img *ngIf="articleIni" [src]="articleIni.medias[0].path" alt="">
+					<div class="edit-info">
+						<i class="bi bi-pencil-fill"></i>
+					</div>
+				</div>
+				@if(edit === 'mision'){
+					<app-edit-info
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						[articleToEdit]="articleMision"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content">
+						<h3 *ngIf="articleMision">{{ articleMision.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleMision.title, 'mision')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentMision'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleMision"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content">
+						<div class="text" *ngIf="articleMision" [innerHTML]="safeText(articleMision.text)"></div>
+						<div class="edit-info" (click)="editInfo(articleMision.text, 'contentMision')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+			}@else {
+				<div *ngIf="articleIni" [innerHTML]="safeText(articleIni.text)"></div>
+				<div class="media-container">
+					<img *ngIf="articleIni" [src]="articleIni.medias[0].path" alt="">
+				</div>
+				<h3 *ngIf="articleMision">{{ articleMision.title }}</h3>
+				<div *ngIf="articleMision" [innerHTML]="safeText(articleMision.text)"></div>
+			}
 		</div>
 		<div class="section-content">
-			<h3>Propósito</h3>
-			<p>Es propósito fundamental de la Dirección de Relaciones Internacionales y Convenios de la
-				Universidad Mayor de San Simón, explotar de manera organizada y sistemática las
-				oportunidades de Cooperación Internacional y de Coordinación Interinstitucional (local,
-				nacional e internacional), coadyuvar a la movilidad docente/estudiantil/administrativa, a la
-				otorgación de becas, la gestión de proyectos internacionales y la implementación de un
-				programa de internacionalización universitaria para dinamizar el desarrollo institucional,
-				académico y científico de la UMSS y mejorar su contribución al desarrollo regional y
-				nacional.</p>
+			<!-- Proposito Article -->
+			@if(isAuthenticated && currentUser.role === 'ADMIN'){
+				@if(edit === 'proposito'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						[articleToEdit]="articleProposito"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content">
+						<h3 *ngIf="articleProposito">{{ articleProposito.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleProposito.title, 'proposito')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentProposito'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleProposito"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else{
+					<div class="content" >
+						<div class="text" *ngIf="articleProposito" [innerHTML]="safeText(articleProposito.text)"></div>
+						<div class="edit-info" (click)="editInfo(articleProposito.text, 'contentProposito')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+			}@else{
+				<h3 *ngIf="articleProposito">{{ articleProposito.title }}</h3>
+				<div *ngIf="articleProposito" [innerHTML]="safeText(articleProposito.text)"></div>
+			}
 		</div>
 	</div>
 
 	<div class="page-section no-border-bottom">
-		<div class="section-content">
-			<h3>Estructura</h3>
-			<p>La DRIC depende directamente del Rectorado. Para el cumplimiento de sus funciones, se
-				estructura de la siguiente manera:</p>
-			<ul>
-				<li>Dirección Ejecutiva</li>
-				<li>Departamento de Convenios, Movilidad y Becas</li>
-				<li>Departamento de Internacionalización y Proyectos</li>
-			</ul>
-			<p>Esta estructura permite que la UMSS se constituya en una buena contraparte,
-				principalmente en proyectos que cuentan con cooperación internacional, habiendo
-				acumulado amplia experiencia.<br>
-				Director: Lic. Oscar Edwin Alba Salazar<br>
-				Correo: director-dric&#64;umss.edu.bo<br>
-				Correo: rrii&#64;umss.edu.bo</p>
-			<h3>Departamento de Convenios, Movilidad y Becas</h3>
-			<ul>
-				<li>Jefe del Departamento: Mgr. Asunta Giovanna Magdalena Maldonado Moscoso
-					convenios-dric&#64;umss.edu.bo</li>
-				<li>Dra. Silvia Arce: corconvenios-dric&#64;umss&sdot;edu.bo</li>
-				<li>Dr. Roberto Achaya: robertoachayamamani&#64;gmail.com</li>
-				<li>Mgr. Roxana Zambrana: dric&#64;umss.edu</li>
-			</ul>
-		</div>
-		<div class="section-content">
-			<h3>Departamento de Internacionalización y Proyectos</h3>
-			<ul>
-				<li>Jefe del Departamento: Mgr. Javier Augusto Jordán Arandia proyectosdric&#64;umss.edu.bo
-				</li>
-				<li>Ing. John Medina: coord-proyectos-dric&#64;umss.edu.bo</li>
-				<li>Por designar: internal-dric&#64;umss.edu.bo</li>
-			</ul>
-			<div class="media-container">
-				<img src="../../../assets/dric/dric-oscar-alba.jpg" alt="foto">
-			</div>
-		</div>
-	</div>
+		@if(isAuthenticated && currentUser.role === 'ADMIN'){
+			<div class="section-content">
+				<!-- Estructura Article -->
+				@if(edit === 'estructura'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						[articleToEdit]="articleEstructura"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content">
+						<h3 *ngIf="articleEstructura">{{ articleEstructura.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleEstructura.title, 'estructura')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentEstructura'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleEstructura"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content" >
+						<div class="text" *ngIf="articleEstructura" [innerHTML]="safeText(articleEstructura.text)"></div>
+						<div class="edit-info" (click)="editInfo(articleEstructura.text, 'contentEstructura')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
 
+				<!-- Convenios Article -->
+				 @if(edit === 'dptoConvenios'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						[articleToEdit]="articleDptoConvenios"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content">
+						<h3 *ngIf="articleDptoConvenios" class="mt-3">{{ articleDptoConvenios.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleDptoConvenios.title, 'dptoConvenios')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentDptoConvenios'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleDptoConvenios"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content" >
+						<div class="text" *ngIf="articleDptoConvenios" [innerHTML]="safeText(articleDptoConvenios.text)"></div>
+						<div class="edit-info" (click)="editInfo(articleDptoConvenios.text, 'contentDptoConvenios')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+			</div>
+			<div class="section-content">
+				@if(edit === 'dptoInternac'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'title'"
+						[articleToEdit]="articleDptoInterac"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content">
+						<h3 *ngIf="articleDptoInterac" class="mt-3">{{ articleDptoInterac.title }}</h3>
+						<div class="edit-info" (click)="editInfo(articleDptoInterac.title, 'dptoInternac')">
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				@if(edit === 'contentDptoInternac'){
+					<app-edit-info 
+						[contentEdited]="contentEdited"
+						[typeText]="'paragraph'"
+						[articleToEdit]="articleDptoInterac"
+						(onCancelEdit)="cancelEdit()"
+						(onSaveSuccessfulEdit)="saveEdit($event)"
+					></app-edit-info>
+				}@else {
+					<div class="content" >
+						<div class="text" *ngIf="articleDptoInterac" [innerHTML]="safeText(articleDptoInterac.text)"></div>
+						<div class="edit-info" >
+							<i class="bi bi-pencil-fill"></i>
+						</div>
+					</div>
+				}
+				<div class="media-container">
+					<img *ngIf="articleDptoInterac" [src]="articleDptoInterac.medias[0].path" alt="foto">
+					<div class="edit-info">
+						<i class="bi bi-pencil-fill"></i> 
+					</div>
+				</div>
+			</div>
+		}@else {
+			<div class="section-content">
+				<!-- Estructura Article -->
+				<h3 *ngIf="articleEstructura">{{ articleEstructura.title }}</h3>
+				<div *ngIf="articleEstructura" [innerHTML]="safeText(articleEstructura.text)"></div>
+				
+				<!-- Convenios Article -->
+				<h3 *ngIf="articleDptoConvenios" class="mt-3">{{ articleDptoConvenios.title }}</h3>
+				<div *ngIf="articleDptoConvenios" [innerHTML]="safeText(articleDptoConvenios.text)"></div>
+			</div>
+			<div class="section-content">
+				<h3 *ngIf="articleDptoInterac">{{ articleDptoInterac.title }}</h3>
+				<div *ngIf="articleDptoInterac" [innerHTML]="safeText(articleDptoInterac.text)"></div>
+				<div class="media-container">
+					<img *ngIf="articleDptoInterac" [src]="articleDptoInterac.medias[0].path" alt="foto">
+				</div>
+			</div>
+		}
+	</div>
 </div>
+<p-toast />

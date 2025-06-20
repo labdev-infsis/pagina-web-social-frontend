@@ -12,7 +12,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class AuthService {
 
   private readonly ROOT_URL = `${environment.BACK_END_HOST_DEV_AUTH}`;
-  private jwtHelper = new JwtHelperService();
+  private readonly jwtHelper = new JwtHelperService();
 
 
   public token: any
@@ -104,10 +104,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
-    //window.location.reload();
     this.router.navigate(['/']);
-
   }
 
   // Method to check token periodically
