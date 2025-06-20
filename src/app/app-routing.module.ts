@@ -13,6 +13,10 @@ import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/sch
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { authGuard } from './authentication/services/auth.guard';
+import { ViewAllPostsConveniosComponent } from './posts/components/view-all-posts-convenios/view-all-posts-convenios.component';
+import { ViewAllPostsProyectosComponent } from './posts/components/view-all-posts-proyectos/view-all-posts-proyectos.component';
+import { ViewAllPostsBecasComponent } from './posts/components/view-all-posts-becas/view-all-posts-becas.component';
+import { ViewAllPostsCudieComponent } from './posts/components/view-all-posts-cudie/view-all-posts-cudie.component';
 
 const routes: Routes = [
   {
@@ -56,6 +60,18 @@ const routes: Routes = [
       },
       { path: 'videos', 
         component: VideosGalleryComponent
+      },
+      { path: 'convenios', 
+        component: ViewAllPostsConveniosComponent
+      },
+      { path: 'proyectos', 
+        component: ViewAllPostsProyectosComponent
+      },
+      { path: 'becas', 
+        component: ViewAllPostsBecasComponent
+      },
+      { path: 'cudie', 
+        component: ViewAllPostsCudieComponent
       }
     ]
   }
