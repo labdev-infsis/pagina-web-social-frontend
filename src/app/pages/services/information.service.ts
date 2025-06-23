@@ -5,6 +5,7 @@ import { AuthService } from '../../authentication/services/auth.service';
 import { Observable } from 'rxjs';
 import { Section } from '../models/section';
 import { Article } from '../models/article';
+import { MediaArticle } from '../models/media-article';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +26,12 @@ export class InformationService {
 
   // Sections
   // GET section
-  getPresentationsSections(): Observable<Section[]> {
+  getAllSections(): Observable<Section[]> {
     return this.http.get<Section[]>(`${this.ROOT_URL}/${this.sectionsUrl}`);
+  }
+
+  getSectionByParam(queryParam: string): Observable<Section>{
+    return this.http.get<Section>(`${this.ROOT_URL}/${this.sectionsUrl}?name=${queryParam}`);
   }
 
   // PUT section
@@ -46,12 +51,12 @@ export class InformationService {
 
   // Articles 
   // GET articles
-  getPresentationArticles(): Observable<Article[]> {
+  getAllArticles(): Observable<Article[]> {
     return this.http.get<Article[]>(`${this.ROOT_URL}/${this.articlesUrl}`);
   }
 
   // PUT articles
-  updateArticle(uuidArticle: string, updatedArticle: Omit<Article, 'uuid' | 'user_id'>): Observable<Article> {
+  updateArticle(uuidArticle: string, updatedArticle: any): Observable<Article> {
     return this.http.put<Article>(`${this.ROOT_URL}/${this.articlesUrl}/${uuidArticle}`, updatedArticle ,this.reqHeader)
   }
 

@@ -101,20 +101,27 @@ div.p-toast.p-component {
 				white-space: wrap;
 			}
 		}
-		.edit-info {
-			width: 30px; 
-			height: 30px; 
-			flex-shrink: 0;
-			border-radius: 50%; 
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 1;
-			cursor: pointer;
-			
-			&:hover {
-				background-color: #F2F2F2;
-			}
-		}
 	}
+}
+.edit-info {
+	cursor: pointer;
+	width: 30px; 
+	height: 30px; 
+	flex-shrink: 0;
+	border-radius: 50%; 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+	
+	&:hover {
+		background-color: #F2F2F2;
+	}
+}
+
+.media {
+	position: absolute;
+	top: 0;
+  	right: 0;
+  	background-color: white;
 }
