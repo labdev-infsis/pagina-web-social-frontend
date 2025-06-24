@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { InstitutionStateService } from '../../services/institution-state.service';
 import { Institution } from '../../posts/models/institution';
-import { Observable } from 'rxjs';
+import { concatMap, Observable } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Article } from '../models/article';
 import { InformationService } from '../services/information.service';
@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { PostService } from '../../posts/services/post.service';
 import { AuthService } from '../../authentication/services/auth.service';
 import { UserDetail } from '../../posts/models/user-detail';
+import { UploadedMedia } from '../../posts/models/uploaded-media';
 
 type IdentifierEdit =  '' | 'presentacion' | 'contentPresentacion' | 'proposito' | 'contentProposito' |
   'mision' | 'contentMision' |'estructura' | 'contentEstructura' | 'dptoConvenios' | 'contentDptoConvenios' |
@@ -39,6 +40,10 @@ export class AboutUsComponent implements OnInit {
   public sections: Section[] = [];
   public isAuthenticated: boolean = false; 
   public currentUser!: UserDetail;
+  @ViewChild('inputMediaArticleIni') 
+  public inputMediaArticleIni!: ElementRef<HTMLInputElement>;
+  @ViewChild('inputMediaArticleDptoInternac') 
+  public inputMediaArticleDptoIternac!: ElementRef<HTMLInputElement>;
 
   constructor(
     private readonly institutionStateService: InstitutionStateService,
@@ -62,7 +67,7 @@ export class AboutUsComponent implements OnInit {
       });
     }
 
-    this.informationService.getPresentationArticles().subscribe({
+    this.informationService.getAllArticles().subscribe({
       next: (responseArticles: Article[]) => {
         this.articles = responseArticles;
         console.log('articulos', this.articles);
@@ -78,7 +83,7 @@ export class AboutUsComponent implements OnInit {
       }
     });
 
-    this.informationService.getPresentationsSections().subscribe({
+    this.informationService.getAllSections().subscribe({
       next: (responseSections: Section[]) => {
         this.sections = responseSections;
         console.log('sections', this.sections);
@@ -114,5 +119,54 @@ export class AboutUsComponent implements OnInit {
 
   cancelEdit(){
     this.edit = ''; 
+  }
+
+  openEditMediaArticleIni(){
+    this.inputMediaArticleIni.nativeElement.click();
+  }
+
+  openEditMediaArticleDptoInternac(){
+    this.inputMediaArticleDptoIternac.nativeElement.click();
+  }
+
+  changeInputMediaArticle(event: Event, article: Article){
+    if (event.target instanceof HTMLInputElement && event.target.files){
+      const mediaFiles = Array.from(event.target.files);
+      const formData = new FormData();
+      mediaFiles.forEach(file => {
+        if(file.type.includes('image')){
+          formData.append('images', file);
+        }
+      })
+      
+      this.postService.uploadImages(formData).pipe(
+        concatMap((uploadResponse: UploadedMedia[]) => {
+          const mediasToArticle = uploadResponse.map((media, index)=> ({
+            number: index + 1,
+            name: media.name,
+            type: media.type,
+            path: media.urlResource
+          }));
+
+          const articleUpdated: any  = {
+            section_id: article.section_id,
+            date: article.date,
+            title: article.title,
+            text: article.text,
+            medias: mediasToArticle
+          }
+          return this.informationService.updateArticle(article.uuid, articleUpdated);
+        })
+      ).subscribe({
+        next: (articleUpdated)=>{
+          article.medias = articleUpdated.medias;
+          this.messageService.add({ severity: 'success', summary: 'Exitoso', detail: 'Articulo editado exitosamente' });
+        },
+        error: (err) =>{
+          console.log('error al actualizar', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al editar artículo' });
+        }
+      });
+    }
   }
 }
