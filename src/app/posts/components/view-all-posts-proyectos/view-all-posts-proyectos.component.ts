@@ -61,8 +61,7 @@ export class ViewAllPostsProyectosComponent {
     
         this.postService.getPostsByType('PROYECTOS').subscribe({
           next: (data: Post[]) => {
-            this.posts = [...this.posts, ...data]; // Agrega nuevos posts a la lista
-            //this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
+            this.posts = [...this.posts, ...data].reverse(); 
             this.loading = false;
           },
           error: (error) => {

@@ -73,12 +73,12 @@
 					</div>
 				}
 			}@else {
-				<div *ngIf="articleIni" [innerHTML]="safeText(articleIni.text)"></div>
+				<div *ngIf="articleIni" class="text" [innerHTML]="safeText(articleIni.text)"></div>
 				<div class="media-container" *ngIf="articleIni">
 					<img [src]="articleIni.medias[articleIni.medias.length-1].path" alt="">
 				</div>
 				<h3 *ngIf="articleMision">{{ articleMision.title }}</h3>
-				<div *ngIf="articleMision" [innerHTML]="safeText(articleMision.text)"></div>
+				<div *ngIf="articleMision" class="text" [innerHTML]="safeText(articleMision.text)"></div>
 			}
 		</div>
 		<div class="section-content">
@@ -118,7 +118,7 @@
 				}
 			}@else{
 				<h3 *ngIf="articleProposito">{{ articleProposito.title }}</h3>
-				<div *ngIf="articleProposito" [innerHTML]="safeText(articleProposito.text)"></div>
+				<div *ngIf="articleProposito" class="text" [innerHTML]="safeText(articleProposito.text)"></div>
 			}
 		</div>
 	</div>
@@ -222,7 +222,7 @@
 				}@else {
 					<div class="content" >
 						<div class="text" *ngIf="articleDptoInterac" [innerHTML]="safeText(articleDptoInterac.text)"></div>
-						<div class="edit-info" >
+						<div class="edit-info" (click)="editInfo(articleDptoInterac.text, 'contentDptoInternac')">
 							<i class="bi bi-pencil-fill"></i>
 						</div>
 					</div>
@@ -241,15 +241,15 @@
 			<div class="section-content">
 				<!-- Estructura Article -->
 				<h3 *ngIf="articleEstructura">{{ articleEstructura.title }}</h3>
-				<div *ngIf="articleEstructura" [innerHTML]="safeText(articleEstructura.text)"></div>
+				<div *ngIf="articleEstructura" class="text" [innerHTML]="safeText(articleEstructura.text)"></div>
 				
 				<!-- Convenios Article -->
 				<h3 *ngIf="articleDptoConvenios" class="mt-3">{{ articleDptoConvenios.title }}</h3>
-				<div *ngIf="articleDptoConvenios" [innerHTML]="safeText(articleDptoConvenios.text)"></div>
+				<div *ngIf="articleDptoConvenios" class="text" [innerHTML]="safeText(articleDptoConvenios.text)"></div>
 			</div>
 			<div class="section-content">
 				<h3 *ngIf="articleDptoInterac">{{ articleDptoInterac.title }}</h3>
-				<div *ngIf="articleDptoInterac" [innerHTML]="safeText(articleDptoInterac.text)"></div>
+				<div *ngIf="articleDptoInterac" class="text" [innerHTML]="safeText(articleDptoInterac.text)"></div>
 				<div class="media-container">
 					<img *ngIf="articleDptoInterac" [src]="articleDptoInterac.medias[0].path" alt="foto">
 				</div>

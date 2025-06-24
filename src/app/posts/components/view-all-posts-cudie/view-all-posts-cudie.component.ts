@@ -18,18 +18,17 @@ export class ViewAllPostsCudieComponent {
         loading = false;
         pageCounter = 0;
       
-        constructor(private postService: PostService,
-          private authService: AuthService
+        constructor(private readonly postService: PostService,
+          private readonly authService: AuthService
         ){
         }
         
         ngOnInit(){
           this.authenticated = this.authService.isAuthenticated();
           // Obtener una cantidad de posts
-          this.postService.getPagedPosts(this.pageCounter).subscribe({
+          this.postService.getPostsByType('CUDIE').subscribe({
             next:(data: Post[])=>{
-              this.posts = data;
-              this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
+              this.posts = data.reverse();
             },
             error:(error) => {
               console.error('Error al obtener los posts paginados', error);
@@ -51,7 +50,7 @@ export class ViewAllPostsCudieComponent {
         onScroll(): void {
       
           if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
-            this.loadPosts(); // Cargar más posts al llegar al final
+            // this.loadPosts(); // Cargar más posts al llegar al final
           }
         }
       
