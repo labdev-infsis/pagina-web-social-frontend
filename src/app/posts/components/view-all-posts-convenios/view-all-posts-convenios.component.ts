@@ -28,7 +28,7 @@ export class ViewAllPostsConveniosComponent {
       // Obtener una cantidad de posts
      this.postService.getPostsByType('CONVENIOS').subscribe({
         next:(data: Post[])=>{
-          this.posts = data;
+          this.posts = data.reverse();
           //this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
         },
         error:(error) => {

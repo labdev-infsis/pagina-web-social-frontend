@@ -18,8 +18,8 @@ export class ViewAllPostsBecasComponent {
         loading = false;
         pageCounter = 0;
       
-        constructor(private postService: PostService,
-          private authService: AuthService
+        constructor(private readonly postService: PostService,
+          private readonly authService: AuthService
         ){
         }
         
@@ -28,9 +28,7 @@ export class ViewAllPostsBecasComponent {
           // Obtener una cantidad de posts
           this.postService.getPostsByType('BECAS').subscribe({
             next:(data: Post[])=>{
-              this.posts = data;
-              
-              //this.postService.getPagedPosts(this.pageCounter++); // Avanza a la siguiente página
+              this.posts = data.reverse();
             },
             error:(error) => {
               console.error('Error al obtener los posts paginados', error);
