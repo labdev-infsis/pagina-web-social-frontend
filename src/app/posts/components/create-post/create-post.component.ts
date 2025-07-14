@@ -168,6 +168,8 @@ export class CreatePostComponent {
         return 'CONVENIOS';
       case 'ADMIN_PROYECTOS':
         return 'PROYECTOS';
+      case 'ADMIN_CUDIE':
+        return 'CUDIE'
       default:
         return 'GENERAL';
     }
