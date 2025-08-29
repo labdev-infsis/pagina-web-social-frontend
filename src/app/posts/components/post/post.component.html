@@ -10,7 +10,7 @@
 			</div>
 		</div>
 		}
-		@if(authenticated === true && currentUser?.role === 'ADMIN'){
+		@if(authenticated === true && currentUser && currentUser.role === 'ADMIN'){
 			<div class="options-post d-flex justify-content-center align-items-center"
 				(click)="showOptions.set(!showOptions())">
 				<i class="bi bi-three-dots"></i>
