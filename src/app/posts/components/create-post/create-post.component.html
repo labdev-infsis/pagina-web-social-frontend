@@ -34,19 +34,8 @@
 				<form [formGroup]="postForm" class="form d-flex flex-column">
 					<div class="container">
 						<!-- Texto del post -->
-						<app-text-editor (textChangeEvent)="getTextPost($event)"></app-text-editor>
-
-						<!-- Seleccionar imagen (es) -->
-						<app-images-uploader [showAreaMedia]="visibleAreaMedia"
-							(closeAreaMediaEvent)="closeAreaMedia($event)"
-							(loadFilesMediaEvent)="getFilesImagesPost($event)"></app-images-uploader>
-
-						<!-- Seleccionar archivo -->
-						<app-document-uploader [showAreaDoc]="visibleAreaMediaDoc"
-							(closeAreaDocEvent)="closeAreaDoc($event)"
-							(loadFileDoc)="getFileDocPost($event)"></app-document-uploader>
+						<app-text-editor (textChangeEvent)="getTextPost($event)"></app-text-editor>						
 					</div>
-
 
 					<!-- Seleccionar redes sociales para compartir publicacion -->
 					<div class="add-media d-flex flex-row align-items-center justify-content-between">
@@ -60,6 +49,18 @@
 						</div>
 					</div>
 
+					<div class="container">
+						<!-- Seleccionar imagen (es) -->
+						<app-images-uploader [showAreaMedia]="visibleAreaMedia"
+							(closeAreaMediaEvent)="closeAreaMedia($event)"
+							(loadFilesMediaEvent)="getFilesImagesPost($event)"></app-images-uploader>
+
+						<!-- Seleccionar archivo -->
+						<app-document-uploader [showAreaDoc]="visibleAreaMediaDoc"
+							(closeAreaDocEvent)="closeAreaDoc($event)"
+							(loadFileDoc)="getFileDocPost($event)"></app-document-uploader>
+					</div>
+					
 					<!-- Añadir a la publicacion -->
 					<div class="add-media d-flex flex-row align-items-center justify-content-between">
 						<p class="fw-semibold">Añadir a tu publicación</p>
