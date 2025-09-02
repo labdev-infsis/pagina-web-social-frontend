@@ -88,7 +88,7 @@
 		<app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>
 		<div class="divisor" *ngIf="amountComments() > 0"></div>
 		<div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
-			<span class="quantity">{{ post.commentCounter.totalComments }}</span>
+			<span class="quantity">{{ totalComments() }}</span>
 			<i class="bi bi-chat-left-text icon"></i>
 		</div>
 		<!--<div class="divisor"></div> -->

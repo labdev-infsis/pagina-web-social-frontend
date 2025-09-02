@@ -46,7 +46,7 @@ export class PostComponent {
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png'];
   typeVideos = ['video', 'video/mp4'];
   totalReactions = signal(0);
-
+  totalComments = signal(0);
 
   constructor(
     private postService: PostService
@@ -70,6 +70,8 @@ export class PostComponent {
     } else {
       console.warn("Advertencia: this.post.reactions es undefined");
     }
+
+    this.totalComments.set(this.post.commentCounter.totalComments);
   }
   
 
@@ -114,6 +116,15 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
+
+    // modalRef.result.then(() => {
+    // }, (dismissReason) => {
+    //   this.totalComments.set(modalRef.componentInstance.comments.length);
+    // });
+
+    modalRef.dismissed.subscribe(() => {
+      this.totalComments.set(modalRef.componentInstance.comments.length);
+    });
   }
 
   getGridClass(media: Media[]): string {
@@ -226,7 +237,7 @@ export class PostComponent {
   }
 
   amountComments() {
-    return this.post.commentCounter.totalComments
+    return this.totalComments();
   }
 
   recuperarReaccion() {
