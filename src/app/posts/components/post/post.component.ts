@@ -116,12 +116,7 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
-
-    // modalRef.result.then(() => {
-    // }, (dismissReason) => {
-    //   this.totalComments.set(modalRef.componentInstance.comments.length);
-    // });
-
+    
     modalRef.dismissed.subscribe(() => {
       this.totalComments.set(modalRef.componentInstance.comments.length);
     });
