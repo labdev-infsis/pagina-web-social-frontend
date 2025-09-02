@@ -9,7 +9,7 @@
 
         <!-- ...existing code... -->
         <div class="comment-actions mt-1">
-          <span class="comment-time">{{ calculateTimeFromNow(reply.date) }}</span>
+          <span class="comment-time">{{ calculateTimeFromNow(reply.createdDate) }}</span>
           <span class="mx-1">·</span>
           <ng-container *ngIf="authenticated">
             <button class="reply-btn" (click)="toggleReplyInput.emit(reply.uuid)">Responder</button>
