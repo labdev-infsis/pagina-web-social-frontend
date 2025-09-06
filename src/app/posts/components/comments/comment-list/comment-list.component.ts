@@ -201,7 +201,8 @@ export class CommentListComponent implements OnChanges {
   }
 
   calculateTimeFromNow(date: string): string {
-    return moment.utc(date).local().fromNow();
+    let commentDate = moment(date,'YYYY-MM-DDTHH:mm:ss.SSS');
+    return commentDate.fromNow();
   }
 
   loadUserReactionsForComments() {

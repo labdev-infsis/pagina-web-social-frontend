@@ -153,7 +153,8 @@ export class ReplyListComponent {
 
   // Calcula el tiempo desde la fecha
   calculateTimeFromNow(date: string): string {
-    return moment.utc(date).local().fromNow();
+    let commentDate = moment(date,'YYYY-MM-DDTHH:mm:ss.SSS');
+    return commentDate.fromNow();
   }
   openReplyReactionsModal(replyUuid: string) {
     this.postService.getReplyReactions(replyUuid).subscribe(reactions => {
