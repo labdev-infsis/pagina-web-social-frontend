@@ -13,7 +13,7 @@
 		<div class="section-content">
 			<!-- Initial Article -->
 			<!-- Mision Article -->
-			@if(isAuthenticated && currentUser.role === 'ADMIN'){
+			@if(isAuthenticated && currentUser && currentUser.role === 'ADMIN'){
 				@if(edit === 'contentPresentacion'){
 					<app-edit-info 
 						[contentEdited]="contentEdited"
@@ -83,7 +83,7 @@
 		</div>
 		<div class="section-content">
 			<!-- Proposito Article -->
-			@if(isAuthenticated && currentUser.role === 'ADMIN'){
+			@if(isAuthenticated && currentUser && currentUser.role === 'ADMIN'){
 				@if(edit === 'proposito'){
 					<app-edit-info 
 						[contentEdited]="contentEdited"
@@ -124,7 +124,7 @@
 	</div>
 
 	<div class="page-section no-border-bottom">
-		@if(isAuthenticated && currentUser.role === 'ADMIN'){
+		@if(isAuthenticated && currentUser && currentUser.role === 'ADMIN'){
 			<div class="section-content">
 				<!-- Estructura Article -->
 				@if(edit === 'estructura'){

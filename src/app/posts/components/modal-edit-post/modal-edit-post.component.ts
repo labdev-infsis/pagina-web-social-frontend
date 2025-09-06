@@ -13,6 +13,7 @@ import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { Modal } from 'bootstrap';
 import { UserDetail } from '../../models/user-detail';
 import { faL } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-modal-edit-post',
@@ -40,6 +41,7 @@ export class ModalEditPostComponent {
   fbMediaResponse!: FbUploadedMedia;
   currentUser!: UserDetail;
   currentPostType!: string;
+  isAuthenticated: boolean = false;
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -47,7 +49,8 @@ export class ModalEditPostComponent {
 
   constructor(
       private postService: PostService,
-      private formBuilder: FormBuilder
+      private formBuilder: FormBuilder,
+      private readonly authService: AuthService
   ){}
 
   ngOnInit(){
@@ -177,18 +180,20 @@ export class ModalEditPostComponent {
   }
 
   getTypeByRol() {
-    this.postService.getUser().subscribe({
-      next:(user: UserDetail) => {
-        this.currentUser = user;
-        
-        this.currentPostType = this.determinePostType(this.currentUser.role);
-        
-    },
-    error:(error) => {
-      console.error('Error al obtener el usuario actual', error);
-      }
-    });
-   
+    this.isAuthenticated = this.authService.isAuthenticated();
+    if (this.isAuthenticated) {
+        this.postService.getUser().subscribe({
+        next:(user: UserDetail) => {
+          this.currentUser = user;
+          
+          this.currentPostType = this.determinePostType(this.currentUser.role);
+          
+        },
+        error:(error) => {
+          console.error('Error al obtener el usuario actual', error);
+          }
+        });
+    } 
   }
 
   private determinePostType(role: string): string {
