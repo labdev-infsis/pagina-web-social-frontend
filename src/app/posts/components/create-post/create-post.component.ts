@@ -108,14 +108,16 @@ export class CreatePostComponent {
   //Ocultar area de imagenes
   closeAreaMedia(option: boolean) {
     this.disableLoadDoc.set(option); //Habilitar el boton de cargar documentos
-    this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
+    const contentPost = this.postForm.get('contentPost')?.value;
+    contentPost != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
     this.listFile = [];//Limpiar la lista de imagenes
   }
 
   //Deshabilitar el boton de publicar si no hay imagenes
   getFilesImagesPost(fileMedia: File[]) {
     this.listFile = fileMedia;
-    this.listFile ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    const contentPost = this.postForm.get('contentPost')?.value;
+    contentPost != '' || this.listFile? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
@@ -127,14 +129,16 @@ export class CreatePostComponent {
   //Ocultar area de documentos
   closeAreaDoc(option: boolean) {
     this.disableLoadImage.set(option);
-    this.disabledPublishButton.set(true);
+    const contentPost = this.postForm.get('contentPost')?.value;
+    contentPost != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
     this.fileDoc = new File([''], '');//Limpiar el archivo
   }
 
   //Deshabilitar el boton de publicar si no hay archivo
   getFileDocPost(doc: File) {
     this.fileDoc = doc;
-    this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    const contentPost = this.postForm.get('contentPost')?.value;
+    contentPost != '' || this.fileDoc ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
   }
 
   showLoading() {
