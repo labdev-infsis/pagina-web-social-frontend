@@ -1,9 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Media } from '../../models/media';
-import { concatMap, of, forkJoin, map, catchError, Observable, mergeMap, from, reduce, tap, concat } from 'rxjs';
+import { concatMap, of, map, catchError, reduce, tap, concat } from 'rxjs';
 import { UploadedMedia } from '../../models/uploaded-media';
 import { CreatePost } from '../../models/create-post';
 import { Institution } from '../../models/institution';
@@ -19,7 +19,7 @@ import { UserDetail } from '../../models/user-detail';
   templateUrl: './create-post.component.html',
   styleUrl: './create-post.component.scss'
 })
-export class CreatePostComponent {
+export class CreatePostComponent implements OnInit {
   institution!: Institution;
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
@@ -38,8 +38,8 @@ export class CreatePostComponent {
   currentPostType!: string;
 
   constructor(
-    private postService: PostService,
-    private formBuilder: FormBuilder
+    private readonly postService: PostService,
+    private readonly formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -199,7 +199,6 @@ export class CreatePostComponent {
 
       this.showLoading();
       if (this.listFile && this.listFile.length > 0) { //Si hay imagenes-videos se los procesa
-        console.log("Publicando texto en opcion 1: " + (this.listFile && this.listFile.length > 0) )
         //Convertir las imagenes y videos en Form Data con su key correspondiente
         Array.from(this.listFile).forEach((file) => {
           if (file.type.includes('image')) {
@@ -208,8 +207,7 @@ export class CreatePostComponent {
             formData.append('videos', file);
           }
         });
-
-        var isVideo = false;
+        let isVideo = false;
         this.postService.uploadMedia(formData).pipe(
           concatMap((uploadResponse: UploadedMedia[]) => {
             // Only process Facebook uploads if switch is on
@@ -266,7 +264,7 @@ export class CreatePostComponent {
               concatMap(responseMedia => {
                 this.currentPostType,
                 post.content.media = responseMedia;
-                post.is_fb_posted = isVideo ? true : false;
+                post.is_fb_posted = isVideo;
                 post.fb_post_enable =  this.isFbSwitchOn;
                 return this.postService.createPost(post);
               })

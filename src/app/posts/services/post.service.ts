@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, forkJoin } from 'rxjs';
 import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
@@ -10,7 +10,6 @@ import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
 import { CommentConfig } from '../models/comment-config';
-import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
 import { PostComment } from '../models/post-comment';
@@ -26,12 +25,13 @@ export class PostService {
   private readonly FACEBOOK_PAGE_ID = `${environment.FACEBOOK_PAGE_ID}`;
   private readonly FACEBOOK_PAGE_ACCESS_TOKEN = `${environment.FACEBOOK_PAGE_ACCESS_TOKEN}`;
 
-  private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }) };
-  private page = 0;
-  private size = 5;
+  private readonly reqHeader = { 
+    headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }),
+    withCredentials: true
+  };
 
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private readonly http: HttpClient, private readonly authService: AuthService) { }
 
   // Método para obtener los datos de una institución
 
@@ -49,7 +49,6 @@ export class PostService {
   // Método para obtener el número de seguidores de una institución
   getNumberFollowers(uuid: string): Observable<any> {
     return this.http.get<number>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
-    //return this.http.get<any>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
   }
 
   // Método para obtener un post por uuid
@@ -65,7 +64,7 @@ export class PostService {
     return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
   }
 
-  getPostsByType(postType: String): Observable<Post[]> {
+  getPostsByType(postType: string): Observable<Post[]> {
     const urlByType = `${this.ROOT_URL}/posts?type=${postType}`;
     return this.http.get<Post[]>(urlByType);
   }
@@ -74,10 +73,6 @@ export class PostService {
   getPagedPosts(pageNumber: number): Observable<Post[]> {
     const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${pageNumber}&size=5`;
     return this.http.get<Post[]>(urlPagedPosts);
-  }
-  // Avanzar a la siguiente pagina de los posts
-  nextPage(): void {
-    this.page++;  // Avanzar a la siguiente página
   }
 
   //Método para crear un post
@@ -114,7 +109,6 @@ export class PostService {
   //Método para subir documentos a facebook
   publishDocumentToFacebook(formData: FormData, description: string, linkDoc: string): Observable<FbUploadedMedia> {
     const resource = 'feed';
-    //linkDoc = 'http://imagenes.fcyt.umss.edu.bo/Calendario%20academico-2025.pdf';
     return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?message=${description}&link=${linkDoc}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
@@ -200,7 +194,6 @@ export class PostService {
 
   // Método para obtener los comentarios de un post
   getComments(postUuid: string): Observable<Comment[]> {
-    const endpoint = `posts/${postUuid}/comments`;
     return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`);
   }
 
