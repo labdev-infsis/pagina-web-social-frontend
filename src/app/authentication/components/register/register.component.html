@@ -17,7 +17,7 @@
             <!-- Name-->
             <div class="mb-3">
               <label for="name" class="form-label">Nombre</label>
-              <input type="text" class="form-control" [ngClass]="{'is-invalid': hasErrors('name', 'required')}" id="name" formControlName="name" />
+              <input type="text" class="form-control" [class.is-invalid]="hasErrors('name', 'required')" id="name" formControlName="name" />
               <div class="invalid-feedback" *ngIf="hasErrors('name', 'required')">
                 Nombre requerido
               </div>
@@ -26,7 +26,7 @@
             <!-- Last Name -->
             <div class="mb-3">
               <label for="lastName" class="form-label">Apellido</label>
-              <input type="text" class="form-control" [ngClass]="{'is-invalid': hasErrors('lastName', 'required')}" id="lastName" formControlName="lastName" />
+              <input type="text" class="form-control" [class.is-invalid]="hasErrors('lastName', 'required')" id="lastName" formControlName="lastName" />
               <div class="invalid-feedback" *ngIf="hasErrors('lastName', 'required')">
                 Apellido requerido
               </div>
@@ -35,7 +35,7 @@
             <!-- Email -->
             <div class="mb-3 mt-3">
               <label for="email" class="form-label">Correo Electrónico</label>
-              <input type="email" class="form-control" [ngClass]="{'is-invalid': hasErrors('email', 'required') || hasErrors('email', 'email')}" id="emailRG" formControlName="email" />
+              <input type="email" class="form-control" [class.is-invalid]="hasErrors('email', 'required') || hasErrors('email', 'email')" id="emailRG" formControlName="email" />
               <div class="invalid-feedback" *ngIf="hasErrors('email', 'required')">
                 Correo requerido
               </div>
@@ -47,37 +47,58 @@
             <!-- Password -->
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
-              <div class="input-password">
-                <input [type]="inputType" class="form-control" [ngClass]="{ 'is-invalid': hasErrors('password', 'required') }" id="passwordRG" formControlName="password" />
-                <div class="eye" (click)="togglePasswordVisibility()" (keypress)="togglePasswordVisibility()">
-                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!hide" width="18" height="18" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+              <div class="input-password" [class.has-error]="hasErrors('password', 'required') || hasErrors('password', 'minlength')">
+                <input [type]="inputType" class="form-control" 
+                      [class.is-invalid]="hasErrors('password', 'required') || hasErrors('password', 'minlength')" 
+                      id="passwordRG" formControlName="password" />
+                <div class="eye" (click)="togglePasswordVisibility()">
+                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!hide" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                   </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="hide" width="18" height="18" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="hide" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                     <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
                     <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
                   </svg>
                 </div>
-                <div class="invalid-feedback" *ngIf="hasErrors('password', 'required')">Contraseña requerida</div>
+                <div class="invalid-feedback" *ngIf="hasErrors('password', 'required')">
+                  Contraseña requerida
+                </div>
+                <div class="invalid-feedback" *ngIf="hasErrors('password', 'minlength')">
+                  La contraseña debe tener al menos 6 caracteres
+                </div>
               </div>
             </div>
 
             <!-- Confirm Password -->
             <div class="mb-3">
               <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
-              <input [type]="inputType" class="form-control" [ngClass]="{ 'is-invalid': hasErrors('confirmPassword', 'required') || passwordMismatch }" id="confirmPassword" formControlName="repeat_password" />
-              <div class="invalid-feedback" *ngIf="hasErrors('confirmPassword', 'required')">
-                Confirmación de contraseña requerida
-              </div>
-              <div class="invalid-feedback" *ngIf="passwordMismatch">
-                Las contraseñas no coinciden
+              <div class="input-password" [class.has-error]="hasErrors('repeat_password', 'required') || passwordMismatch">
+                <input [type]="confirmInputType" class="form-control" 
+                       [class.is-invalid]="hasErrors('repeat_password', 'required') || passwordMismatch" 
+                       id="confirmPassword" formControlName="repeat_password" />
+                <div class="eye" (click)="toggleConfirmPasswordVisibility()">
+                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!confirmHide" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" *ngIf="confirmHide" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                    <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
+                  </svg>
+                </div>
+                <div class="invalid-feedback" *ngIf="hasErrors('repeat_password', 'required')">
+                  Confirmación de contraseña requerida
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordMismatch">
+                  Las contraseñas no coinciden
+                </div>
               </div>
             </div>
 
             <div class="d-grid gap-2">
               <p-toast/>
-              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || passwordMismatch">
                 Registrarse
               </button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">
