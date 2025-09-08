@@ -7,7 +7,7 @@ import { catchError, forkJoin, from, of } from 'rxjs';
   styleUrl: './images-uploader.component.scss'
 })
 export class ImagesUploaderComponent {
-  @Input() showAreaMedia! : WritableSignal<boolean>; //Mostrar seleccion y prevista de imagenes videos
+  @Input() showAreaMedia!: WritableSignal<boolean>; //Mostrar seleccion y prevista de imagenes videos
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
   @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
   @ViewChild('fileInput') fileInput!: ElementRef; // Referencia al input file
@@ -18,7 +18,7 @@ export class ImagesUploaderComponent {
   readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
-  closeCleanPreviewMedia(){
+  closeCleanPreviewMedia() {
     this.mediaListPreview = [];
     this.listFileMedia = [];
     this.showPreviewMedia = false;
@@ -28,7 +28,7 @@ export class ImagesUploaderComponent {
   }
 
   //Abrir el input para seleccionar imagenes videos
-  openInputFileMedia(){
+  openInputFileMedia() {
     this.resetFileInput();
     const inputFile = document.getElementById('input-file-img-vid')
     inputFile?.click()
@@ -43,14 +43,14 @@ export class ImagesUploaderComponent {
 
   changeInputMedia(event: Event | DragEvent): void {
     event.preventDefault();
-    
+
     // Obtener archivos según el tipo de evento
     const files = this.getFilesFromEvent(event);
-    
+
     if (!files || files.length === 0) {
       return;
     }
-    
+
     this.processMediaFiles(files, event);
   }
 
@@ -69,7 +69,7 @@ export class ImagesUploaderComponent {
       this.handleOversizedVideoError(originalEvent);
       return;
     }
-    
+
     // Actualizar estado y procesar archivos
     this.showPreviewMedia = true;
     this.listFileMedia = files;
@@ -79,19 +79,19 @@ export class ImagesUploaderComponent {
   }
 
   private hasOversizedVideo(files: File[]): boolean {
-    return files.some(file => 
+    return files.some(file =>
       file.type.startsWith('video/') && file.size > this.MAX_VIDEO_SIZE_GB
     );
   }
 
   private handleOversizedVideoError(event: Event): void {
     alert(`El tamaño del video no debe exceder los ${this.MAX_VIDEO_SIZE_GB / (1024 * 1024 * 1024)} GB.`);
-    
+
     // Limpiar el input si es un evento de input
     if (event.target instanceof HTMLInputElement) {
       event.target.files = new DataTransfer().files; // Limpiar el input
     }
-    
+
     // Resetear estado
     this.showPreviewMedia = false;
     this.mediaListPreview = [];
@@ -103,7 +103,7 @@ export class ImagesUploaderComponent {
     this.mediaListPreview = [];
     this.isLoadingMedia = true;
     // Convertir cada archivo a un observable
-    const mediaObservables = files.map(file => 
+    const mediaObservables = files.map(file =>
       from(this.readFileAsDataURL(file)).pipe(
         catchError(error => {
           console.error(`Error al leer el archivo ${file.name}:`, error);
@@ -135,7 +135,7 @@ export class ImagesUploaderComponent {
   private readFileAsDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = () => {
         if (typeof reader.result === 'string') {
           resolve(reader.result);
@@ -143,7 +143,7 @@ export class ImagesUploaderComponent {
           reject(new Error('Tipo de resultado inesperado al leer el archivo'));
         }
       };
-      
+
       reader.onerror = () => reject(new Error(`Error al leer el archivo: ${file.name}`));
       reader.readAsDataURL(file);
     });
@@ -168,46 +168,25 @@ export class ImagesUploaderComponent {
     return 'more';
   }
 
-  isImage(mediaBase64: string): boolean{
+  isImage(mediaBase64: string): boolean {
     return mediaBase64.includes('image');
   }
 
-  //Eliminar imagen prevista NO USADA AUN
-  // deletePreviewMedia(media:string){
-  //   let index = this.mediaListPreview.indexOf(media);
-  //   this.mediaListPreview.splice(index,1);
-  //   const fileInput = document.getElementById('input-file') as HTMLInputElement;
-  //   if (fileInput && fileInput.files) {
-  //     const files = Array.from(fileInput.files);
-
-  //     if (index >= 0 && index < files.length) {
-  //       files.splice(index, 1); // Elimina el archivo en la posición indicada
-  //     }
-
-  //     // Usa DataTransfer para crear una nueva lista de archivos
-  //     const dataTransfer = new DataTransfer();
-  //     files.forEach(file => dataTransfer.items.add(file));
-
-  //     // Asigna la nueva lista de archivos al input
-  //     fileInput.files = dataTransfer.files;
-  //   }
-  // }
-
-   deletePreviewMedia(index: number){
+  deletePreviewMedia(index: number) {
     if (index >= 0 && index < this.mediaListPreview.length) {
       // Liberar la URL del objeto para evitar memory leaks
       URL.revokeObjectURL(this.mediaListPreview[index]);
-      
+
       // Eliminar de las listas
       this.mediaListPreview.splice(index, 1);
       this.listFileMedia.splice(index, 1);
-      
+
       // Resetear el input file para permitir seleccionar el mismo archivo nuevamente
       this.resetFileInput();
-      
+
       // Emitir la lista actualizada al padre
       this.loadFilesMediaEvent.emit(this.listFileMedia);
-      
+
       // Si no hay más archivos, ocultar el preview
       if (this.mediaListPreview.length === 0) {
         this.showPreviewMedia = false;
@@ -215,7 +194,7 @@ export class ImagesUploaderComponent {
     }
   }
 
-   resetUploader(): void {
+  resetUploader(): void {
     this.mediaListPreview = [];
     this.listFileMedia = [];
     this.showPreviewMedia = false;
