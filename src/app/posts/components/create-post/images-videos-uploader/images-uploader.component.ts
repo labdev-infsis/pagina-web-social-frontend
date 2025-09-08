@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, WritableSignal, ElementRef, ViewChild } from '@angular/core';
+import { catchError, forkJoin, from, of } from 'rxjs';
 
 @Component({
   selector: 'app-images-uploader',
@@ -13,7 +14,8 @@ export class ImagesUploaderComponent {
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
   mediaListPreview: string[] = []; //Imagenes videos a mostrar en formato base64
   listFileMedia!: File[]; //Lista de archivos seleccionados
-
+  isLoadingMedia = false;
+  readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){
@@ -39,44 +41,119 @@ export class ImagesUploaderComponent {
     }
   }
 
-  async changeInputMedia(event: Event | DragEvent){
+  changeInputMedia(event: Event | DragEvent): void {
     event.preventDefault();
-    let valueMedia;
-    if (event instanceof DragEvent && event.dataTransfer) {
-      // Evento de arrastrar y soltar
-      valueMedia = event.dataTransfer;
-    } else if (event.target instanceof HTMLInputElement && event.target.files) {
-      // Evento de entrada de archivo
-      valueMedia = event.target;
+    
+    // Obtener archivos según el tipo de evento
+    const files = this.getFilesFromEvent(event);
+    
+    if (!files || files.length === 0) {
+      return;
     }
     
-    
-    if(valueMedia?.files && valueMedia.files.length >0 ){
-      this.showPreviewMedia = true;
-      //Renderizar imagenes videos seleccionados
-      this.listFileMedia = Array.from(valueMedia.files);
-      //Emitir al padre las images precargadas para habilitar el boton de publicar
-      this.loadFilesMediaEvent.emit(this.listFileMedia);
+    this.processMediaFiles(files, event);
+  }
 
-      const mediaPromises = this.listFileMedia.map(file => this.readFileAsDataURL(file));
-      
-      this.mediaListPreview = await Promise.all(mediaPromises);
+  private getFilesFromEvent(event: Event | DragEvent): File[] | null {
+    if (event instanceof DragEvent && event.dataTransfer?.files) {
+      return Array.from(event.dataTransfer.files);
+    } else if (event.target instanceof HTMLInputElement && event.target.files) {
+      return Array.from(event.target.files);
     }
+    return null;
+  }
+
+  private processMediaFiles(files: File[], originalEvent: Event): void {
+    // Validar tamaño máximo de videos
+    if (this.hasOversizedVideo(files)) {
+      this.handleOversizedVideoError(originalEvent);
+      return;
+    }
+    
+    // Actualizar estado y procesar archivos
+    this.showPreviewMedia = true;
+    this.listFileMedia = files;
+    this.loadFilesMediaEvent.emit(this.listFileMedia);
+    // Leer archivos para previsualización
+    this.loadMediaPreviews(files);
+  }
+
+  private hasOversizedVideo(files: File[]): boolean {
+    return files.some(file => 
+      file.type.startsWith('video/') && file.size > this.MAX_VIDEO_SIZE_GB
+    );
+  }
+
+  private handleOversizedVideoError(event: Event): void {
+    alert(`El tamaño del video no debe exceder los ${this.MAX_VIDEO_SIZE_GB / (1024 * 1024 * 1024)} GB.`);
+    
+    // Limpiar el input si es un evento de input
+    if (event.target instanceof HTMLInputElement) {
+      event.target.files = new DataTransfer().files; // Limpiar el input
+    }
+    
+    // Resetear estado
+    this.showPreviewMedia = false;
+    this.mediaListPreview = [];
+    this.listFileMedia = [];
+  }
+
+  private loadMediaPreviews(files: File[]): void {
+    // Limpiar el array de previsualizaciones antes de empezar
+    this.mediaListPreview = [];
+    this.isLoadingMedia = true;
+    // Convertir cada archivo a un observable
+    const mediaObservables = files.map(file => 
+      from(this.readFileAsDataURL(file)).pipe(
+        catchError(error => {
+          console.error(`Error al leer el archivo ${file.name}:`, error);
+          return of(null); // Devolver null en caso de error
+        })
+      )
+    );
+
+    // Combinar todos los observables y procesar los resultados
+    forkJoin(mediaObservables).subscribe({
+      next: (results) => {
+        // Filtrado seguro con type guard
+        const validResults = results.filter(this.isString);
+        this.mediaListPreview = validResults;
+        this.isLoadingMedia = false;
+      },
+      error: (error) => {
+        this.isLoadingMedia = false;
+        console.error('Error general:', error);
+        this.handleMediaLoadError();
+      }
+    });
+  }
+
+  private isString(value: string | null): value is string {
+    return typeof value === 'string';
   }
 
   private readFileAsDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+      
       reader.onload = () => {
         if (typeof reader.result === 'string') {
           resolve(reader.result);
         } else {
-          reject('Error al leer el archivo');
+          reject(new Error('Tipo de resultado inesperado al leer el archivo'));
         }
       };
-      reader.onerror = () => reject('Error al leer el archivo');
+      
+      reader.onerror = () => reject(new Error(`Error al leer el archivo: ${file.name}`));
       reader.readAsDataURL(file);
     });
+  }
+
+  private handleMediaLoadError(): void {
+    // Opcional: mostrar mensaje de error al usuario
+    this.showPreviewMedia = false;
+    this.mediaListPreview = [];
+    this.listFileMedia = [];
   }
 
   onDragOver(event: DragEvent): void {
@@ -92,9 +169,7 @@ export class ImagesUploaderComponent {
   }
 
   isImage(mediaBase64: string): boolean{
-    let response = false;
-    mediaBase64.includes('image')? response = true : response = false;
-    return response;
+    return mediaBase64.includes('image');
   }
 
   //Eliminar imagen prevista NO USADA AUN
