@@ -1,0 +1,28 @@
+<div class="post-container">
+  <div *ngIf="loading" class="loading">Cargando publicación...</div>
+  
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button routerLink="/posts">Volver a publicaciones</button>
+  </div>
+
+  <div *ngIf="post && !loading" class="post-content">
+    <h1>Publicación</h1>
+    
+    <div class="post-text" [innerHTML]="post.content.text"></div>
+    
+    <div *ngIf="post.content.media.length" class="media-gallery">
+      <div *ngFor="let media of post.content.media" class="media-item">
+        <img *ngIf="media.type === 'image'" [src]="media.path" [alt]="media.name">
+        <!-- Puedes agregar video u otros tipos de media aquí -->
+      </div>
+    </div>
+
+    <div class="post-meta">
+      <p>Fecha: {{ post.date | date:'medium' }}</p>
+      <p>Tipo: {{ post.post_type }}</p>
+      <p>Reacciones: {{ post.reactions.total_reactions }}</p>
+      <p>Comentarios: {{ post.commentCounter.totalComments }}</p>
+    </div>
+  </div>
+</div>
