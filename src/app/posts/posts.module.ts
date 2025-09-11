@@ -39,6 +39,7 @@ import { ViewAllPostsProyectosComponent } from './components/view-all-posts-proy
 import { ViewAllPostsBecasComponent } from './components/view-all-posts-becas/view-all-posts-becas.component';
 import { ViewAllPostsCudieComponent } from './components/view-all-posts-cudie/view-all-posts-cudie.component';
 import { PageComponent } from './components/post-page/page/page.component';
+import { PostActionsComponent } from './components/post-page/post-actions/post-actions.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { PageComponent } from './components/post-page/page/page.component';
     ViewAllPostsProyectosComponent,
     ViewAllPostsBecasComponent,
     ViewAllPostsCudieComponent,
-    PageComponent
+    PageComponent,
+    PostActionsComponent
   ],
   imports: [
     CommonModule,
