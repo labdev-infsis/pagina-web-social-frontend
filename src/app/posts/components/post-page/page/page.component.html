@@ -1,52 +1,3 @@
-<!-- <div class="post-container">
-  <div *ngIf="loading" class="loading">
-    <p>Cargando publicación...</p>
-  </div>
-
-  <div *ngIf="error" class="error">
-    <p>{{ error }}</p>
-    <button routerLink="/posts">← Volver a publicaciones</button>
-  </div>
-
-  <div *ngIf="post && !loading">
-    <div class="institution-info-card">
-      <h3>Dirección de Relaciones Internacionales y Convenios</h3>
-      <ul class="contact-info">
-        <li>Universidad Mayor de San Simón</li>
-        <li>Av. Ballivián # 591 esq. Reza, Cochabamba, Bolivia</li>
-        <li>dric.umss.edu.bo</li>
-      </ul>
-    </div>
-
-    <div class="post-card">
-      <div class="post-header">
-        <img src="/assets/umss-logo.png" alt="UMSS" width="40" height="40" style="border-radius: 50%;">
-        <div class="institution-info">
-          <h3 class="institution-name">Dirección de Relaciones Internacionales y Convenios - UMSS</h3>
-          <p class="post-date">{{ post.date | date:'dd MMMM y, HH:mm' }}</p>
-        </div>
-      </div>
-
-      <div class="post-content-body">
-        <div class="post-text" [innerHTML]="post.content.text"></div>
-
-        <div *ngIf="post.content.media.length" class="media-gallery">
-          <div *ngFor="let media of post.content.media" class="media-item">
-            <img *ngIf="media.type === 'image'" [src]="media.path" [alt]="media.name">
-          </div>
-        </div>
-      </div>
-
-      <app-post-actions [authenticated]="authenticated" [postId]="post.uuid" [myReaction]="myReaction"
-        [totalReactions]="totalReactions" [totalComments]="totalComments" (likeClicked)="reactUserBoton(post.uuid)"
-        [postUrl]="'https://tuapp.com/post/' + post.uuid"
-        (commentClicked)="openViewPostComments(post)">
-      </app-post-actions>
-
-    </div>
-  </div>
-</div> -->
-
 <div class="post-container">
   <div *ngIf="loading" class="loading">
     <p>Cargando publicación...</p>
@@ -68,7 +19,6 @@
     </div>
 
     <div class="post-card">
-      <!-- Header del post -->
       <div class="post-header">
         @if (institution) {
         <div class="data-user">
@@ -87,20 +37,16 @@
         }
       </div>
 
-      <!-- Popup de opciones post Editar/Eliminar -->
       <app-options-post *ngIf="showOptions() && authenticated === true && currentUser?.role === 'ADMIN'"
         (clickOutside)="showOptions.set(false)" [postReference]="post.uuid"
         (openEdit)="openModalEdit.set(true)"></app-options-post>
 
-      <!-- Modals de editar y eliminar post -->
       <app-modal-edit-post [showModalEdit]="openModalEdit" [institution]="institution" [postToEdit]="sendCopyPost()"
         (postUpdatedEvent)="updatePost($event)"></app-modal-edit-post>
       <app-modal-delete-post (confirmDeletePost)="deletePost($event)"
         [postReference]="post.uuid"></app-modal-delete-post>
 
-      <!-- Contenido del post -->
       <div class="post-content-body">
-        <!-- Contenido de texto del post -->
         <div class="post-text">
           <p *ngIf="post.content.text != '' && allowedTextLength(); else reduceText" [innerHTML]="post.content.text">
           </p>
@@ -111,13 +57,10 @@
           </ng-template>
         </div>
 
-        <!-- Contenido multimedia -->
         <ng-container *ngIf="listMediaPost.length > 0">
-          <!-- Visualizar posts con imagenes y/o videos -->
           <div *ngIf="post.content.media[0].type != 'document'" class="media-gallery"
             [ngClass]="getGridClass(listMediaPost)">
             <ng-container *ngFor="let media of listMediaPost; let i = index">
-              <!-- Mostrar las primeras 4 imágenes/videos directamente -->
               <div *ngIf="i < 3 || listMediaPost.length == 4" class="media-item"
                 [ngClass]="{'three': listMediaPost.length == 3 && i == 0}">
                 <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
@@ -127,7 +70,6 @@
                     style="cursor: pointer;"></video>
                 </ng-template>
               </div>
-              <!-- Quinta imagen/video: Con superposición si hay más media -->
               <div *ngIf="i === 3 && listMediaPost.length > 4" class="media-item">
                 <div class="more">
                   <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
@@ -141,7 +83,6 @@
             </ng-container>
           </div>
 
-          <!-- Visualizar post con solo documento -->
           <ng-container *ngIf="post.content.media[0].type == 'document'">
             <a [href]="post.content.media[0].path" target="_blank" class="text-decoration-none">
               <div class="doc-post d-flex justify-content-center">
@@ -153,7 +94,6 @@
         </ng-container>
       </div>
 
-      <!-- Componente de reacciones y acciones -->
       <app-post-reactions [post]="post" [authenticated]="authenticated" [currentUser]="currentUser"
         [postUrl]="'https://devpws.cs.umss.edu.bo/post/' + post.uuid"
         [myReaction]="myReaction" [totalReactions]="totalReactions()" [totalComments]="totalComments()"
