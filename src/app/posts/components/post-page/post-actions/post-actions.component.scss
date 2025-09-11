@@ -1,0 +1,255 @@
+/* Estadísticas de la publicación */
+.post-stats {
+    padding: 8px 16px;
+    border-top: 1px solid #e4e6eb;
+    border-bottom: 1px solid #e4e6eb;
+    display: flex;
+    align-items: center;
+    color: #65676b;
+    font-size: 14px;
+}
+
+.reactions-count {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.reactions-count:hover {
+    text-decoration: underline;
+}
+
+.quantity {
+    margin-right: 6px;
+}
+
+.comments-share-count {
+    display: flex;
+    gap: 16px;
+}
+
+.item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.item:hover {
+    text-decoration: underline;
+}
+
+/* Botones de acción */
+.post-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+    border-top: 1px solid #e4e6eb;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #65676b;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #f0f2f5;
+}
+
+.action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Opciones de reacción */
+.reaction-options {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 20px;
+    padding: 4px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 1000;
+}
+
+.action-btn:hover .reaction-options {
+    display: flex;
+    gap: 8px;
+}
+
+.reaction-options i,
+.reaction-options img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.reaction-options i:hover,
+.reaction-options img:hover {
+    transform: scale(1.2);
+}
+
+/* Estilos específicos para reacciones */
+.thumbs-up {
+    color: #1877f2;
+}
+
+.red-heart {
+    color: #f33e58;
+}
+
+.crying-face,
+.angry-face {
+    width: 16px;
+    height: 16px;
+}
+
+.hr-post-division {
+    margin: 8px 16px;
+    border-color: #e4e6eb;
+}
+
+.post-actions {
+    .action-btn:hover {
+        background-color: #F2F2F2;
+
+        .reaction-options {
+
+            .fa-thumbs-up {
+                background-color: #087CFE;
+                border-radius: 50%;
+                font-size: 25px;
+                padding: 5px;
+                height: 35px;
+                width: 35px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .fa-thumbs-up:hover {
+                transform: scale(1.2);
+
+            }
+
+            .fa-heart {
+                background-color: #FB4D70;
+                border-radius: 50%;
+                font-size: 25px;
+                padding: 5px;
+                height: 35px;
+                width: 35px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .fa-heart:hover {
+                transform: scale(1.2);
+            }
+
+            .crying-face {
+                height: 35px;
+                width: 35px;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .crying-face:hover {
+                transform: scale(1.2);
+            }
+
+            .angry-face {
+                height: 35px;
+                width: 35px;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .angry-face:hover {
+                transform: scale(1.2);
+            }
+        }
+    }
+
+    .btn.default {
+        color: #606367;
+
+        i {
+            font-size: 20px;
+        }
+    }
+
+    .btn.thumbs-up {
+        color: #005FF2;
+
+        i {
+            font-size: 20px;
+        }
+    }
+
+    .btn.red-heart {
+
+        // transition-duration: 500ms;
+        i {
+            background-color: #FB4D70;
+            border-radius: 50%;
+            font-size: 14px;
+            padding: 10px;
+            height: 19px;
+            width: 19px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        span {
+            color: #FB4D70;
+        }
+    }
+
+    .btn.crying-face {
+
+        // transition-duration: 500ms;
+        img {
+            height: 20px;
+        }
+
+        span {
+            color: #EAA823;
+        }
+    }
+
+    .btn.angry-face {
+
+        // transition-duration: 500ms;
+        img {
+            height: 20px;
+        }
+
+        span {
+            color: #DD6B0E;
+        }
+    }
+}

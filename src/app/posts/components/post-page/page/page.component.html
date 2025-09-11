@@ -1,0 +1,106 @@
+<div class="post-container">
+  <div *ngIf="loading" class="loading">
+    <p>Cargando publicación...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button routerLink="/posts">← Volver a publicaciones</button>
+  </div>
+
+  <div *ngIf="post && !loading">
+    <div class="institution-info-card">
+      <h3>Dirección de Relaciones Internacionales y Convenios</h3>
+      <ul class="contact-info">
+        <li>Universidad Mayor de San Simón</li>
+        <li>Av. Ballivián # 591 esq. Reza, Cochabamba, Bolivia</li>
+        <li>dric.umss.edu.bo</li>
+      </ul>
+    </div>
+
+    <div class="post-card">
+      <div class="post-header">
+        @if (institution) {
+        <div class="data-user">
+          <img [src]="institution.logo_url" [alt]="'Foto de perfil'" class="img-profile" />
+          <div class="info-user">
+            <h2 class="institution-name">{{ institution.name }}</h2>
+            <p class="post-date">{{ calculateTimePost() }}</p>
+          </div>
+        </div>
+        }
+        @if(authenticated === true && currentUser && currentUser.role === 'ADMIN'){
+        <div class="options-post d-flex justify-content-center align-items-center"
+          (click)="showOptions.set(!showOptions())">
+          <i class="bi bi-three-dots"></i>
+        </div>
+        }
+      </div>
+
+      <app-options-post *ngIf="showOptions() && authenticated === true && currentUser?.role === 'ADMIN'"
+        (clickOutside)="showOptions.set(false)" [postReference]="post.uuid"
+        (openEdit)="openModalEdit.set(true)"></app-options-post>
+
+      <app-modal-edit-post [showModalEdit]="openModalEdit" [institution]="institution" [postToEdit]="sendCopyPost()"
+        (postUpdatedEvent)="updatePost($event)"></app-modal-edit-post>
+      <app-modal-delete-post (confirmDeletePost)="deletePost($event)"
+        [postReference]="post.uuid"></app-modal-delete-post>
+
+      <div class="post-content-body">
+        <div class="post-text">
+          <p *ngIf="post.content.text != '' && allowedTextLength(); else reduceText" [innerHTML]="post.content.text">
+          </p>
+          <ng-template #reduceText>
+            <p id="{{'text-post-'+post.uuid}}">
+              {{adjustedTextLength()}}<span class="see-more fw-bold" (click)="showAllText(post.uuid)">Ver más</span>
+            </p>
+          </ng-template>
+        </div>
+
+        <ng-container *ngIf="listMediaPost.length > 0">
+          <div *ngIf="post.content.media[0].type != 'document'" class="media-gallery"
+            [ngClass]="getGridClass(listMediaPost)">
+            <ng-container *ngFor="let media of listMediaPost; let i = index">
+              <div *ngIf="i < 3 || listMediaPost.length == 4" class="media-item"
+                [ngClass]="{'three': listMediaPost.length == 3 && i == 0}">
+                <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
+                  [alt]="media.name || 'Imagen del post'" (click)="openViewPostComments(post)" style="cursor: pointer;">
+                <ng-template #mostrarVideo>
+                  <video [src]="media.path" controls (click)="openViewPostComments(post)"
+                    style="cursor: pointer;"></video>
+                </ng-template>
+              </div>
+              <div *ngIf="i === 3 && listMediaPost.length > 4" class="media-item">
+                <div class="more">
+                  <img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
+                    [alt]="media.name || 'Imagen del post'">
+                  <ng-template #mostrarVideo>
+                    <video [src]="media.path" controls></video>
+                  </ng-template>
+                  <div class="overlay">+{{ listMediaPost.length - 4 }}</div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <ng-container *ngIf="post.content.media[0].type == 'document'">
+            <a [href]="post.content.media[0].path" target="_blank" class="text-decoration-none">
+              <div class="doc-post d-flex justify-content-center">
+                <pdf-viewer [src]="post.content.media[0].path" [render-text]="true" [original-size]="false"
+                  style="width: 400px; height: 500px;" [autoresize]="true" class="pdf-viewer"></pdf-viewer>
+              </div>
+            </a>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <app-post-reactions [post]="post" [authenticated]="authenticated" [currentUser]="currentUser"
+        [postUrl]="'https://devpws.cs.umss.edu.bo/post/' + post.uuid"
+        [myReaction]="myReaction" [totalReactions]="totalReactions()" [totalComments]="totalComments()"
+        (likeClicked)="reactUserBoton(post.uuid)" (commentClicked)="openViewPostComments(post)"
+        (reactionSelected)="clickReaction(post.uuid, $event.type, $event.event)">
+      </app-post-reactions>
+
+    </div>
+  </div>
+</div>
