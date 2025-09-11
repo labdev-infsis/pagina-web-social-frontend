@@ -462,15 +462,12 @@ export class PageComponent {
   //----------------------------------------------
   updatePost(postUpdated: Post) {
     if (this.post) {
-      // Actualizar el post local con los datos actualizados
       this.post = { ...postUpdated };
 
-      // También puedes actualizar los datos derivados
       this.initializePostData(this.post);
 
       console.log('Post actualizado:', this.post);
 
-      // Opcional: mostrar mensaje de éxito
       alert('La publicación fue actualizada exitosamente');
     }
   }
@@ -479,7 +476,7 @@ export class PageComponent {
     if (!this.post) {
       throw new Error('No post available to copy');
     }
-    // Crear una copia profunda para evitar mutaciones accidentales
+
     const copyPost: Post = JSON.parse(JSON.stringify(this.post));
     return copyPost;
   }
@@ -489,14 +486,8 @@ export class PageComponent {
       this.postService.deletePost(this.post.uuid).subscribe({
         next: () => {
           console.log('Post eliminado exitosamente');
-          // Aquí puedes redirigir o mostrar un mensaje de éxito
-          // Por ejemplo, redirigir a la página de posts:
-          // this.router.navigate(['/posts']);
-
-          // O mostrar un mensaje de éxito
           alert('La publicación fue eliminada exitosamente');
 
-          // Opcional: recargar la página o limpiar el post
           this.post = null;
         },
         error: (error) => {
