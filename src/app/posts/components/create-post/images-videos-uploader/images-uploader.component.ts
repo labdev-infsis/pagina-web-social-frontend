@@ -99,54 +99,28 @@ export class ImagesUploaderComponent {
   }
 
   private loadMediaPreviews(files: File[]): void {
-    // Limpiar el array de previsualizaciones antes de empezar
-    this.mediaListPreview = [];
+    this.cleanUpMediaPreviews();
     this.isLoadingMedia = true;
-    // Convertir cada archivo a un observable
-    const mediaObservables = files.map(file => 
-      from(this.readFileAsDataURL(file)).pipe(
-        catchError(error => {
-          console.error(`Error al leer el archivo ${file.name}:`, error);
-          return of(null); // Devolver null en caso de error
-        })
-      )
-    );
 
-    // Combinar todos los observables y procesar los resultados
-    forkJoin(mediaObservables).subscribe({
-      next: (results) => {
-        // Filtrado seguro con type guard
-        const validResults = results.filter(this.isString);
-        this.mediaListPreview = validResults;
-        this.isLoadingMedia = false;
-      },
-      error: (error) => {
-        this.isLoadingMedia = false;
-        console.error('Error general:', error);
-        this.handleMediaLoadError();
-      }
-    });
+    try {
+      // Crear URLs directamente
+      this.mediaListPreview = files.map(file => URL.createObjectURL(file));
+      this.isLoadingMedia = false;
+    } catch (error) {
+      this.isLoadingMedia = false;
+      this.handleMediaLoadError();
+    }
   }
 
-  private isString(value: string | null): value is string {
-    return typeof value === 'string';
-  }
-
-  private readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject(new Error('Tipo de resultado inesperado al leer el archivo'));
+  private cleanUpMediaPreviews(): void {
+    if (this.mediaListPreview && this.mediaListPreview.length > 0) {
+      this.mediaListPreview.forEach(url => {
+        if (url && typeof url === 'string') {
+          URL.revokeObjectURL(url);
         }
-      };
-      
-      reader.onerror = () => reject(new Error(`Error al leer el archivo: ${file.name}`));
-      reader.readAsDataURL(file);
-    });
+      });
+    }
+    this.mediaListPreview = [];
   }
 
   private handleMediaLoadError(): void {
