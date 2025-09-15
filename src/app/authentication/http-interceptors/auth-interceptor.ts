@@ -25,7 +25,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Excluir login, refresh y registro del manejo de token y refresh
-    const isAuthRequest = request.url.includes('/login') || request.url.includes('/refresh') || request.url.includes('/register');
+    const isAuthRequest = request.url.includes('/login') || request.url.includes('/refresh') || request.url.includes('/register') || request.url.includes('/logout');
     if (isAuthRequest) {
       return next.handle(request);
     }

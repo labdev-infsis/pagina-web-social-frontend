@@ -98,7 +98,7 @@ export class NavbarComponent {
 
   logout(){
     this.authService.logout();
-    window.location.reload();
+    //window.location.reload();
   }
 
   createAccount(){}

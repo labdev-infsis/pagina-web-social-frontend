@@ -24,8 +24,8 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
-
-    return token != null;
+    if (!token) return false;
+    return !this.jwtHelper.isTokenExpired(token);
   }
 
   login(username: string, password: string) {
@@ -111,36 +111,16 @@ export class AuthService {
   // Logout usando refresh token
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.reload();
     if (refreshToken) {
-      this.http.post(`${this.ROOT_URL}/logout`, { refreshToken }).subscribe({
-        next: () => {
-          // Limpiar tokens y recargar/redirigir SOLO después de respuesta exitosa
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
-          window.location.reload();
-        },
-        error: (err) => {
-          // Si el backend responde 400 (refresh token inválido/no existe), limpiar igual y recargar/redirigir
-          if (err.status === 400 && (err.error?.exception === 'El token no existe en la base de datos.' || err.error?.exception === 'Refresh token is revoked or expired')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.reload();
-          } else {
-            // Otros errores: limpiar y recargar/redirigir igual
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.reload();
-          }
+      this.http.post(`${this.ROOT_URL}/logout`, {}, {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
         }
-      });
-    } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      window.location.reload();
+      }).subscribe();
     }
   }
 
@@ -148,47 +128,36 @@ export class AuthService {
   refreshAccessToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     console.log('[AuthService] refreshAccessToken called. Refresh token**************************:', refreshToken);
-        if (!refreshToken) return null;
-        console.log('[AuthService] Llamando endpoint de refresh token...');
-        return this.http.post<any>('http://localhost:9090/api/auth/refresh', {}, {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`
-          }
-        });
+    if (!refreshToken) return null;
+    console.log('[AuthService] Llamando endpoint de refresh token...');
+    return this.http.post<any>(`${this.ROOT_URL}/refresh`, {}, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`
+      }
+    });
   }
 
-  // Method to check token periodically
-  checkTokenExpiration(): void {
-    if (this.isTokenExpired()) {
-      // Solo eliminar el access token, NO el refresh token
-      localStorage.removeItem('token');
-      // El refresh token se conserva para intentar refrescar
-      this.router.navigate(['/']);
-    }
-  }
+  // Métodos de expiración periódica eliminados para simplificar el servicio.
 
-  startTokenExpirationTimer(): void {
+
+  // Refresca el token antes de inicializar la app
+  tryRefreshOnStartup(): Promise<void> {
     const token = localStorage.getItem('token');
-    if (!token) return;
-
-    const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
-
-    // Add null check here
-    if (!expirationDate) {
-      localStorage.removeItem('token');
-      this.router.navigate(['/']);
-      return;
+    if (!token || this.jwtHelper.isTokenExpired(token)) {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        const refreshObs = this.refreshAccessToken();
+        if (refreshObs) {
+          return refreshObs.toPromise().then((res: any) => {
+            if (res && res.accessToken) {
+              localStorage.setItem('token', res.accessToken);
+            }
+          }).catch(() => {
+            this.logout();
+          });
+        }
+      }
     }
-
-    const expiresIn = expirationDate.getTime() - Date.now();
-
-    // Set timeout slightly before actual expiration
-    setTimeout(() => {
-      localStorage.removeItem('token');
-      this.router.navigate(['/']);
-      // El refresh token se conserva para intentar refrescar
-    }, expiresIn - 5000); // 5 seconds before actual expiration
+    return Promise.resolve();
   }
-
-
 }
