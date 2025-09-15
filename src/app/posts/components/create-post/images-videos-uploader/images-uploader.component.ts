@@ -123,6 +123,10 @@ export class ImagesUploaderComponent {
     this.mediaListPreview = [];
   }
 
+  isImage(mediaBase64: string): boolean{
+    return mediaBase64.includes('image');
+  }
+
   private handleMediaLoadError(): void {
     // Opcional: mostrar mensaje de error al usuario
     this.showPreviewMedia = false;
