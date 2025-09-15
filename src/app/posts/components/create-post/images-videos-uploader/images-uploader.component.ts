@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, WritableSignal, ElementRef, ViewChild } from '@angular/core';
-import { catchError, forkJoin, from, of } from 'rxjs';
 
 @Component({
   selector: 'app-images-uploader',
@@ -36,7 +35,7 @@ export class ImagesUploaderComponent {
 
   // Método para resetear el input file
   private resetFileInput(): void {
-    if (this.fileInput && this.fileInput.nativeElement) {
+    if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
   }
@@ -108,6 +107,7 @@ export class ImagesUploaderComponent {
       this.isLoadingMedia = false;
     } catch (error) {
       this.isLoadingMedia = false;
+      console.error('Error al crear URLs:', error);
       this.handleMediaLoadError();
     }
   }
@@ -142,32 +142,7 @@ export class ImagesUploaderComponent {
     return 'more';
   }
 
-  isImage(mediaBase64: string): boolean{
-    return mediaBase64.includes('image');
-  }
-
-  //Eliminar imagen prevista NO USADA AUN
-  // deletePreviewMedia(media:string){
-  //   let index = this.mediaListPreview.indexOf(media);
-  //   this.mediaListPreview.splice(index,1);
-  //   const fileInput = document.getElementById('input-file') as HTMLInputElement;
-  //   if (fileInput && fileInput.files) {
-  //     const files = Array.from(fileInput.files);
-
-  //     if (index >= 0 && index < files.length) {
-  //       files.splice(index, 1); // Elimina el archivo en la posición indicada
-  //     }
-
-  //     // Usa DataTransfer para crear una nueva lista de archivos
-  //     const dataTransfer = new DataTransfer();
-  //     files.forEach(file => dataTransfer.items.add(file));
-
-  //     // Asigna la nueva lista de archivos al input
-  //     fileInput.files = dataTransfer.files;
-  //   }
-  // }
-
-   deletePreviewMedia(index: number){
+  deletePreviewMedia(index: number){
     if (index >= 0 && index < this.mediaListPreview.length) {
       // Liberar la URL del objeto para evitar memory leaks
       URL.revokeObjectURL(this.mediaListPreview[index]);

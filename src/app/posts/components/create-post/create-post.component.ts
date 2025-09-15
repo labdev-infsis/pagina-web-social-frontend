@@ -266,7 +266,6 @@ export class CreatePostComponent implements OnInit {
                   responseMedia.some(media => (media.fb_media_id != ''));
               }),
               concatMap(responseMedia => {
-                this.currentPostType,
                 post.content.media = responseMedia;
                 post.is_fb_posted = isVideo;
                 post.fb_post_enable =  this.isFbSwitchOn;
@@ -292,8 +291,6 @@ export class CreatePostComponent implements OnInit {
 
         if (this.isFbSwitchOn) {
           //call uploadDocument
-        } else {
-          //build response
         }
         this.postService.uploadDocument(formData).pipe(
           concatMap((uploadResponse: UploadedDocument) => {
