@@ -107,13 +107,11 @@ export class AuthService {
     return expired;
   }
 
-  // Clean local storage and redirect
   // Logout usando refresh token
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
     window.location.reload();
     if (refreshToken) {
       this.http.post(`${this.ROOT_URL}/logout`, {}, {
@@ -127,7 +125,6 @@ export class AuthService {
   // Método para refrescar el access token
   refreshAccessToken() {
     const refreshToken = localStorage.getItem('refreshToken');
-    console.log('[AuthService] refreshAccessToken called. Refresh token**************************:', refreshToken);
     if (!refreshToken) return null;
     console.log('[AuthService] Llamando endpoint de refresh token...');
     return this.http.post<any>(`${this.ROOT_URL}/refresh`, {}, {
@@ -136,9 +133,6 @@ export class AuthService {
       }
     });
   }
-
-  // Métodos de expiración periódica eliminados para simplificar el servicio.
-
 
   // Refresca el token antes de inicializar la app
   tryRefreshOnStartup(): Promise<void> {
