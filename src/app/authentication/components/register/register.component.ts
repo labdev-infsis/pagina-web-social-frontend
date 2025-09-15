@@ -14,7 +14,9 @@ import { Modal } from 'bootstrap';
 export class RegisterComponent implements OnInit {
   public registerForm!: FormGroup;
   public hide = true;
+  public confirmHide = true;
   public inputType: string = 'password';
+  public confirmInputType: string = 'password';
   public passwordMismatch: boolean = false;
   public modal?: Modal | null;
 
@@ -30,62 +32,87 @@ export class RegisterComponent implements OnInit {
 
   private buildForm() {
     this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required]], 
-      lastName: ['', [Validators.required]], 
+      name: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]], // ← Aquí está la validación
+      repeat_password: ['', [Validators.required, Validators.minLength(6)]] // ← Y aquí también
     });
 
-    // Detecta cuando las contraseñas no coinciden
-    this.registerForm.get('confirmPassword')?.valueChanges.subscribe(() => {
-      this.passwordMismatch = this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value;
+    this.registerForm.valueChanges.subscribe(() => {
+      this.checkPasswordMatch();
     });
   }
 
+  private checkPasswordMatch() {
+    const password = this.registerForm.get('password')?.value;
+    const confirmPassword = this.registerForm.get('repeat_password')?.value;
+    this.passwordMismatch = password !== confirmPassword && confirmPassword !== '';
+  }
+
   register() {
-    if (this.registerForm.valid) {
+    if (this.registerForm.valid && !this.passwordMismatch) {
       const newUser: NewUser = this.registerForm.value;
       
       this.authService.register(newUser).subscribe({
         next: (response) => {
           console.log('Usuario registrado:', response.message);
           this.showLoading();
-          setTimeout(()=>{
-            this.hideLoading()
-            this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'El usuario ha sido registrado con éxito. Inicie sesión', sticky: true });
-          },2000)
-          setTimeout(()=> {
+          setTimeout(() => {
+            this.hideLoading();
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: 'Registro exitoso', 
+              detail: 'El usuario ha sido registrado con éxito. Inicie sesión', 
+              sticky: true 
+            });
+          }, 2000);
+          setTimeout(() => {
             this.resetForm();
             this.closeModalRegister();
             this.showModalLogin();
-          },5000);
+          }, 5000);
         },
-        error:(error) => {
-          console.log('Error al registar',error);
-          this.messageService.add({ severity: 'error', summary: 'Error al registrar', detail: 'Intentelo mas tarde.', sticky: true });
+        error: (error) => {
+          console.log('Error al registrar', error);
+          this.messageService.add({ 
+            severity: 'error', 
+            summary: 'Error al registrar', 
+            detail: 'Inténtelo más tarde.', 
+            sticky: true 
+          });
         }
       });
     }
   }
 
   hasErrors(controlName: string, errorType: string) {
-    return this.registerForm.get(controlName)?.hasError(errorType) && this.registerForm.get(controlName)?.touched;
+    const control = this.registerForm.get(controlName);
+    return control?.hasError(errorType) && control?.touched;
   }
 
   togglePasswordVisibility() {
     this.hide = !this.hide;
-    this.inputType = this.inputType === 'password' ? 'text' : 'password';
+    this.inputType = this.hide ? 'password' : 'text';
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.confirmHide = !this.confirmHide;
+    this.confirmInputType = this.confirmHide ? 'password' : 'text';
   }
 
   resetForm() {
     this.registerForm.reset();
     this.passwordMismatch = false;
+    this.hide = true;
+    this.confirmHide = true;
+    this.inputType = 'password';
+    this.confirmInputType = 'password';
   }
 
-  closeModalRegister(){
+  closeModalRegister() {
     const modalRegister = document.getElementById('registerModal') as HTMLElement;
-    let modal = Modal.getInstance(modalRegister)
+    let modal = Modal.getInstance(modalRegister);
     modal?.hide();
     setTimeout(() => {
       const backdrop = document.querySelector('.modal-backdrop');
@@ -98,9 +125,9 @@ export class RegisterComponent implements OnInit {
     }, 300);
   }
 
-  showModalLogin(){
+  showModalLogin() {
     const modalLogin = document.getElementById('loginModal') as HTMLElement;
-    let modal = new Modal(modalLogin)
+    let modal = new Modal(modalLogin);
     modal?.show();
   }
 
@@ -109,6 +136,6 @@ export class RegisterComponent implements OnInit {
   }
 
   hideLoading() {
-    document.getElementById('loadingBackdrop')!.classList.add('hide');
+    document.getElementById('loadingBackdrop')!.style.display = 'none';
   }
 }

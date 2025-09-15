@@ -1,10 +1,13 @@
 .area-media {
   border-radius: 10px;
   border: 1.5px solid #e0e0e0;
-  // min-height: 160px;
+  min-height: 160px;
   margin-top: 5px;
   padding: 10px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .btn-close {
     border-radius: 50%;
@@ -32,7 +35,6 @@
 
     img, video {        
       width: 100%;
-      // min-height: inherit;
       min-height: 207.5px;
       display: block;
       border-radius: 8px;
@@ -95,6 +97,7 @@
     border-radius: inherit;
     cursor: pointer;
     min-height: 135px;
+    width: 100%;
 
     label {
       cursor: pointer;
