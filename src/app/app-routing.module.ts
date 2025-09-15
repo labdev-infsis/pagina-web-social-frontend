@@ -17,6 +17,7 @@ import { ViewAllPostsConveniosComponent } from './posts/components/view-all-post
 import { ViewAllPostsProyectosComponent } from './posts/components/view-all-posts-proyectos/view-all-posts-proyectos.component';
 import { ViewAllPostsBecasComponent } from './posts/components/view-all-posts-becas/view-all-posts-becas.component';
 import { ViewAllPostsCudieComponent } from './posts/components/view-all-posts-cudie/view-all-posts-cudie.component';
+import { PageComponent } from './posts/components/post-page/page/page.component';
 
 const routes: Routes = [
   {
@@ -72,8 +73,12 @@ const routes: Routes = [
       },
       { path: 'cudie', 
         component: ViewAllPostsCudieComponent
-      }
-    ]
+      },
+    ],
+  },
+  {
+    path: 'posts/:id',
+    component: PageComponent
   }
 ];
 

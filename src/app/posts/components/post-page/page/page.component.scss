@@ -1,0 +1,238 @@
+.post-container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: #65676b;
+}
+
+.error {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.error button {
+    background: #1877f2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.error button:hover {
+    background: #166fe5;
+}
+
+/* Tarjeta de publicación estilo Facebook */
+.post-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Header de la publicación */
+.post-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e4e6eb;
+}
+
+.institution-info {
+    margin-left: 12px;
+}
+
+.institution-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #050505;
+    margin: 0;
+}
+
+.post-date {
+    font-size: 13px;
+    color: #65676b;
+    margin: 2px 0 0 0;
+}
+
+/* Contenido de la publicación */
+.post-content-body {
+    padding: 12px 16px;
+}
+
+.post-text {
+    font-size: 15px;
+    line-height: 1.38;
+    color: #050505;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Galería de medios */
+.media-gallery {
+    margin: 12px 0;
+}
+
+.media-item {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.media-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+/* Estadísticas de la publicación */
+.post-stats {
+    padding: 8px 16px;
+    border-top: 1px solid #e4e6eb;
+    border-bottom: 1px solid #e4e6eb;
+    display: flex;
+    align-items: center;
+    color: #65676b;
+    font-size: 14px;
+}
+
+.img-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.reactions-count {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.reactions-icons {
+    display: flex;
+    margin-right: 8px;
+}
+
+.reaction-emoji {
+    width: 18px;
+    height: 18px;
+    background: #1877f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-left: -4px;
+    border: 2px solid white;
+}
+
+.reaction-emoji:first-child {
+    margin-left: 0;
+}
+
+.comments-share-count {
+    display: flex;
+    gap: 16px;
+}
+
+/* Información de la institución */
+.institution-info-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.institution-info-card h3 {
+    margin: 0 0 12px 0;
+    color: #050505;
+    font-size: 17px;
+}
+
+.contact-info {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-info li {
+    padding: 6px 0;
+    color: #65676b;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-info li:before {
+    content: "•";
+    color: #1877f2;
+    font-weight: bold;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20px;
+
+    .data-user {
+        width: 95%;
+        display: flex;
+        gap: 10px;
+
+        .img-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .info-user {
+            margin: 0;
+            padding: 0;
+
+            h2 {
+                margin: 0;
+                padding: 0;
+                font-family: var(--secondary-font-family);
+                font-size: 20px;
+            }
+
+            p {
+                margin: 0;
+                padding: 0;
+                font-size: 14px;
+                font-weight: normal;
+            }
+        }
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .post-container {
+        padding: 10px;
+    }
+
+    .post-card {
+        border-radius: 0;
+        margin-bottom: 10px;
+    }
+}
