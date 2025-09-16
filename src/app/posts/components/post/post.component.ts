@@ -107,7 +107,7 @@ export class PostComponent {
     return copyPost;
   }
 
-  openViewPostComments(post: Post) {
+  openViewPostComments(post: Post, initialImageIndex: number = 0) {
     const modalRef = this.modalService.open(CommentsComponent, { size: 'lg', centered: true });
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = post;
@@ -116,7 +116,7 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
-    
+    modalRef.componentInstance.initialImageIndex = initialImageIndex;
     modalRef.dismissed.subscribe(() => {
       this.totalComments.set(modalRef.componentInstance.comments.length);
     });
