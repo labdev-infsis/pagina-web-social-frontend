@@ -4,7 +4,7 @@
       <!-- Cabecera del comentario -->
       <div class="d-flex align-items-start comment-row">
         <!-- Avatar -->
-        <img [src]="comment.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="comment-img" />
+        <img [src]="comment.user_photo || '/assets/default-avatar.png'" alt="Foto de perfil" class="comment-img" />
 
         <!-- Burbuja del comentario -->
         <div class="comment-bubble">
@@ -51,7 +51,7 @@
 
       <!-- Input para responder al comentario principal -->
       <div *ngIf="replyInputVisible[comment.uuid]" class="reply-box">
-        <img [src]="currentUser?.photo_profile_path || 'assets/default-avatar.png'" alt="Foto de perfil"
+        <img [src]="currentUser?.photo_profile_path || '/assets/default-avatar.png'" alt="Foto de perfil"
           class="reply-img" />
         <div class="reply-input-container">
           <input [(ngModel)]="replyText[comment.uuid]" placeholder="Escribe una respuesta..." class="reply-input"
@@ -91,7 +91,7 @@
 <ng-template #recursiveReplies let-replies="replies" let-parentCommentUuid="parentCommentUuid">
   <div *ngFor="let reply of replies" class="nested-reply-item">
     <div class="d-flex flex-row">
-      <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
+      <img *ngIf="currentUser" [src]="reply.user_photo || '/assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
       <div class="nested-reply-content">
         <p><strong>{{ reply.name }} {{ reply.lastName }}</strong></p>
         <p>{{ reply.content }}</p>

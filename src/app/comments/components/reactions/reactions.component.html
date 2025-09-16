@@ -38,10 +38,10 @@
     <div class="reaction-detail-popup" *ngIf="showReactionDetails">
       <div class="reaction-detail-item" *ngFor="let user of detailedReactions">
         <img
-          [src]="user.userPhoto || 'assets/default-avatar.png'"
+          [src]="user.userPhoto || '/assets/default-avatar.png'"
           class="reaction-avatar"
           alt="Avatar"
-          (error)="user.userPhoto = 'assets/default-avatar.png'"
+          (error)="user.userPhoto = '/assets/default-avatar.png'"
         />
         <span class="reaction-name">{{ user.userName }}</span>
         <span class="reaction-emoji">{{ user.emoji }}</span>
