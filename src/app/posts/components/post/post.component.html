@@ -48,14 +48,14 @@
 				<div *ngIf="i < 3 || listMediaPost.length == 4" class="media-post"
 					[ngClass]="{'three': listMediaPost.length == 3 && i == 0}">
 					<img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
-						[alt]="media.name || 'Imagen del post'" (click)="openViewPostComments(post)" style="cursor: pointer;">
+						[alt]="media.name || 'Imagen del post'" (click)="openViewPostComments(post, i)" style="cursor: pointer;">
 					<ng-template #mostrarVideo>
-						<video [src]="media.path" controls (click)="openViewPostComments(post)" style="cursor: pointer;"></video>
+						<video [src]="media.path" controls (click)="openViewPostComments(post, i)" style="cursor: pointer;"></video>
 					</ng-template>
 				</div>
 				<!-- Quinta imagen/video: Con superposición si hay más media -->
 				<div *ngIf="i === 3 && listMediaPost.length > 4" class="media-post">
-					<div class="more">
+					<div class="more" (click)="openViewPostComments(post, 3)">
 						<img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
 							[alt]="media.name || 'Imagen del post'">
 						<ng-template #mostrarVideo>

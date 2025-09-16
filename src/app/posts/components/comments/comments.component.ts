@@ -22,6 +22,7 @@ import moment from 'moment-timezone';
   styleUrls: ['./comments.component.scss'],
 })
 export class CommentsComponent implements OnInit {
+  @Input() initialImageIndex: number = 0;
   @ViewChild('commentInput') commentInput!: ElementRef;
   @Input() institution!: Institution;
   @Input() post!: Post;
