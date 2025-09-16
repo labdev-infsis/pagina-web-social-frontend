@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, WritableSignal, ElementRef, ViewChild } from '@angular/core';
-import { catchError, forkJoin, from, of } from 'rxjs';
 
 @Component({
   selector: 'app-images-uploader',
@@ -12,7 +11,7 @@ export class ImagesUploaderComponent {
   @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
   @ViewChild('fileInput') fileInput!: ElementRef; // Referencia al input file
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
-  mediaListPreview: string[] = []; //Imagenes videos a mostrar en formato base64
+  mediaListPreview: {type: string, url: string}[] = []; //Imagenes videos a mostrar en formato base64
   listFileMedia!: File[]; //Lista de archivos seleccionados
   isLoadingMedia = false;
   readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
@@ -36,7 +35,7 @@ export class ImagesUploaderComponent {
 
   // Método para resetear el input file
   private resetFileInput(): void {
-    if (this.fileInput && this.fileInput.nativeElement) {
+    if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
   }
@@ -99,54 +98,33 @@ export class ImagesUploaderComponent {
   }
 
   private loadMediaPreviews(files: File[]): void {
-    // Limpiar el array de previsualizaciones antes de empezar
-    this.mediaListPreview = [];
+    this.cleanUpMediaPreviews();
     this.isLoadingMedia = true;
-    // Convertir cada archivo a un observable
-    const mediaObservables = files.map(file => 
-      from(this.readFileAsDataURL(file)).pipe(
-        catchError(error => {
-          console.error(`Error al leer el archivo ${file.name}:`, error);
-          return of(null); // Devolver null en caso de error
-        })
-      )
-    );
 
-    // Combinar todos los observables y procesar los resultados
-    forkJoin(mediaObservables).subscribe({
-      next: (results) => {
-        // Filtrado seguro con type guard
-        const validResults = results.filter(this.isString);
-        this.mediaListPreview = validResults;
-        this.isLoadingMedia = false;
-      },
-      error: (error) => {
-        this.isLoadingMedia = false;
-        console.error('Error general:', error);
-        this.handleMediaLoadError();
-      }
-    });
+    try {
+      // Crear URLs directamente y su tipo
+      this.mediaListPreview = files.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
+      this.isLoadingMedia = false;
+    } catch (error) {
+      this.isLoadingMedia = false;
+      console.error('Error al crear URLs:', error);
+      this.handleMediaLoadError();
+    }
   }
 
-  private isString(value: string | null): value is string {
-    return typeof value === 'string';
-  }
-
-  private readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject(new Error('Tipo de resultado inesperado al leer el archivo'));
+  private cleanUpMediaPreviews(): void {
+    if (this.mediaListPreview && this.mediaListPreview.length > 0) {
+      this.mediaListPreview.forEach(media => {
+        if (media.url && typeof media.url === 'string') {
+          URL.revokeObjectURL(media.url);
         }
-      };
-      
-      reader.onerror = () => reject(new Error(`Error al leer el archivo: ${file.name}`));
-      reader.readAsDataURL(file);
-    });
+      });
+    }
+    this.mediaListPreview = [];
+  }
+
+  isImage(typeMedia: string): boolean{
+    return typeMedia.includes('image');
   }
 
   private handleMediaLoadError(): void {
@@ -168,35 +146,10 @@ export class ImagesUploaderComponent {
     return 'more';
   }
 
-  isImage(mediaBase64: string): boolean{
-    return mediaBase64.includes('image');
-  }
-
-  //Eliminar imagen prevista NO USADA AUN
-  // deletePreviewMedia(media:string){
-  //   let index = this.mediaListPreview.indexOf(media);
-  //   this.mediaListPreview.splice(index,1);
-  //   const fileInput = document.getElementById('input-file') as HTMLInputElement;
-  //   if (fileInput && fileInput.files) {
-  //     const files = Array.from(fileInput.files);
-
-  //     if (index >= 0 && index < files.length) {
-  //       files.splice(index, 1); // Elimina el archivo en la posición indicada
-  //     }
-
-  //     // Usa DataTransfer para crear una nueva lista de archivos
-  //     const dataTransfer = new DataTransfer();
-  //     files.forEach(file => dataTransfer.items.add(file));
-
-  //     // Asigna la nueva lista de archivos al input
-  //     fileInput.files = dataTransfer.files;
-  //   }
-  // }
-
-   deletePreviewMedia(index: number){
+  deletePreviewMedia(index: number){
     if (index >= 0 && index < this.mediaListPreview.length) {
       // Liberar la URL del objeto para evitar memory leaks
-      URL.revokeObjectURL(this.mediaListPreview[index]);
+      URL.revokeObjectURL(this.mediaListPreview[index].url);
       
       // Eliminar de las listas
       this.mediaListPreview.splice(index, 1);
