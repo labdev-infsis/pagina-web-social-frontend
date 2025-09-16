@@ -27,7 +27,7 @@
                   <div class="img-profile">
                     <img
                       (mouseenter)="pop.toggle($event)"
-                      [src]="reaction.user_photo || '/assets/default-avatar.png'"
+                      [src]="reaction.user_photo || 'assets/default-avatar.png'"
                       [alt]="'Foto de perfil'"
                     />
                     <app-popup-info-user #pop 
@@ -55,7 +55,7 @@
                     <div class="img-profile">
                       <img
                         (mouseenter)="pop.toggle($event)"
-                        [src]="reactionUser.user_photo || '/assets/default-avatar.png'"
+                        [src]="reactionUser.user_photo || 'assets/default-avatar.png'"
                         [alt]="'Foto de perfil'"
                       />
                       <app-popup-info-user #pop 
