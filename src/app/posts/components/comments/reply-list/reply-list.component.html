@@ -2,7 +2,7 @@
   <div *ngFor="let reply of replies | slice:0:getLimit(parentUuid)" class="reply-wrapper">
     <!-- Contenido de la respuesta -->
     <div class="d-flex align-items-start reply-row">
-      <img [src]="reply.user_photo || '/assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
+      <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
       <div class="comment-bubble">
         <p class="mb-1"><strong>{{ reply.name }} {{ reply.lastName }}</strong></p>
         <p class="mb-1">{{ reply.content }}</p>
@@ -47,7 +47,7 @@
     </div>
     <!-- Input para responder a esta respuesta -->
     <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
-      <img [src]="currentUser?.photo_profile_path || '/assets/default-avatar.png'" alt="Foto de perfil"
+      <img [src]="currentUser?.photo_profile_path || 'assets/default-avatar.png'" alt="Foto de perfil"
         class="reply-img" />
       <div class="reply-input-container">
         <input [(ngModel)]="replyText[reply.uuid]" placeholder="Escribe una respuesta..." class="reply-input"
