@@ -166,7 +166,8 @@ $font-size-large: 1.2rem;
 }
 
 // Carousel styles
-.carousel-inner > .carousel-item > img {
+.carousel-inner > .carousel-item > img,
+.carousel-inner > .carousel-item > video {
   width: 75%;
   height: auto;
   object-fit: contain;
