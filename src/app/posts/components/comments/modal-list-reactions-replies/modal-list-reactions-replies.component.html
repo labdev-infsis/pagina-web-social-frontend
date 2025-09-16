@@ -23,7 +23,7 @@
           <div class="reactions-by-user d-flex flex-row gap-3">
             <div class="img-profile">
               <img
-                [src]="reaction.userPhoto"
+                [src]="reaction.userPhoto || 'assets/default-avatar.png'"
                 [alt]="'Foto de perfil'"
               />
             </div>
@@ -45,8 +45,8 @@
             <div class="reactions-by-user d-flex flex-row gap-3">
               <div class="img-profile">
                 <img
-                  [src]="reactionUser.userPhoto"
-                  [alt]="'Foto de perfil'"
+                  [src]="reactionUser.userPhoto || 'assets/default-avatar.png'"
+                  [alt]="'Foto de perfil'" 
                 />
               </div>
               <div class="name-user d-flex align-items-center">
