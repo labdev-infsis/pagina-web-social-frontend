@@ -11,7 +11,7 @@ export class ImagesUploaderComponent {
   @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
   @ViewChild('fileInput') fileInput!: ElementRef; // Referencia al input file
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
-  mediaListPreview: string[] = []; //Imagenes videos a mostrar en formato base64
+  mediaListPreview: {type: string, url: string}[] = []; //Imagenes videos a mostrar en formato base64
   listFileMedia!: File[]; //Lista de archivos seleccionados
   isLoadingMedia = false;
   readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
@@ -102,8 +102,8 @@ export class ImagesUploaderComponent {
     this.isLoadingMedia = true;
 
     try {
-      // Crear URLs directamente
-      this.mediaListPreview = files.map(file => URL.createObjectURL(file));
+      // Crear URLs directamente y su tipo
+      this.mediaListPreview = files.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
       this.isLoadingMedia = false;
     } catch (error) {
       this.isLoadingMedia = false;
@@ -114,17 +114,17 @@ export class ImagesUploaderComponent {
 
   private cleanUpMediaPreviews(): void {
     if (this.mediaListPreview && this.mediaListPreview.length > 0) {
-      this.mediaListPreview.forEach(url => {
-        if (url && typeof url === 'string') {
-          URL.revokeObjectURL(url);
+      this.mediaListPreview.forEach(media => {
+        if (media.url && typeof media.url === 'string') {
+          URL.revokeObjectURL(media.url);
         }
       });
     }
     this.mediaListPreview = [];
   }
 
-  isImage(mediaBase64: string): boolean{
-    return mediaBase64.includes('image');
+  isImage(typeMedia: string): boolean{
+    return typeMedia.includes('image');
   }
 
   private handleMediaLoadError(): void {
@@ -149,7 +149,7 @@ export class ImagesUploaderComponent {
   deletePreviewMedia(index: number){
     if (index >= 0 && index < this.mediaListPreview.length) {
       // Liberar la URL del objeto para evitar memory leaks
-      URL.revokeObjectURL(this.mediaListPreview[index]);
+      URL.revokeObjectURL(this.mediaListPreview[index].url);
       
       // Eliminar de las listas
       this.mediaListPreview.splice(index, 1);
