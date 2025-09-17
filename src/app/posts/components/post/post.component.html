@@ -127,7 +127,7 @@
 			<i class="bi bi-chat-left-text"></i>
 			Comentar</button>
 		<!-- Boton de Compartir -->
-		<button type="button" class="btn icon-btn" id="btn-share" [hidden]="!authenticated">
+		<button type="button" class="btn icon-btn" id="btn-share" (click)="onShare()" [hidden]="!authenticated">
 			<i class="fa-solid fa-share"></i>
 			Compartir</button>
 	</div>
