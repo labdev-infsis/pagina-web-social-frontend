@@ -95,7 +95,7 @@
       </div>
 
       <app-post-reactions [post]="post" [authenticated]="authenticated" [currentUser]="currentUser"
-        [postUrl]="'https://devpws.cs.umss.edu.bo/post/' + post.uuid"
+        [postUrl]="'https://devpws.cs.umss.edu.bo/posts/' + post.uuid"
         [myReaction]="myReaction" [totalReactions]="totalReactions()" [totalComments]="totalComments()"
         (likeClicked)="reactUserBoton(post.uuid)" (commentClicked)="openViewPostComments(post)"
         (reactionSelected)="clickReaction(post.uuid, $event.type, $event.event)">
