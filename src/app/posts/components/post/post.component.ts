@@ -24,6 +24,7 @@ export class PostComponent {
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
+  postUrl: string = "https://devpws.cs.umss.edu.bo/post/";
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
@@ -351,5 +352,18 @@ export class PostComponent {
       console.log(textPost)
     }
     return textPost || '';
+  }
+
+  onShare() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Mira esta publicación',
+        url: this.postUrl + this.post.uuid
+      }).catch(() => { });
+    } else {
+      navigator.clipboard.writeText(this.postUrl).then(() => {
+        alert('URL copiada al portapapeles');
+      });
+    }
   }
 }
