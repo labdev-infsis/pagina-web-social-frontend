@@ -77,29 +77,31 @@
 			</a>
 		</ng-container>
 	</ng-container>
-	<!--}-->
-	<hr>
+
 	<!-- Cantidad de reacciones y comentarios -->
-	<div class="interactions-quantity " *ngIf="amountReactions() > 0 || amountComments() > 0">
-		<div *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid" data-bs-toggle="modal">
-			<span class="quantity">{{ totalReactions() }}</span>
-			<i class="bi bi-hand-thumbs-up icon"></i>
+	<!-- Mostrar solo si hay reacciones o comentarios -->
+	<ng-container *ngIf="amountReactions() > 0 || amountComments() > 0">
+		<hr>
+		<div class="interactions-quantity">
+			<div *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid" data-bs-toggle="modal">
+				<span class="quantity">{{ totalReactions() }}</span>
+				<i class="bi bi-hand-thumbs-up icon"></i>
+			</div>
+			<app-modal-list-reactions [reactions]="post.reactions"
+				[postReference]="post.uuid"></app-modal-list-reactions>
+			<div class="divisor" *ngIf="amountComments() > 0"></div>
+			<div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
+				<span class="quantity">{{ totalComments() }}</span>
+				<i class="bi bi-chat-left-text icon"></i>
+			</div>
+			<div class="item" hidden>
+				<span class="quantity">20</span>
+				<i class="fa fa-share icon"></i>
+			</div>
 		</div>
-		<app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>
-		<div class="divisor" *ngIf="amountComments() > 0"></div>
-		<div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
-			<span class="quantity">{{ totalComments() }}</span>
-			<i class="bi bi-chat-left-text icon"></i>
-		</div>
-		<!--<div class="divisor"></div> -->
-		<div class="item" hidden>
-			<span class="quantity">20</span>
-			<i class="fa fa-share icon"></i>
-		</div>
-	</div>
-
-	<hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}" [hidden]="!authenticated">
-
+		<hr [hidden]="!authenticated">
+	</ng-container>
+	
 	<!-- Botones de reaccionar, comentar y compartir -->
 	<!--<div class="bottuns d-flex justify-content-evenly m-2" [hidden]="!authenticated">-->
 	<div class="bottuns" [hidden]="!authenticated">
