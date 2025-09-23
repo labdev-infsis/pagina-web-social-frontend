@@ -48,14 +48,14 @@
 				<div *ngIf="i < 3 || listMediaPost.length == 4" class="media-post"
 					[ngClass]="{'three': listMediaPost.length == 3 && i == 0}">
 					<img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
-						[alt]="media.name || 'Imagen del post'" (click)="openViewPostComments(post)" style="cursor: pointer;">
+						[alt]="media.name || 'Imagen del post'" (click)="openViewPostComments(post, i)" style="cursor: pointer;">
 					<ng-template #mostrarVideo>
-						<video [src]="media.path" controls (click)="openViewPostComments(post)" style="cursor: pointer;"></video>
+						<video [src]="media.path" controls (click)="openViewPostComments(post, i)" style="cursor: pointer;"></video>
 					</ng-template>
 				</div>
 				<!-- Quinta imagen/video: Con superposición si hay más media -->
 				<div *ngIf="i === 3 && listMediaPost.length > 4" class="media-post">
-					<div class="more">
+					<div class="more" (click)="openViewPostComments(post, 3)">
 						<img *ngIf="typeImages.includes(media.type); else mostrarVideo" [src]="media.path"
 							[alt]="media.name || 'Imagen del post'">
 						<ng-template #mostrarVideo>
@@ -77,29 +77,31 @@
 			</a>
 		</ng-container>
 	</ng-container>
-	<!--}-->
-	<hr>
+
 	<!-- Cantidad de reacciones y comentarios -->
-	<div class="interactions-quantity " *ngIf="amountReactions() > 0 || amountComments() > 0">
-		<div *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid" data-bs-toggle="modal">
-			<span class="quantity">{{ totalReactions() }}</span>
-			<i class="bi bi-hand-thumbs-up icon"></i>
+	<!-- Mostrar solo si hay reacciones o comentarios -->
+	<ng-container *ngIf="amountReactions() > 0 || amountComments() > 0">
+		<hr>
+		<div class="interactions-quantity">
+			<div *ngIf="amountReactions() > 0" [attr.data-bs-target]="'#reactions-'+post.uuid" data-bs-toggle="modal">
+				<span class="quantity">{{ totalReactions() }}</span>
+				<i class="bi bi-hand-thumbs-up icon"></i>
+			</div>
+			<app-modal-list-reactions [reactions]="post.reactions"
+				[postReference]="post.uuid"></app-modal-list-reactions>
+			<div class="divisor" *ngIf="amountComments() > 0"></div>
+			<div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
+				<span class="quantity">{{ totalComments() }}</span>
+				<i class="bi bi-chat-left-text icon"></i>
+			</div>
+			<div class="item" hidden>
+				<span class="quantity">20</span>
+				<i class="fa fa-share icon"></i>
+			</div>
 		</div>
-		<app-modal-list-reactions [reactions]="post.reactions" [postReference]="post.uuid"></app-modal-list-reactions>
-		<div class="divisor" *ngIf="amountComments() > 0"></div>
-		<div class="item" *ngIf="amountComments() > 0" (click)="openViewPostComments(post)">
-			<span class="quantity">{{ totalComments() }}</span>
-			<i class="bi bi-chat-left-text icon"></i>
-		</div>
-		<!--<div class="divisor"></div> -->
-		<div class="item" hidden>
-			<span class="quantity">20</span>
-			<i class="fa fa-share icon"></i>
-		</div>
-	</div>
-
-	<hr [ngClass]="{'hr-post-division': amountReactions() == 0 && amountComments() == 0}" [hidden]="!authenticated">
-
+		<hr [hidden]="!authenticated">
+	</ng-container>
+	
 	<!-- Botones de reaccionar, comentar y compartir -->
 	<!--<div class="bottuns d-flex justify-content-evenly m-2" [hidden]="!authenticated">-->
 	<div class="bottuns" [hidden]="!authenticated">
@@ -108,16 +110,16 @@
 			[disabled]="!authenticated" (click)="reactUserBoton(post.uuid)">
 			<i class="{{ myReaction.emoji }}"
 				*ngIf="myReaction.class == 'thumbs-up' || myReaction.class == 'red-heart' || myReaction.class == 'default'"></i>
-			<img src="../../../../assets/{{myReaction.class}}.png" class="{{myReaction.class}}"
+			<img src="assets/{{myReaction.class}}.png" class="{{myReaction.class}}"
 				*ngIf="myReaction.class == 'crying-face' || myReaction.class == 'angry-face'">
 			<span class="ms-1">{{ myReaction.name }}</span>
 			<!-- Opciones de reaccion  -->
 			<div class="option-reactions">
 				<i class="fa-solid fa-thumbs-up" (click)="clickReaction(post.uuid, 'thumbs-up', $event)"></i>
 				<i class="fa-solid fa-heart" (click)="clickReaction(post.uuid, 'red-heart', $event)"></i>
-				<img src="../../../../assets/crying-face.png" class="crying-face"
+				<img src="assets/crying-face.png" class="crying-face"
 					(click)="clickReaction(post.uuid, 'crying-face', $event)">
-				<img src="../../../../assets/angry-face.png" class="angry-face"
+				<img src="assets/angry-face.png" class="angry-face"
 					(click)="clickReaction(post.uuid, 'angry-face', $event)">
 			</div>
 		</button>
@@ -127,7 +129,7 @@
 			<i class="bi bi-chat-left-text"></i>
 			Comentar</button>
 		<!-- Boton de Compartir -->
-		<button type="button" class="btn icon-btn" id="btn-share" [hidden]="!authenticated">
+		<button type="button" class="btn icon-btn" id="btn-share" (click)="onShare()" [hidden]="!authenticated">
 			<i class="fa-solid fa-share"></i>
 			Compartir</button>
 	</div>

@@ -27,7 +27,7 @@
             <ng-container *ngIf="postImages">
               <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner image-box text-center">
-                  <div *ngFor="let image of postImages; let i = index" class="carousel-item" [ngClass]="{ 'active': i === 0 }">
+                  <div *ngFor="let image of postImages; let i = index" class="carousel-item" [ngClass]="{ 'active': i === initialImageIndex }">
                     <ng-container *ngIf="image.type.includes('image')">
                       <img [src]="image.path" class="object-fit-scale" alt="" />
                     </ng-container>
