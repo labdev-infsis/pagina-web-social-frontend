@@ -74,6 +74,10 @@ export class DocumentEditorComponent {
     this.fileDoc = new File([''],'');
     this.showPreviewDoc = false;
     this.showAreaDoc.set(false);
+    
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
 
     this.closeAreaDocEvent.emit(false); 
   }
