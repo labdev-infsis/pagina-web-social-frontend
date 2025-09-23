@@ -23,7 +23,7 @@
       <img *ngIf="isImage(media.type) && (i < 3 || mediaListPreview.length == 4); else mostrarVideo" [src]="media.url" alt="post" [ngClass]="{'three': mediaListPreview.length == 3 && i === 0}">
       <!-- Mostrar <video> si no es una imagen -->
       <ng-template #mostrarVideo>
-        <video *ngIf="i < 3 || mediaListPreview.length == 4" [src]="media.url" controls [ngClass]="{'three': mediaListPreview.length == 3 && i === 0}"></video>
+        <video *ngIf="(i < 3 || mediaListPreview.length == 4) && media.url" [src]="media.url" controls [ngClass]="{'three': mediaListPreview.length == 3 && i === 0}"></video>
       </ng-template>
       <!-- Quinta imagen/video: Con superposición si hay más media -->
       <div *ngIf="i === 3 && mediaListPreview.length > 4" class="more">
