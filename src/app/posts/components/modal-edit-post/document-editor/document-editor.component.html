@@ -10,11 +10,13 @@
   <!-- Preview archivo -->
   <div class="preview-doc d-flex flex-row" *ngIf="showPreviewDoc">
     <div class="icon-doc d-flex align-items-center justify-content-center">
-      <img src="../../../../assets/{{fileType}}.png" alt="Document">
+      <img src="assets/{{fileType}}.png" alt="Document">
     </div>
     <div class="name-doc d-flex align-items-center">
-      <span>{{ fileMediaDoc.name }}</span>
+      <span *ngIf="fileMediaDoc">{{ fileMediaDoc.name }}</span>
+      <span *ngIf="fileDoc && fileDoc.name">{{ fileDoc.name }}</span>
     </div>
   </div>
+
+  <input type="file" #fileInput hidden (change)="changeInputMediaDoc($event)" accept=".doc,.docx,.pdf,.pptx">
 </div>
-<input type="file" name="" id="input-file-doc" hidden (input)="changeInputMediaDoc($event)" accept=".doc,.docx,.pdf,.pptx">

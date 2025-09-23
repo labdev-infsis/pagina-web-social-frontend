@@ -129,7 +129,12 @@ export class ModalEditPostComponent {
   //Establecer el Doc editado y Deshabilitar el boton de guardar si no hay archivo
   setFileDocPostAdded(doc: File){
     this.fileDoc = doc;
-    this.fileDoc ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+    // Asegurarse de que el tamaño del archivo sea mayor que 0
+    if (this.fileDoc && this.fileDoc.size > 0) {
+      this.disabledSaveButton.set(false);
+    } else {
+      this.disabledSaveButton.set(true);
+    }
   }
 
   sendMedia(type: string){
@@ -299,7 +304,11 @@ export class ModalEditPostComponent {
               fb_media_id: ''
             }
 
-            editedPost.content.media?.push(responseDoc)
+            if (!editedPost.content.media) {
+              editedPost.content.media = [];
+            }
+            
+            editedPost.content.media.push(responseDoc);
             editedPost.is_fb_posted = false;
             editedPost.fb_post_enable = false;
             return this.postService.updatePost(this.postToEdit.uuid, editedPost);
@@ -315,6 +324,10 @@ export class ModalEditPostComponent {
           }
         })      
       }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+        // Preservar documentos o media existentes en el post original
+        if(this.postToEdit.content.media && this.postToEdit.content.media.length > 0) {
+          editedPost.content.media = this.postToEdit.content.media;
+        }
 
         this.postService.updatePost(this.postToEdit.uuid, editedPost).subscribe({
           next: (responseUpdatedPost) => {
