@@ -23,7 +23,8 @@
   }
 
   .images-videos {
-    height: 220px;
+    height: auto;
+    min-height: 220px;
     width: 100%;
     display: grid; 
     gap: 5px; 
