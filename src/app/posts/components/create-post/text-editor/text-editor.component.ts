@@ -1,14 +1,20 @@
-import { Component, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-text-editor',
   templateUrl: './text-editor.component.html',
   styleUrl: './text-editor.component.scss'
 })
-export class TextEditorComponent {
+export class TextEditorComponent implements OnChanges {
   @Output() textChangeEvent = new EventEmitter<string>();
   @ViewChild('textareaRef') textarea!: ElementRef<HTMLTextAreaElement>;
+  @Input() isVisibleModal: boolean = false;
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['isVisibleModal'] && !this.isVisibleModal){
+      this.textarea.nativeElement.value = '';
+    }
+  }
 
   onTextChange(event: Event){
     const contentPost = (event.target as HTMLTextAreaElement).value;

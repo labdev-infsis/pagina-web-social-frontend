@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Input, Output, WritableSignal, ElementRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, WritableSignal, ElementRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-images-uploader',
   templateUrl: './images-uploader.component.html',
   styleUrl: './images-uploader.component.scss'
 })
-export class ImagesUploaderComponent {
+export class ImagesUploaderComponent implements OnChanges {
   @Input() showAreaMedia! : WritableSignal<boolean>; //Mostrar seleccion y prevista de imagenes videos
+  @Input() isVisibleModal: boolean = false;
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
   @Output() loadFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos seleccionadas
   @ViewChild('fileInput') fileInput!: ElementRef; // Referencia al input file
@@ -15,6 +16,12 @@ export class ImagesUploaderComponent {
   listFileMedia!: File[]; //Lista de archivos seleccionados
   isLoadingMedia = false;
   readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['isVisibleModal'] && !this.isVisibleModal){
+      this.closeCleanPreviewMedia();
+    }
+  }
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){

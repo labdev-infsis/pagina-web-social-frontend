@@ -1,12 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, WritableSignal, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-document-uploader',
   templateUrl: './document-uploader.component.html',
   styleUrl: './document-uploader.component.scss'
 })
-export class DocumentUploaderComponent {
+export class DocumentUploaderComponent implements OnChanges {
   @Input() showAreaDoc!: WritableSignal<boolean>;
+  @Input() isVisibleModal: boolean = false;
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadFileDoc = new EventEmitter<File>(); 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -20,6 +21,12 @@ export class DocumentUploaderComponent {
     text : 'application/txt' 
   }
   fileType!: string;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['isVisibleModal'] && !this.isVisibleModal){
+      this.closeCleanPreviewDoc();
+    }
+  }
 
   changeInputMediaDoc(event: Event){
     if(event.target instanceof HTMLInputElement && event.target.files && event.target.files.length > 0){

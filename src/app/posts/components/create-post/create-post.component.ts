@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Modal } from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -19,7 +19,7 @@ import { UserDetail } from '../../models/user-detail';
   templateUrl: './create-post.component.html',
   styleUrl: './create-post.component.scss'
 })
-export class CreatePostComponent implements OnInit {
+export class CreatePostComponent implements OnInit, AfterViewInit {
   institution!: Institution;
   commentConfig!: CommentConfig[];
   selectedCommentConfig!: string;
@@ -36,6 +36,8 @@ export class CreatePostComponent implements OnInit {
   isFbSwitchOn: boolean = false;
   currentUser!: UserDetail;
   currentPostType!: string;
+  @ViewChild('modalCreatePost') modal!: ElementRef;
+  public visibleModalCreate: boolean = false;
 
   constructor(
     private readonly postService: PostService,
@@ -67,6 +69,14 @@ export class CreatePostComponent implements OnInit {
     this.buildForm()
   }
 
+  ngAfterViewInit(): void {
+    this.modal.nativeElement.addEventListener('hidden.bs.modal', () => {
+      this.visibleModalCreate = false;
+      this.selectedCommentConfig = this.commentConfig[0].uuid;
+      this.postForm.get('switchControl')?.setValue(false);
+    });
+  }
+
   private buildForm() {
     this.postForm = this.formBuilder.group({
       contentPost: ['', [Validators.maxLength(1000)]],
@@ -76,7 +86,6 @@ export class CreatePostComponent implements OnInit {
     });
     // Optional: Listen to value changes
     this.postForm.get('switchControl')?.valueChanges.subscribe(value => {
-      console.log('Switch value changed:', value);
       this.onSwitchChange(value);
     });
   }
@@ -90,6 +99,7 @@ export class CreatePostComponent implements OnInit {
     if (modalElement) {
       const modal = new Modal(modalElement);
       modal.show();
+      this.visibleModalCreate = true;
     }
   }
 
