@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, WritableSignal, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-document-uploader',
@@ -10,6 +10,8 @@ export class DocumentUploaderComponent implements OnChanges {
   @Input() isVisibleModal: boolean = false;
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadFileDoc = new EventEmitter<File>(); 
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  
   showPreviewDoc = false;
   fileDoc!: File; //El doc que se selecciona para crear post
   typesDocs = {
@@ -27,9 +29,9 @@ export class DocumentUploaderComponent implements OnChanges {
   }
 
   changeInputMediaDoc(event: Event){
-    if(event.target instanceof HTMLInputElement && event.target.files){
+    if(event.target instanceof HTMLInputElement && event.target.files && event.target.files.length > 0){
       this.fileDoc = event.target.files[0];
-      this.fileType = this.getTypeFile(this.fileDoc.name);
+      this.fileType = this.getTypeFile(this.fileDoc.type);
       this.showPreviewDoc = true;
       this.loadFileDoc.emit(this.fileDoc);
     }
@@ -47,14 +49,17 @@ export class DocumentUploaderComponent implements OnChanges {
   }
 
   openInputFileDoc(){
-    const inputFileDoc = document.getElementById('input-file-doc');
-    inputFileDoc?.click();
+    this.fileInput.nativeElement.click();
   }
 
   closeCleanPreviewDoc(){
     this.fileDoc = new File([''],'');
-    this.showPreviewDoc  = false;
+    this.showPreviewDoc = false;
     this.showAreaDoc.set(false);
-    this.closeAreaDocEvent.emit(this.showAreaDoc())
+    
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.closeAreaDocEvent.emit(this.showAreaDoc());
   }
 }
