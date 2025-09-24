@@ -10,7 +10,7 @@
     <!-- Preview de imagenes videos del post -->
     <div class="images-videos" *ngIf="showPreviewMedia" [ngClass]="getGridClass()">
 
-      @if (listFileMediaPost[0].type.includes('image') || listFileMediaPost[0].type.includes('video')) {
+      @if (listFileMediaPost.length > 0 && (listFileMediaPost[0].type.includes('image') || listFileMediaPost[0].type.includes('video'))) {
         <div class="buttons-edit">
           <!-- Boton para editar toda la media -->
           <!-- <button class="btn fw-semibold" type="button" (click)="openEditAll()">
@@ -24,28 +24,40 @@
           </button>
         </div>
       }
+      
+      <!-- Botón para añadir fotos/videos cuando no hay media -->
+      @if (listFileMediaPost.length === 0 && mediaListPreviewAdded.length === 0) {
+        <div class="buttons-edit">
+          <button class="btn fw-semibold" type="button" (click)="openInputFileMedia()">
+            <i class="bi bi-file-earmark-plus-fill"></i>
+            Añadir fotos o videos
+          </button>
+        </div>
+      }
 
       <!-- Iterar imagenes y videos del post-->
-      <ng-container *ngFor="let media of listFileMediaPost; let i = index"> 
-        <!-- Mostrar las primeras 4 imágenes o videos directamente -->
-        <ng-container *ngIf="(i < 3 || (listFileMediaPost.length == 4 && mediaListPreviewAdded.length == 0)); else iterarResto">
-          <!-- Mostrar si es img o video -->
-          <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
-          <ng-template #mostrarVideo>
-            <video [src]="media.path" controls></video>
-          </ng-template>
-        </ng-container>
-
-        <!-- Quinta imagen/video: Con superposición si hay más media -->
-        <ng-template #iterarResto>
-          <div class="more">
+      <ng-container *ngIf="listFileMediaPost.length > 0">
+        <ng-container *ngFor="let media of listFileMediaPost; let i = index"> 
+          <!-- Mostrar las primeras 4 imágenes o videos directamente -->
+          <ng-container *ngIf="(i < 3 || (listFileMediaPost.length == 4 && mediaListPreviewAdded.length == 0)); else iterarResto">
+            <!-- Mostrar si es img o video -->
             <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
             <ng-template #mostrarVideo>
               <video [src]="media.path" controls></video>
             </ng-template>
-            <div class="overlay">+{{ getAmountMedia() - 4 }}</div>
-          </div>
-        </ng-template>
+          </ng-container>
+
+          <!-- Quinta imagen/video: Con superposición si hay más media -->
+          <ng-template #iterarResto>
+            <div class="more">
+              <img *ngIf="isImage(media.type); else mostrarVideo" [src]="media.path" alt="Imagen del post">
+              <ng-template #mostrarVideo>
+                <video [src]="media.path" controls></video>
+              </ng-template>
+              <div class="overlay">+{{ getAmountMedia() - 4 }}</div>
+            </div>
+          </ng-template>
+        </ng-container>
       </ng-container>
 
       <!-- Iterar imagenes y videos añadidos -->

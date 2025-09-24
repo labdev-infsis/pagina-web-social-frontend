@@ -42,6 +42,8 @@ export class ModalEditPostComponent {
   currentUser!: UserDetail;
   currentPostType!: string;
   isAuthenticated: boolean = false;
+  documentWasRemoved: boolean = false; // Bandera para rastrear si el documento fue eliminado
+  mediaWasRemoved: boolean = false; // Bandera para rastrear si las imágenes/videos fueron eliminados
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -108,8 +110,15 @@ export class ModalEditPostComponent {
 
   //Establecer imagenes-videos ya existentes y Deshabilitar el boton de guardar si no hay imagenes
   setFilesMediaPostOld(fileMedia: Media[]){
-    this.listOldMediaFile = fileMedia;
-    this.listOldMediaFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+    // Asignar fileMedia o un array vacío si es undefined
+    this.listOldMediaFile = fileMedia || [];
+    // Solo deshabilitar el botón si hay elementos en el array
+    if (this.listOldMediaFile && this.listOldMediaFile.length > 0) {
+      this.disabledSaveButton.set(false);
+    } else if (this.postForm.get('contentPost')?.value === '') {
+      // Si no hay media ni texto, deshabilitar el botón
+      this.disabledSaveButton.set(true);
+    }
   }
   
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
@@ -136,18 +145,41 @@ export class ModalEditPostComponent {
       this.disabledSaveButton.set(true);
     }
   }
+  
+  // Método para manejar la eliminación de un documento
+  handleDocumentRemoved(removed: boolean) {
+    if (removed) {
+      this.documentWasRemoved = true;
+      // Habilitar el botón de guardar para que se pueda actualizar el post sin el documento
+      this.disabledSaveButton.set(false);
+    }
+  }
+  
+  // Método para manejar la eliminación de imágenes/videos
+  handleMediaRemoved(removed: boolean) {
+    if (removed) {
+      this.mediaWasRemoved = true;
+      // Habilitar el botón de guardar para que se pueda actualizar el post sin las imágenes/videos
+      this.disabledSaveButton.set(false);
+    }
+  }
 
   sendMedia(type: string){
+    // Verificar si el post tiene contenido media
+    if (!this.postToEdit.content.media || this.postToEdit.content.media.length === 0) {
+      return []; // Retornar un array vacío si no hay media
+    }
+    
     if(type == this.typeMedia.img_vid){
       if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type != 'document')
         return this.postToEdit.content.media;
       else
-        return undefined;
+        return []; // Retornar un array vacío en lugar de undefined
     }else{
       if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type == 'document')
         return this.postToEdit.content.media;
       else
-        return undefined;
+        return []; // Retornar un array vacío en lugar de undefined
     }
   }
 
@@ -269,7 +301,8 @@ export class ModalEditPostComponent {
             });
 
             //Añadir las imagenes que ya habian en el post
-            editedPost.content.media = this.listOldMediaFile;
+            // Inicializar como array vacío si listOldMediaFile es undefined
+            editedPost.content.media = this.listOldMediaFile || [];
 
             //Añadir las nuevas medias que se agregaron
             Array.from(responseMedia).forEach((newMedia) => {
@@ -324,9 +357,31 @@ export class ModalEditPostComponent {
           }
         })      
       }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
-        // Preservar documentos o media existentes en el post original
+        // Verificar si tenemos que preservar medios existentes o si se eliminaron deliberadamente
         if(this.postToEdit.content.media && this.postToEdit.content.media.length > 0) {
-          editedPost.content.media = this.postToEdit.content.media;
+          // Si había un documento y fue eliminado, no lo preservamos
+          const hasDocument = this.postToEdit.content.media.some(media => media.type === 'document');
+          // Si había imágenes/videos y fueron eliminados, no los preservamos
+          const hasMediaImagesVideos = this.postToEdit.content.media.some(media => media.type !== 'document');
+          
+          if (hasDocument && this.documentWasRemoved) {
+            // Si hay un documento y fue eliminado, no lo preservamos
+            if (hasMediaImagesVideos && !this.mediaWasRemoved) {
+              // Si hay imágenes/videos y NO fueron eliminados, los preservamos
+              editedPost.content.media = this.postToEdit.content.media.filter(media => media.type !== 'document');
+            }
+            // Si ambos tipos fueron eliminados, no preservamos ninguno (media queda vacío)
+          } else if (hasMediaImagesVideos && this.mediaWasRemoved) {
+            // Si hay imágenes/videos y fueron eliminados, no los preservamos
+            if (hasDocument && !this.documentWasRemoved) {
+              // Si hay un documento y NO fue eliminado, lo preservamos
+              editedPost.content.media = this.postToEdit.content.media.filter(media => media.type === 'document');
+            }
+            // Si ambos tipos fueron eliminados, no preservamos ninguno (media queda vacío)
+          } else if (!this.documentWasRemoved && !this.mediaWasRemoved) {
+            // Si ningún tipo de media fue eliminado, preservamos todos
+            editedPost.content.media = this.postToEdit.content.media;
+          }
         }
 
         this.postService.updatePost(this.postToEdit.uuid, editedPost).subscribe({
