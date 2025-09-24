@@ -11,6 +11,7 @@ export class DocumentEditorComponent {
   @Input() mediaDocPost!: Media[] | undefined; //Documento que se recibe del post
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadNewFileDoc = new EventEmitter<File>(); 
+  @Output() documentRemovedEvent = new EventEmitter<boolean>(); // Nuevo evento para notificar la eliminación
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   
   showPreviewDoc = false;
@@ -70,6 +71,9 @@ export class DocumentEditorComponent {
   }
 
   closeCleanPreviewDoc(){
+    // Verificar si había un documento existente que estamos eliminando
+    const hadExistingDocument = this.mediaDocPost && this.mediaDocPost.length > 0;
+    
     this.mediaDocPost = undefined; 
     this.fileDoc = new File([''],'');
     this.showPreviewDoc = false;
@@ -79,6 +83,12 @@ export class DocumentEditorComponent {
       this.fileInput.nativeElement.value = '';
     }
 
-    this.closeAreaDocEvent.emit(false); 
+    // Emitir que se cerró el área de documentos
+    this.closeAreaDocEvent.emit(false);
+    
+    // Si había un documento existente, emitir que se eliminó
+    if (hadExistingDocument) {
+      this.documentRemovedEvent.emit(true);
+    }
   }
 }

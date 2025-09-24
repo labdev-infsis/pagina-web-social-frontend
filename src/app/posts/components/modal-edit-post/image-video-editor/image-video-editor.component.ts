@@ -12,6 +12,7 @@ export class ImageVideoEditorComponent {
   @Output() closeAreaMediaEvent = new EventEmitter<boolean>();//Ocultar la seleccion y prevista de media
   @Output() loadNewFilesMediaEvent = new EventEmitter<File[]>(); //Devolver las imagenes/videos nuevos seleccionadas
   @Output() loadOldFilesMediaEvent = new EventEmitter<Media[]>(); //Devolver las imagenes/videos nuevos seleccionadas
+  @Output() mediaRemovedEvent = new EventEmitter<boolean>(); // Evento para notificar cuando se eliminan medias
   @ViewChild('inputFileEdit') inputFileEdit!: ElementRef<HTMLInputElement> 
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
   mediaListPreviewAdded: string[] = []; //Imagenes videos a mostrar en formato base64
@@ -19,16 +20,25 @@ export class ImageVideoEditorComponent {
   listFileMediaPost: Media[] = []; //Lista de archivos del post - not undefined
 
   ngOnInit(){
+    // Inicializar listFileMediaPost como un array vacío si no hay media en el post
     if(this.listMediaPost && this.listMediaPost.length > 0){
-
       this.listFileMediaPost = this.listMediaPost; //Asegurarse de trabajar con no undefined
       this.showAreaMedia.set(true);
       this.showPreviewMedia = true;
+    } else {
+      this.listFileMediaPost = []; // Inicializar como array vacío
+      // Si estamos en modo edición, mostrar el área para añadir imágenes
+      if(this.showAreaMedia()){
+        this.showPreviewMedia = true;
+      }
     }
   }
 
   //Cerrar y limpiar la seleccion y prevista de imagenes videos
   closeCleanPreviewMedia(){
+    // Verificar si había imágenes/videos existentes que estamos eliminando
+    const hadExistingMedia = this.listMediaPost && this.listMediaPost.length > 0;
+    
     this.mediaListPreviewAdded = [];
     this.listMediaPost = []; // Borrar la copia del medias del post
     this.listFileMediaAdded = [];
@@ -38,6 +48,11 @@ export class ImageVideoEditorComponent {
     this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar medias existentes "borradas"
     this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
     this.closeAreaMediaEvent.emit(this.showAreaMedia());
+    
+    // Si había imágenes/videos existentes, emitir que fueron eliminados
+    if (hadExistingMedia) {
+      this.mediaRemovedEvent.emit(true);
+    }
   }
 
   //Abrir el input para seleccionar imagenes videos
@@ -93,7 +108,11 @@ export class ImageVideoEditorComponent {
 
   //Añadir clase segun media del post y media añadida
   getGridClass(): string {
-    const sumMediaPost_MediaAdded = this.listFileMediaPost.length + this.listFileMediaAdded.length;
+    // Asegurar que listFileMediaPost esté inicializado
+    const mediaPostLength = this.listFileMediaPost ? this.listFileMediaPost.length : 0;
+    const mediaAddedLength = this.listFileMediaAdded ? this.listFileMediaAdded.length : 0;
+    
+    const sumMediaPost_MediaAdded = mediaPostLength + mediaAddedLength;
     if (sumMediaPost_MediaAdded === 1) return 'single';
     if (sumMediaPost_MediaAdded === 2) return 'two';
     if (sumMediaPost_MediaAdded === 3) return 'three';
@@ -103,14 +122,22 @@ export class ImageVideoEditorComponent {
 
   //Obtener cantidad de media existente y seleccionada
   getAmountMedia(){
-    return this.listFileMediaPost.length + this.listFileMediaAdded.length;
+    // Asegurar que listFileMediaPost y listFileMediaAdded estén inicializados
+    const mediaPostLength = this.listFileMediaPost ? this.listFileMediaPost.length : 0;
+    const mediaAddedLength = this.listFileMediaAdded ? this.listFileMediaAdded.length : 0;
+    
+    return mediaPostLength + mediaAddedLength;
   }
 
   // Verificar si es imagen para mostrar etiqueta img o video
   isImage(urlMedia: string): boolean{
-    let response = false;
-    urlMedia.includes('image')? response = true : response = false;
-    return response;
+    // Si urlMedia es undefined o null, consideramos que no es una imagen
+    if (!urlMedia) {
+      return false;
+    }
+    
+    // Verificar si la URL contiene la palabra 'image'
+    return urlMedia.includes('image');
   }
 
   //Eliminar imagen prevista NO USADA AUN
