@@ -13,7 +13,7 @@ export class ImagesUploaderComponent implements OnChanges {
   @ViewChild('fileInput') fileInput!: ElementRef; // Referencia al input file
   showPreviewMedia = false; //Mostrar la prevista de imagenes y/o videos
   mediaListPreview: {type: string, url: string}[] = []; //Imagenes videos a mostrar en formato base64
-  listFileMedia!: File[]; //Lista de archivos seleccionados
+  listFileMedia: File[] = []; //Lista de archivos seleccionados
   isLoadingMedia = false;
   readonly MAX_VIDEO_SIZE_GB = 1 * 1024 * 1024 * 1024; // 1 GB en bytes
 
@@ -36,8 +36,7 @@ export class ImagesUploaderComponent implements OnChanges {
   //Abrir el input para seleccionar imagenes videos
   openInputFileMedia(){
     this.resetFileInput();
-    const inputFile = document.getElementById('input-file-img-vid')
-    inputFile?.click()
+    this.fileInput?.nativeElement.click();  
   }
 
   // Método para resetear el input file
@@ -76,12 +75,21 @@ export class ImagesUploaderComponent implements OnChanges {
       return;
     }
     
-    // Actualizar estado y procesar archivos
+    // Inicializar listFileMedia si es nulo
+    if (!this.listFileMedia) {
+      this.listFileMedia = [];
+    }
+    
+    // Acumular archivos en lugar de reemplazarlos
+    const newFiles = Array.from(files);
+    this.listFileMedia = [...this.listFileMedia, ...newFiles];
+    
+    // Actualizar estado y emitir lista acumulada
     this.showPreviewMedia = true;
-    this.listFileMedia = files;
     this.loadFilesMediaEvent.emit(this.listFileMedia);
+    
     // Leer archivos para previsualización
-    this.loadMediaPreviews(files);
+    this.loadMediaPreviewsAppend(newFiles);
   }
 
   private hasOversizedVideo(files: File[]): boolean {
@@ -103,31 +111,22 @@ export class ImagesUploaderComponent implements OnChanges {
     this.mediaListPreview = [];
     this.listFileMedia = [];
   }
-
-  private loadMediaPreviews(files: File[]): void {
-    this.cleanUpMediaPreviews();
+  
+  private loadMediaPreviewsAppend(files: File[]): void {
     this.isLoadingMedia = true;
 
     try {
-      // Crear URLs directamente y su tipo
-      this.mediaListPreview = files.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
+      // Crear URLs para los nuevos archivos
+      const newPreviews = files.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
+      
+      // Añadir los nuevos previews a los existentes
+      this.mediaListPreview = [...this.mediaListPreview, ...newPreviews];
       this.isLoadingMedia = false;
     } catch (error) {
       this.isLoadingMedia = false;
       console.error('Error al crear URLs:', error);
       this.handleMediaLoadError();
     }
-  }
-
-  private cleanUpMediaPreviews(): void {
-    if (this.mediaListPreview && this.mediaListPreview.length > 0) {
-      this.mediaListPreview.forEach(media => {
-        if (media.url && typeof media.url === 'string') {
-          URL.revokeObjectURL(media.url);
-        }
-      });
-    }
-    this.mediaListPreview = [];
   }
 
   isImage(typeMedia: string): boolean{
@@ -146,11 +145,12 @@ export class ImagesUploaderComponent implements OnChanges {
   }
 
   getGridClass(): string {
-    if (this.mediaListPreview.length === 1) return 'single';
-    if (this.mediaListPreview.length === 2) return 'two';
-    if (this.mediaListPreview.length === 3) return 'three';
-    if (this.mediaListPreview.length === 4) return 'four';
-    return 'more';
+    // Consideramos el tile de "añadir más" como un elemento adicional
+    if (this.mediaListPreview.length === 1) return 'single-with-add';
+    if (this.mediaListPreview.length === 2) return 'two-with-add';
+    if (this.mediaListPreview.length === 3) return 'three-with-add';
+    if (this.mediaListPreview.length === 4) return 'four-with-add';
+    return 'more-with-add';
   }
 
   deletePreviewMedia(index: number){
@@ -176,10 +176,19 @@ export class ImagesUploaderComponent implements OnChanges {
   }
 
    resetUploader(): void {
+      this.cleanUpMediaPreviews();  // Esto ya limpia mediaListPreview
+      this.listFileMedia = [];
+      this.showPreviewMedia = false;
+      this.resetFileInput();
+      this.loadFilesMediaEvent.emit(this.listFileMedia);
+  }
+  
+  private cleanUpMediaPreviews(): void {
+    this.mediaListPreview.forEach(media => {
+      if (media.url) {
+        URL.revokeObjectURL(media.url);
+      }
+    });
     this.mediaListPreview = [];
-    this.listFileMedia = [];
-    this.showPreviewMedia = false;
-    this.resetFileInput();
-    this.loadFilesMediaEvent.emit(this.listFileMedia);
   }
 }

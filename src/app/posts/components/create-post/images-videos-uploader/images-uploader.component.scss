@@ -68,31 +68,49 @@
     }
   }
 
-  .images-videos.single {
-    grid-template-columns: 1fr; /* Una sola columna */
+  /* Estilos para grids considerando el elemento "añadir más" */
+  .images-videos.single-with-add {
+    grid-template-columns: 1fr 1fr; /* Una columna para la imagen, otra para añadir más */
   }
   
-  .images-videos.two {
-    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  .images-videos.two-with-add {
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas, una para cada imagen y otra para añadir más */
   }
   
-  .images-videos.three {
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: 1fr 1fr;
-    // max-height: 250px; //poner cada image en div
+  .images-videos.three-with-add {
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: auto auto;
 
     .three {
       grid-column: 1 / 3;
       grid-row: 1 / 2;
     }
+    
+    /* El botón añadir más va en la tercera posición */
+    .add-more-tile {
+      grid-column: 2;
+      grid-row: 2;
+    }
   }
-  .images-videos.three img:nth-child(1) {
+  
+  .images-videos.three-with-add img:nth-child(1) {
     grid-row: span 2; /* Imagen más grande a la izquierda */
   }
   
-  .images-videos.four {
-    grid-template-columns: repeat(2, 1fr); /* Dos columnas iguales */
+  .images-videos.four-with-add {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
     
+    /* El botón añadir más va en la quinta posición */
+    .add-more-tile {
+      grid-column: 3;
+      grid-row: 2;
+    }
+  }
+  
+  .images-videos.more-with-add {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
   }
 
   .back-media {
@@ -110,5 +128,62 @@
 
   .back-media:hover {
     background-color: #EBECEE;
+  }
+  
+  /* Estilos para el contenedor de medios con botón de eliminar */
+  .media-container {
+    position: relative;
+    
+    .btn-delete-media {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      padding: 0;
+      z-index: 5;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+  
+  /* Estilos para el tile de "añadir más" */
+  .add-more-tile {
+    background-color: #f0f2f5;
+    border: 1px dashed #ccd0d5;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: #e4e6eb;
+    }
+    
+    .add-more-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      
+      i {
+        font-size: 28px;
+        color: #1877f2;
+        margin-bottom: 5px;
+      }
+    }
   }
 }
