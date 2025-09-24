@@ -112,22 +112,29 @@ export class CreatePostComponent implements OnInit, AfterViewInit {
   //Mostrar area de imagenes y deshabilitar el boton de cargar documentos
   showAreaMedia() {
     this.visibleAreaMedia.set(true);
+    
+    // Siempre deshabilitar la opción de documentos cuando se está trabajando con imágenes
     this.disableLoadDoc.set(true);
   }
 
   //Ocultar area de imagenes
   closeAreaMedia(option: boolean) {
     this.disableLoadDoc.set(option); //Habilitar el boton de cargar documentos
+    
+    // Actualizar estado del botón de publicar basado en el texto y la lista de archivos
     const contentPost = this.postForm.get('contentPost')?.value;
-    contentPost != '' ? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);//Deshabilitar el boton de publicar
-    this.listFile = [];//Limpiar la lista de imagenes
+    const hasMedia = this.listFile && this.listFile.length > 0;
+    this.disabledPublishButton.set(!(contentPost != '' || hasMedia));
+    
+    // Ya no limpiamos la lista de archivos para permitir acumular medios
   }
 
-  //Deshabilitar el boton de publicar si no hay imagenes
+  //Actualizar la lista de archivos y habilitar/deshabilitar el botón de publicar
   getFilesImagesPost(fileMedia: File[]) {
     this.listFile = fileMedia;
     const contentPost = this.postForm.get('contentPost')?.value;
-    contentPost != '' || this.listFile? this.disabledPublishButton.set(false) : this.disabledPublishButton.set(true);
+    // Habilitar el botón de publicar si hay texto o si hay archivos seleccionados
+    this.disabledPublishButton.set(!(contentPost != '' || (this.listFile && this.listFile.length > 0)));
   }
 
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
