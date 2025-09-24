@@ -25,7 +25,6 @@
       <ng-template #mostrarVideo>
         <video aria-labelledby="video-description" *ngIf="(i < 3 || mediaListPreview.length == 4) && media.url" [src]="media.url" controls [ngClass]="{'three': mediaListPreview.length == 3 && i === 0}">
           <track kind="captions" src="" default>
-          <p id="video-description">Video explicativo sobre [tema del video]</p>
         </video>
       </ng-template>
       <!-- Quinta imagen/video: Con superposición si hay más media -->
@@ -34,7 +33,6 @@
         <ng-template #mostrarVideo>
           <video [src]="media.url" controls aria-labelledby="video-description">
             <track kind="captions" src="" default>
-            <p id="video-description">Video explicativo sobre [tema del video]</p>
           </video>
         </ng-template>
         <div class="overlay">+{{ mediaListPreview.length - 4 }}</div>
