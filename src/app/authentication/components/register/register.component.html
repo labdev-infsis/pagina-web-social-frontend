@@ -17,18 +17,28 @@
             <!-- Name-->
             <div class="mb-3">
               <label for="name" class="form-label">Nombre</label>
-              <input type="text" class="form-control" [class.is-invalid]="hasErrors('name', 'required')" id="name" formControlName="name" />
+              <input type="text" class="form-control" 
+                     [class.is-invalid]="hasErrors('name', 'required') || hasCustomError('name', 'onlyLetters')" 
+                     id="name" formControlName="name" />
               <div class="invalid-feedback" *ngIf="hasErrors('name', 'required')">
                 Nombre requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="hasCustomError('name', 'onlyLetters')">
+                El nombre solo puede contener letras y espacios
               </div>
             </div>
 
             <!-- Last Name -->
             <div class="mb-3">
               <label for="lastName" class="form-label">Apellido</label>
-              <input type="text" class="form-control" [class.is-invalid]="hasErrors('lastName', 'required')" id="lastName" formControlName="lastName" />
+              <input type="text" class="form-control" 
+                     [class.is-invalid]="hasErrors('lastName', 'required') || hasCustomError('lastName', 'onlyLetters')" 
+                     id="lastName" formControlName="lastName" />
               <div class="invalid-feedback" *ngIf="hasErrors('lastName', 'required')">
                 Apellido requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="hasCustomError('lastName', 'onlyLetters')">
+                El apellido solo puede contener letras y espacios
               </div>
             </div>
 

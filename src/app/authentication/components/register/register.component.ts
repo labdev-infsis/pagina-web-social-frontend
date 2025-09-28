@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { NewUser } from '../../models/new-user';
 import { MessageService } from 'primeng/api';
@@ -30,13 +30,26 @@ export class RegisterComponent implements OnInit {
     this.buildForm();
   }
 
+  private onlyLettersValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value) {
+        return null;
+      }
+      
+      const lettersRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/;
+      
+      const valid = lettersRegex.test(control.value);
+      return valid ? null : { 'onlyLetters': { value: control.value } };
+    };
+  }
+
   private buildForm() {
     this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
+      name: ['', [Validators.required, this.onlyLettersValidator()]],
+      lastName: ['', [Validators.required, this.onlyLettersValidator()]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]], // ← Aquí está la validación
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]] // ← Y aquí también
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      repeat_password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     this.registerForm.valueChanges.subscribe(() => {
@@ -87,6 +100,11 @@ export class RegisterComponent implements OnInit {
   }
 
   hasErrors(controlName: string, errorType: string) {
+    const control = this.registerForm.get(controlName);
+    return control?.hasError(errorType) && control?.touched;
+  }
+
+  hasCustomError(controlName: string, errorType: string) {
     const control = this.registerForm.get(controlName);
     return control?.hasError(errorType) && control?.touched;
   }
