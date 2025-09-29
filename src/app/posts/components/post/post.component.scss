@@ -349,14 +349,13 @@ hr {
 
 .post-medias {
 	display: grid;
-	gap: 10px;
+	gap: 5px;
 	grid-template-columns: repeat(2, minmax(100px, 1fr));
 	overflow: hidden;
 	border-radius: 8px;
 	position: relative;
 	background-color: #ffffff;
 	margin: auto;
-	min-height: max-content;
 
 	.media-post {
 		width: 100%;
@@ -365,12 +364,14 @@ hr {
 		border-radius: 8px;
 		object-fit: cover;
 		border: 1px solid #ddd;
+		max-height: 500px;
 
 		video {
 			width: 100%;
-			min-height: 100%;
+			height: 100%;
 			border-radius: 8px;
 			border: 1px solid #ddd;
+			background: black;
 		}
 
 		img {
@@ -380,6 +381,7 @@ hr {
 			border-radius: 8px;
 			object-fit: cover;
 			border: 1px solid #ddd;
+			max-height: 500px;
 		}
 	}
 
@@ -440,12 +442,18 @@ hr {
 
 .post-medias.three img:nth-child(1) {
 	grid-row: span 2;
+	max-height: 220px;
 	/* Imagen más grande a la izquierda */
 }
 
 .post-medias.four {
 	grid-template-rows: repeat(2, 1fr);
 	/* Dos filas iguales */
+}
+
+.post-medias.four img:nth-child(1) {
+	grid-row: span 2;
+	max-height: 220px;
 }
 
 .post-medias {
