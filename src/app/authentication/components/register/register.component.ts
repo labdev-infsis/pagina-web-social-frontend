@@ -43,13 +43,30 @@ export class RegisterComponent implements OnInit {
     };
   }
 
+  private passwordValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value) {
+        return null;
+      }
+      
+      const value = control.value;
+      
+      // Verificar longitud
+      if (value.length < 8 || value.length > 20) {
+        return { 'passwordLength': { value: control.value } };
+      }
+      
+      return null;
+    };
+  }
+
   private buildForm() {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required, this.onlyLettersValidator()]],
       lastName: ['', [Validators.required, this.onlyLettersValidator()]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, this.passwordValidator()]],
+      repeat_password: ['', [Validators.required, this.passwordValidator()]]
     });
 
     this.registerForm.valueChanges.subscribe(() => {
