@@ -68,6 +68,10 @@ export class ModalEditPostComponent {
     })
     this.getTypeByRol()
     this.buildForm()
+    
+    // Inicializar listOldMediaFile con los medios existentes del post
+    this.listOldMediaFile = this.postToEdit.content.media ? [...this.postToEdit.content.media] : [];
+    
     //No deshabilitar boton Guardar si el post viene con info
     this.disabledSaveButton.set(!(this.postToEdit.content.text != '' || this.postToEdit.content.media.length > 0));
     if(this.postToEdit.content.media.length > 0)
@@ -150,6 +154,8 @@ export class ModalEditPostComponent {
   handleDocumentRemoved(removed: boolean) {
     if (removed) {
       this.documentWasRemoved = true;
+      // Remover el documento de listOldMediaFile si existe
+      this.listOldMediaFile = this.listOldMediaFile.filter(media => media.type !== 'document');
       // Habilitar el botón de guardar para que se pueda actualizar el post sin el documento
       this.disabledSaveButton.set(false);
     }
@@ -356,42 +362,24 @@ export class ModalEditPostComponent {
             console.log('Error al actualizar el post con archivo',error)
           }
         })      
-      }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
-        // Verificar si tenemos que preservar medios existentes o si se eliminaron deliberadamente
-        if(this.postToEdit.content.media && this.postToEdit.content.media.length > 0) {
-          // Si había un documento y fue eliminado, no lo preservamos
-          const hasDocument = this.postToEdit.content.media.some(media => media.type === 'document');
-          // Si había imágenes/videos y fueron eliminados, no los preservamos
-          const hasMediaImagesVideos = this.postToEdit.content.media.some(media => media.type !== 'document');
-          
-          if (hasDocument && this.documentWasRemoved) {
-            // Si hay un documento y fue eliminado, no lo preservamos
-            if (hasMediaImagesVideos && !this.mediaWasRemoved) {
-              // Si hay imágenes/videos y NO fueron eliminados, los preservamos
-              editedPost.content.media = this.postToEdit.content.media.filter(media => media.type !== 'document');
-            }
-            // Si ambos tipos fueron eliminados, no preservamos ninguno (media queda vacío)
-          } else if (hasMediaImagesVideos && this.mediaWasRemoved) {
-            // Si hay imágenes/videos y fueron eliminados, no los preservamos
-            if (hasDocument && !this.documentWasRemoved) {
-              // Si hay un documento y NO fue eliminado, lo preservamos
-              editedPost.content.media = this.postToEdit.content.media.filter(media => media.type === 'document');
-            }
-            // Si ambos tipos fueron eliminados, no preservamos ninguno (media queda vacío)
-          } else if (!this.documentWasRemoved && !this.mediaWasRemoved) {
-            // Si ningún tipo de media fue eliminado, preservamos todos
-            editedPost.content.media = this.postToEdit.content.media;
-          }
+      }else if(valueFormPost.contentPost != '' || this.mediaWasRemoved || this.documentWasRemoved){//Si solo tiene texto O si se eliminaron medios
+        // Usar directamente listOldMediaFile que ya contiene solo los medios que NO fueron eliminados
+        if(this.listOldMediaFile && this.listOldMediaFile.length > 0) {
+          // listOldMediaFile ya contiene solo los medios que deben preservarse
+          editedPost.content.media = [...this.listOldMediaFile];
+        } else {
+          // Si no hay medios en listOldMediaFile, significa que se eliminaron todos o no había ninguno
+          editedPost.content.media = [];
         }
 
         this.postService.updatePost(this.postToEdit.uuid, editedPost).subscribe({
           next: (responseUpdatedPost) => {
-            console.log('post de solo texto actualizado',responseUpdatedPost);
+            console.log('post actualizado',responseUpdatedPost);
             window.location.reload();
             // this.postUpdatedEvent.emit(responseUpdatedPost);
           },
           error: (error) => {
-            console.log('Error al actualizar post solo texto', error)
+            console.log('Error al actualizar post', error)
           }
         })
       }
