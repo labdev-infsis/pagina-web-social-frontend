@@ -30,6 +30,10 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(){
+    // Inicializar arrays para evitar referencias undefined
+    this.listFileMediaAdded = [];
+    this.mediaListPreviewAdded = [];
+    
     // Inicializar listFileMediaPost como un array vacío si no hay media en el post
     if(this.listMediaPost && this.listMediaPost.length > 0){
       this.listFileMediaPost = [...this.listMediaPost]; //Crear copia para no mutar original
@@ -93,13 +97,15 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
     
     if(valueMedia?.files && valueMedia.files.length >0 ){
       this.showPreviewMedia = true;
-      //Renderizar imagenes videos seleccionados
-      this.listFileMediaAdded = Array.from(valueMedia.files);
+      //Renderizar imagenes videos seleccionados - ACUMULAR en lugar de reemplazar
+      const newFiles = Array.from(valueMedia.files);
+      this.listFileMediaAdded = [...this.listFileMediaAdded, ...newFiles];
+      
       //Emitir al padre las images precargadas para habilitar el boton de publicar
       this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
-      this.loadOldFilesMediaEvent.emit(this.listMediaPost); //Enviar imagenes existentes antiguas
+      this.loadOldFilesMediaEvent.emit(this.listFileMediaPost); //Enviar imagenes existentes actualizadas (después de eliminaciones)
 
-      const newPreviews = this.listFileMediaAdded.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
+      const newPreviews = newFiles.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
       this.mediaListPreviewAdded = [...this.mediaListPreviewAdded, ...newPreviews];
     }
   }
