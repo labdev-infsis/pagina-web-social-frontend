@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
   public inputType: string = 'password';
   public confirmInputType: string = 'password';
   public passwordMismatch: boolean = false;
+  public isRegistering: boolean = false;
   public modal?: Modal | null;
 
   constructor(
@@ -88,6 +89,7 @@ export class RegisterComponent implements OnInit {
         next: (response) => {
           console.log('Usuario registrado:', response.message);
           this.showLoading();
+          this.isRegistering = true;
           setTimeout(() => {
             this.hideLoading();
             this.messageService.add({ 
@@ -98,12 +100,14 @@ export class RegisterComponent implements OnInit {
             });
           }, 2000);
           setTimeout(() => {
+            this.isRegistering = false;
             this.resetForm();
             this.closeModalRegister();
             this.showModalLogin();
           }, 5000);
         },
         error: (error) => {
+          this.isRegistering = false;
           console.log('Error al registrar', error);
           this.messageService.add({ 
             severity: 'error', 
@@ -171,6 +175,6 @@ export class RegisterComponent implements OnInit {
   }
 
   hideLoading() {
-    document.getElementById('loadingBackdrop')!.style.display = 'none';
+    document.getElementById('loadingBackdrop')!.style.setProperty("display","none","important");
   }
 }
