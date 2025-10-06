@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   authenticated: boolean = false;
+  canModerate: boolean = false; // Nueva propiedad
   institution!: Institution
   isMenuOpen = false;
   user: any
@@ -30,7 +31,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private postService: PostService,
     private commentService: CommentService
   ) {
-    this.authenticated = authService.isAuthenticated()
+    this.authenticated = authService.isAuthenticated();
+    this.canModerate = authService.canModerate();
   }
 
   ngOnInit() {
@@ -91,7 +93,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   createAccount() { }
 
   totalModeratedComments() {
-    if (this.authenticated) {
+    if (this.authenticated && this.canModerate) {
       this.commentService.countModeratedComments()
         .pipe(takeUntil(this.destroy$))
         .subscribe({

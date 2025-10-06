@@ -77,13 +77,28 @@ export class AuthService {
   }
 
   getRoles() {
-    let roles = localStorage.getItem('roles');
-    if (roles) {
-      return roles.split(',');
-    }
-    else {
+    const token = this.getToken();
+    if (!token) return [];
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Extraer roles del array en el payload
+      return payload.roles || [];
+    } catch (error) {
+      console.error("Error al extraer roles del token:", error);
       return [];
     }
+  }
+
+  // Verificar si el usuario tiene un rol específico
+  hasRole(role: string): boolean {
+    const roles = this.getRoles();
+    return roles.includes(role);
+  }
+
+  // Verificar si el usuario puede moderar (ADMIN o MODERATOR)
+  canModerate(): boolean {
+    return this.hasRole('ADMIN') || this.hasRole('MODERATOR');
   }
 
   tokenHasExpired() {

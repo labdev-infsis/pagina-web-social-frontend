@@ -10,7 +10,7 @@
 
   <div class="avatar-user">
   
-    @if (counterModeratedComments > 0) {
+    @if (counterModeratedComments > 0 && canModerate) {
     <div class="icon-up-number" (click)="showModeratedComments()">
       <img src="assets/moderate-messages.png" alt="Ícono mensajes para moderar" class="logo-small">
       <span class="number-up">{{ counterModeratedComments }}</span>
@@ -47,4 +47,4 @@
 
 <app-register></app-register>
 
-<app-moderate-comments *ngIf="authenticated" (counterUpdated)="onCounterUpdated($event)"></app-moderate-comments>
+<app-moderate-comments *ngIf="authenticated && canModerate" (counterUpdated)="onCounterUpdated($event)"></app-moderate-comments>
