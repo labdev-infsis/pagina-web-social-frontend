@@ -111,7 +111,7 @@
 
             <div class="d-grid gap-2">
               <p-toast/>
-              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || passwordMismatch || hasCustomError('password', 'passwordLength') || hasCustomError('repeat_password', 'passwordLength')">
+              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || passwordMismatch || hasCustomError('password', 'passwordLength') || hasCustomError('repeat_password', 'passwordLength') || isRegistering">
                 Registrarse
               </button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">
