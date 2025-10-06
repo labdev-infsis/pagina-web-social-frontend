@@ -22,6 +22,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   counterModeratedComments: number = 0;
 
   private destroy$ = new Subject<void>();
+  private modalInstance?: Modal; // Para gestionar el modal
 
   @ViewChild('moderateCommentModal') modalElement!: ElementRef;
 
@@ -39,6 +40,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // Limpiar modal si existe
+    if (this.modalInstance) {
+      this.modalInstance.dispose();
+      this.modalInstance = undefined;
+    }
+    
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -52,7 +59,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.institution = institutionData;
         },
         error: (error) => {
-          console.log(error);
+          // Error manejado silenciosamente
         }
       });
   }
@@ -87,16 +94,33 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.authenticated) {
       this.commentService.countModeratedComments()
         .pipe(takeUntil(this.destroy$))
-        .subscribe((total) => {
-          console.log(total);
-          this.counterModeratedComments = total;
+        .subscribe({
+          next: (total) => {
+            this.counterModeratedComments = total;
+          },
+          error: (error) => {
+            console.error('Error al obtener contador de comentarios:', error);
+          }
         });
     }
   }
 
   showModeratedComments() {
-    const modal = new Modal(document.getElementById('moderateCommentModal')!);
-    modal.show();
+    const modalElement = document.getElementById('moderateCommentModal');
+    if (modalElement) {
+      // Limpiar modal anterior si existe
+      if (this.modalInstance) {
+        this.modalInstance.dispose();
+      }
+      
+      // Crear nueva instancia del modal
+      this.modalInstance = new Modal(modalElement);
+      this.modalInstance.show();
+    }
+  }
+
+  onCounterUpdated(newCount: number) {
+    this.counterModeratedComments = newCount;
   }
 
 }

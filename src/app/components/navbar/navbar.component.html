@@ -47,4 +47,4 @@
 
 <app-register></app-register>
 
-<app-moderate-comments *ngIf="authenticated"></app-moderate-comments>
+<app-moderate-comments *ngIf="authenticated" (counterUpdated)="onCounterUpdated($event)"></app-moderate-comments>
