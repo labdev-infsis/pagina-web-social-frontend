@@ -59,7 +59,9 @@ export class CommentService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.put<Comment>(`${this.BASE_URL}/comments/moderated`, commentUuid, { headers });
+    const body = { uuid: commentUuid };
+
+    return this.http.put<Comment>(`${this.BASE_URL}/comments/approve`, body, { headers });
   }
 
   // Rechazar un comentario moderado
@@ -93,7 +95,9 @@ export class CommentService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.put<Comment>(`${this.BASE_URL}/comments/delete`, commentUuid, { headers });
+    const body = { uuid: commentUuid };
+
+    return this.http.put<Comment>(`${this.BASE_URL}/comments/delete`, body, { headers });
   }
 
   // Obtener cantidad de commentarios para moderar

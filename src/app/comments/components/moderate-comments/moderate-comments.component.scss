@@ -126,3 +126,53 @@
 		}
 	}
 }
+
+// Estilos para el estado vacío
+.empty-state {
+	padding: 2rem 1rem;
+	
+	i {
+		opacity: 0.4;
+		margin-bottom: 1rem;
+	}
+	
+	h5 {
+		color: var(--blue-color);
+		font-family: var(--secondary-font);
+		margin-bottom: 0.5rem;
+	}
+	
+	p {
+		font-family: var(--primary-font);
+		color: #6c757d;
+		margin-bottom: 0.25rem;
+	}
+	
+	small {
+		font-family: var(--primary-font);
+		color: #6c757d;
+		font-style: italic;
+	}
+}
+
+// Estilos para el header info
+.header-info {
+	border-bottom: 1px solid #e9ecef;
+	margin-bottom: 1rem;
+	
+	h6 {
+		color: var(--blue-color);
+		font-family: var(--secondary-font);
+		font-weight: 600;
+		
+		.text-muted {
+			color: #6c757d !important;
+			font-weight: 400;
+		}
+	}
+}
+
+// Estilos para el estado de carga
+.spinner-border-sm {
+	color: var(--blue-color);
+}
