@@ -19,13 +19,12 @@ export class RegisterComponent implements OnInit {
   public confirmInputType: string = 'password';
   public passwordMismatch: boolean = false;
   public isRegistering: boolean = false;
-  public modal?: Modal | null;
 
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService,
     private readonly messageService: MessageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
@@ -33,46 +32,33 @@ export class RegisterComponent implements OnInit {
 
   private onlyLettersValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      if (!control.value) {
-        return null;
-      }
-      
+      if (!control.value) return null;
       const lettersRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/;
-      
-      const valid = lettersRegex.test(control.value);
-      return valid ? null : { 'onlyLetters': { value: control.value } };
+      return lettersRegex.test(control.value) ? null : { 'onlyLetters': true };
     };
   }
 
   private passwordValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      if (!control.value) {
-        return null;
-      }
-      
       const value = control.value;
-      
-      // Verificar longitud
+      if (!value) return null;
       if (value.length < 8 || value.length > 20) {
-        return { 'passwordLength': { value: control.value } };
+        return { 'passwordLength': true };
       }
-      
       return null;
     };
   }
 
   private buildForm() {
     this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required, this.onlyLettersValidator()]],
-      lastName: ['', [Validators.required, this.onlyLettersValidator()]],
+      name: ['', [Validators.required, Validators.minLength(3), this.onlyLettersValidator()]],
+      lastName: ['', [Validators.required, Validators.minLength(3), this.onlyLettersValidator()]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, this.passwordValidator()]],
       repeat_password: ['', [Validators.required, this.passwordValidator()]]
     });
 
-    this.registerForm.valueChanges.subscribe(() => {
-      this.checkPasswordMatch();
-    });
+    this.registerForm.valueChanges.subscribe(() => this.checkPasswordMatch());
   }
 
   private checkPasswordMatch() {
@@ -84,19 +70,18 @@ export class RegisterComponent implements OnInit {
   register() {
     if (this.registerForm.valid && !this.passwordMismatch) {
       const newUser: NewUser = this.registerForm.value;
-      
+
       this.authService.register(newUser).subscribe({
-        next: (response) => {
-          console.log('Usuario registrado:', response.message);
+        next: () => {
           this.showLoading();
           this.isRegistering = true;
           setTimeout(() => {
             this.hideLoading();
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Registro exitoso', 
-              detail: 'El usuario ha sido registrado con éxito. Inicie sesión', 
-              sticky: true 
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Registro exitoso',
+              detail: 'El usuario ha sido registrado con éxito. Inicie sesión',
+              sticky: true
             });
           }, 2000);
           setTimeout(() => {
@@ -108,13 +93,36 @@ export class RegisterComponent implements OnInit {
         },
         error: (error) => {
           this.isRegistering = false;
-          console.log('Error al registrar', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'Error al registrar', 
-            detail: 'Inténtelo más tarde.', 
-            sticky: true 
+          console.error('Error al registrar', error);
+
+          const backendMessage = error?.error?.message || error?.error?.detail || 'Inténtelo más tarde.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error al registrar',
+            detail: backendMessage,
+            sticky: true
           });
+
+          if (backendMessage.toLowerCase().includes('already registered') ||
+              backendMessage.toLowerCase().includes('ya registrado') ||
+              backendMessage.toLowerCase().includes('email exists')) {
+            const emailControl = this.registerForm.get('email');
+            if (emailControl) {
+              emailControl.setErrors({ backend: 'Este correo ya está registrado' });
+              emailControl.markAsTouched();
+            }
+          }
+
+          if (error?.error?.errors) {
+            const fieldErrors = error.error.errors;
+            Object.keys(fieldErrors).forEach(field => {
+              const control = this.registerForm.get(field);
+              if (control) {
+                control.setErrors({ backend: fieldErrors[field][0] });
+                control.markAsTouched();
+              }
+            });
+          }
         }
       });
     }
@@ -128,6 +136,16 @@ export class RegisterComponent implements OnInit {
   hasCustomError(controlName: string, errorType: string) {
     const control = this.registerForm.get(controlName);
     return control?.hasError(errorType) && control?.touched;
+  }
+
+  hasBackendError(controlName: string): boolean {
+    const control = this.registerForm.get(controlName);
+    return !!control?.errors?.['backend'];
+  }
+
+  getBackendError(controlName: string): string {
+    const control = this.registerForm.get(controlName);
+    return control?.errors?.['backend'] || '';
   }
 
   togglePasswordVisibility() {
@@ -151,13 +169,11 @@ export class RegisterComponent implements OnInit {
 
   closeModalRegister() {
     const modalRegister = document.getElementById('registerModal') as HTMLElement;
-    let modal = Modal.getInstance(modalRegister);
+    const modal = Modal.getInstance(modalRegister);
     modal?.hide();
     setTimeout(() => {
       const backdrop = document.querySelector('.modal-backdrop');
-      if (backdrop) {
-        backdrop.remove();
-      }
+      if (backdrop) backdrop.remove();
       document.body.classList.remove('modal-open');
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
@@ -166,7 +182,7 @@ export class RegisterComponent implements OnInit {
 
   showModalLogin() {
     const modalLogin = document.getElementById('loginModal') as HTMLElement;
-    let modal = new Modal(modalLogin);
+    const modal = new Modal(modalLogin);
     modal?.show();
   }
 
@@ -175,6 +191,6 @@ export class RegisterComponent implements OnInit {
   }
 
   hideLoading() {
-    document.getElementById('loadingBackdrop')!.style.setProperty("display","none","important");
+    document.getElementById('loadingBackdrop')!.style.setProperty('display', 'none', 'important');
   }
 }
