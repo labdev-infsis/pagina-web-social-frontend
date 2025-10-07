@@ -22,6 +22,11 @@
     position: relative;
 }
 
+input[type=password]::-ms-reveal,
+input[type=password]::-ms-clear {
+    display: none;    
+}
+
 input {
     border: 1px solid var(--blue-color);
 }
