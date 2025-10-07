@@ -55,8 +55,28 @@ export class ImagesUploaderComponent implements OnChanges {
     if (!files || files.length === 0) {
       return;
     }
+
+    if(files && !this.isValidFileType(files)){
+      alert('Por favor, seleccione solo imágenes o videos');
+       if (event.target instanceof HTMLInputElement) {
+        event.target.files = new DataTransfer().files; // Limpiar el input
+      }
+    
+      // Resetear estado
+      this.showPreviewMedia = false;
+      this.mediaListPreview = [];
+      this.listFileMedia = [];
+      return;
+    }
     
     this.processMediaFiles(files, event);
+  }
+
+  private isValidFileType(files: File[]): boolean {
+    return files.every(file => {
+      const fileType = file.type;
+      return fileType.startsWith('image/') || fileType.startsWith('video/');
+    });
   }
 
   private getFilesFromEvent(event: Event | DragEvent): File[] | null {

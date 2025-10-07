@@ -11,7 +11,8 @@ export class DocumentUploaderComponent implements OnChanges {
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadFileDoc = new EventEmitter<File>(); 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  
+  public readonly SIZE = 100;
+  private readonly MAX_FILE_SIZE = this.SIZE * 1024 * 1024; // 100MB en bytes
   showPreviewDoc = false;
   fileDoc!: File; //El doc que se selecciona para crear post
   typesDocs = {
@@ -31,10 +32,35 @@ export class DocumentUploaderComponent implements OnChanges {
   changeInputMediaDoc(event: Event){
     if(event.target instanceof HTMLInputElement && event.target.files && event.target.files.length > 0){
       this.fileDoc = event.target.files[0];
+
+      // Validar tipo archivo pdf
+      if(this.fileDoc && !this.isValidFileType(this.fileDoc.type)){
+        alert('Por favor, seleccione un documento tipo PDF');
+        //Limpiar el input file
+        event.target.files = new DataTransfer().files;
+        return;
+      }
+
+      // Validar tamaño de archivo
+      if(this.fileDoc && !this.isValidFileSize(this.fileDoc.size)){
+        alert(`El archivo es demasiado grande. Máximo permitido: ${this.SIZE}MB.`);
+        //Limpiar el input file
+        event.target.files = new DataTransfer().files;
+        return;
+      }
+
       this.fileType = this.getTypeFile(this.fileDoc.type);
       this.showPreviewDoc = true;
       this.loadFileDoc.emit(this.fileDoc);
     }
+  }
+
+  private isValidFileType(type: string): boolean {
+    return type.includes('pdf');
+  }
+
+  private isValidFileSize(size: number): boolean {
+    return size <= this.MAX_FILE_SIZE;
   }
 
   getTypeFile(type: string){
