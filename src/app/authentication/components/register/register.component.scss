@@ -91,6 +91,33 @@
   display: none !important;
 }
 
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+input[type="password"]::-moz-textfield-decoration {
+  display: none;
+}
+
+.input-password .is-invalid ~ .eye {
+  display: none;
+}
+
+.invalid-feedback {
+  min-height: 20px;
+  margin-top: 0.25rem;
+}
+
 @media (max-width: 576px) {
   .botones {
     min-width: 100%;
