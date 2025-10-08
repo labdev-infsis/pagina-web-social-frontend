@@ -168,9 +168,20 @@ $font-size-large: 1.2rem;
 // Carousel styles
 .carousel-inner > .carousel-item > img,
 .carousel-inner > .carousel-item > video {
-  width: 75%;
-  height: auto;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+}
+
+.carousel-item {
+  width: fit-content;
+  height: 390px;
+  margin: 0;
+}
+
+.carousel-inner {
+  display: flex;
+  justify-content: center;
 }
 
 .carousel-control-prev-icon,
