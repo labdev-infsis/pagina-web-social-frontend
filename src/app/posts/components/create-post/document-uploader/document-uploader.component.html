@@ -3,7 +3,7 @@
   <button type="button" class="btn-close m-0" aria-label="Close" (click)="closeCleanPreviewDoc()"></button>
   <div class="back-doc d-flex flex-column px-3 py-3" *ngIf="!showPreviewDoc">
     <span>Subir un archivo</span>
-    <p>Los archivos deben ocupar un máximo de 100MB</p>
+    <p>Los archivos deben ocupar un máximo de {{SIZE}}MB</p>
     <button type="button" class="btn" (click)="openInputFileDoc()">Elegir archivo</button>
   </div>
 
