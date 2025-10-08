@@ -29,7 +29,7 @@
                 <div class="carousel-inner image-box text-center">
                   <div *ngFor="let image of postImages; let i = index" class="carousel-item" [ngClass]="{ 'active': i === initialImageIndex }">
                     <ng-container *ngIf="image.type.includes('image')">
-                      <img [src]="image.path" class="object-fit-scale" alt="" />
+                      <img [src]="image.path" class="" alt="" />
                     </ng-container>
                     <ng-container *ngIf="image.type.includes('video')">
                       <video [src]="image.path" controls class="video"></video>
