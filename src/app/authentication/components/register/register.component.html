@@ -69,11 +69,10 @@
                     <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
                   </svg>
                 </div>
-
-                <div class="invalid-feedback" *ngIf="hasErrors('password', 'required')">Contraseña requerida</div>
-                <div class="invalid-feedback" *ngIf="hasCustomError('password', 'passwordLength')">La contraseña debe tener entre 8 y 20 caracteres</div>
-                <div class="invalid-feedback" *ngIf="hasBackendError('password')">{{ getBackendError('password') }}</div>
               </div>
+              <div class="invalid-feedback" *ngIf="hasErrors('password', 'required')">Contraseña requerida</div>
+              <div class="invalid-feedback" *ngIf="hasCustomError('password', 'passwordLength')">La contraseña debe tener entre 8 y 20 caracteres</div>
+              <div class="invalid-feedback" *ngIf="hasBackendError('password')">{{ getBackendError('password') }}</div>
             </div>
 
             <!-- Confirm Password -->
@@ -93,12 +92,11 @@
                     <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
                   </svg>
                 </div>
-
-                <div class="invalid-feedback" *ngIf="hasErrors('repeat_password', 'required')">Confirmación requerida</div>
-                <div class="invalid-feedback" *ngIf="hasCustomError('repeat_password', 'passwordLength')">La confirmación debe tener entre 8 y 20 caracteres</div>
-                <div class="invalid-feedback" *ngIf="passwordMismatch">Las contraseñas no coinciden</div>
-                <div class="invalid-feedback" *ngIf="hasBackendError('repeat_password')">{{ getBackendError('repeat_password') }}</div>
-              </div>
+              </div>              
+              <div class="invalid-feedback" *ngIf="hasErrors('repeat_password', 'required')">Confirmación requerida</div>
+              <div class="invalid-feedback" *ngIf="hasCustomError('repeat_password', 'passwordLength')">La confirmación debe tener entre 8 y 20 caracteres</div>
+              <div class="invalid-feedback" *ngIf="passwordMismatch">Las contraseñas no coinciden</div>
+              <div class="invalid-feedback" *ngIf="hasBackendError('repeat_password')">{{ getBackendError('repeat_password') }}</div>
             </div>
 
             <div class="d-grid gap-2">

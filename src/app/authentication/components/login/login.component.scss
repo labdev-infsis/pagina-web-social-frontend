@@ -20,6 +20,21 @@
 
 .input-password {
     position: relative;
+
+    .bi {
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        color: #9FB0E7; 
+        transform: translateY(-150%);
+    }
+
+    .is-invalid ~ .eye {
+        .bi {
+            right: 35px;
+            color: var(--red-color);
+        }
+    }
 }
 
 input[type=password]::-ms-reveal,
@@ -33,15 +48,6 @@ input {
 
 .is-invalid  ~ .invalid-feedback{
     color: var(--red-color);
-}
-
-.bi {
-    cursor: pointer;
-    position: absolute;
-    right: 10px; //35px is-invalid
-    color: #9FB0E7; 
-    transform: translateY(-150%);
-    transition: .4s ease all;
 }
 
 .bi:hover {
