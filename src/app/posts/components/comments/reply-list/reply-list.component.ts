@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import moment from 'moment-timezone';
+import { momentCalculateTimeFromNow } from '../../../../shared/date.utils';
 import { PostService } from '../../../services/post.service';
 import { EmojiType } from '../../../models/emoji-type';
 import { AuthService } from '../../../../authentication/services/auth.service';
@@ -153,8 +153,7 @@ export class ReplyListComponent {
 
   // Calcula el tiempo desde la fecha
   calculateTimeFromNow(date: string): string {
-    let commentDate = moment(date,'YYYY-MM-DDTHH:mm:ss.SSS');
-    return commentDate.fromNow();
+    return momentCalculateTimeFromNow(date);
   }
   openReplyReactionsModal(replyUuid: string) {
     this.postService.getReplyReactions(replyUuid).subscribe(reactions => {
