@@ -3,6 +3,7 @@ import { CommentService } from '../../../comments/services/comment.service';
 import { AuthService } from '../../../authentication/services/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { momentCalculateTimeFromNow } from '../../../shared/date.utils';
 
 @Component({
   selector: 'app-moderate-comments',
@@ -135,6 +136,11 @@ export class ModerateCommentsComponent implements OnInit, OnDestroy {
 
   onButtonDeleteComment(uuid: string) {
     this.deleteModeratedComment(uuid);
+  }
+
+  // Formatea la fecha relativa
+  formatCommentDate(date: string): string {
+    return momentCalculateTimeFromNow(date);
   }
 
   // Método para refrescar el contador después de acciones
