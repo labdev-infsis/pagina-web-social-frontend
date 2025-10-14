@@ -1,0 +1,446 @@
+.reply-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 500;
+  color: #65676b;
+
+  padding: 6px 12px;
+  border-radius: 16px;
+  transition: all 0.25s ease;
+
+  i {
+    font-size: 14px;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    background: rgba(24, 119, 242, 0.12);
+    color: #1877f2;
+
+    i {
+      transform: scale(1.2);
+      color: #1877f2;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.reply-input-container {
+  display: flex;
+  align-items: center;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 8px;
+  width: 100%;
+}
+.reply-input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  padding: 5px;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+.send-reply-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #65676b;
+  margin-left: 8px;
+
+  &:hover {
+    color: #1877f2;
+  }
+}
+
+.send-reply-btn:hover {
+  background-color: #1659c7;
+}
+.reply-time {
+  font-size: 12px;
+  color: #6c757d;  // Color gris claro para que no resalte demasiado
+  display: block;
+  margin-top: 4px;  // Espacio pequeño arriba para que no quede pegado al contenido
+  text-align: right; // Alinear a la derecha para que quede más ordenado
+}
+
+
+.view-more-replies:hover, .view-less-replies:hover {
+  color: #0056b3;
+}
+.reply-wrapper {
+  margin-bottom: 14px; // Ajusta a tu gusto: 12px, 16px, etc.
+}
+
+/* Puedes agregar esto a tu archivo de estilos del componente */
+.comment-row {
+  margin-bottom: 12px;
+}
+
+.comment-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 2px;
+}
+
+.comment-bubble {
+  background: #f0f2f5;
+  border-radius: 18px;
+  padding: 8px 14px;
+  max-width: 500px;
+  min-width: 120px;
+  box-shadow: none;
+  display: inline-block;
+}
+
+.comment-actions {
+  font-size: 13px;
+  color: #65676b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.like-btn, .reply-btn {
+  background: none;
+  border: none;
+  color: #65676b;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.like-btn:hover, .reply-btn:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor de la respuesta */
+.reply-row {
+  position: relative;
+  margin-left: 40px; /* Espacio para la línea vertical */
+}
+
+/* Línea vertical que conecta los avatares */
+.vertical-line {
+  position: absolute;
+  left: 17px; /* Centrado respecto al avatar */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #d3d6db; /* Color gris claro */
+  z-index: 0;
+}
+
+/* Avatar de la respuesta */
+.reply-img {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Contenido de la respuesta */
+.reply-content {
+  background: #f0f2f5;
+  border-radius: 12px;
+  padding: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 14px;
+  color: #333;
+}
+
+
+
+/* Tiempo de la respuesta */
+.reply-time {
+  font-size: 12px;
+  color: #65676b;
+  margin-top: 5px;
+}
+
+/* Botón de responder */
+.reply-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.reply-btn:hover {
+  text-decoration: underline;
+}
+
+
+.reply-wrapper {
+  position: relative;
+  margin-left: 30px; // Espacio para la línea
+  padding-left: 20px; // Espacio adicional para el avatar
+  
+  // Línea horizontal que conecta con la vertical
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20px; // Centrado verticalmente con el avatar
+    width: 20px;
+    height: 2px;
+    background-color: #d3d6db;
+    z-index: 0;
+  }
+}
+
+.like-btn, .reply-btn {
+  background: none;
+  border: none;
+  color: #65676b;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.like-btn:hover, .reply-btn:hover {
+  text-decoration: underline;
+}
+
+.reply-time {
+  font-size: 12px;
+  color: #65676b;
+}
+
+.view-more-replies, .view-less-replies {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 4px 0;
+  display: block;
+  margin-top: 4px;
+}
+
+.view-more-replies:hover, .view-less-replies:hover {
+  color: #0056b3;
+}
+/* Estilos mejorados para la conexión entre avatares */
+.comment-box {
+  position: relative;
+  padding-bottom: 8px;
+
+  &:has(.replies) {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 25px; /* Alineado con el centro del avatar */
+      top: 48px; /* Comienza al final del avatar del comentario */
+      bottom: calc(100% - 48px - 20px); /* Termina antes del botón */
+      width: 2px;
+      background-color: #d3d6db;
+      z-index: 0;
+    }
+  }
+}
+
+/* Contenedor para alinear el botón a la derecha */
+.view-more-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 15px;
+  margin-top: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.view-more-replies, .view-less-replies {
+  background: none;
+  border: none;
+  color: #65676b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #f0f2f5;
+    text-decoration: none;
+  }
+}
+
+/* Ajuste fino para los avatares */
+.comment-img, .reply-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid white; /* Para que cubra la línea */
+  box-sizing: content-box;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Modifica el contenedor de comentarios para controlar la línea */
+.comment-box {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 25px;
+    top: 50px;
+    /* La altura ahora se calcula dinámicamente */
+    height: calc(100% - 60px); /* Ajusta este valor según necesites */
+    width: 2px;
+    background-color: #d3d6db;
+    z-index: 0;
+    display: none;
+  }
+
+  &:has(.replies)::before {
+    display: block;
+  }
+
+  /* Asegura que la línea no pase por el botón "Ver más respuestas" */
+  .replies {
+    position: relative;
+    
+    .view-more-replies, .view-less-replies {
+      position: relative;
+      z-index: 2; /* Coloca el botón sobre la línea */
+      background-color: white; /* Fondo sólido para tapar la línea */
+      padding-left: 5px;
+      margin-left: -5px;
+    }
+  }
+}
+
+/* Ajusta el margen izquierdo principal de las respuestas */
+.replies {
+  margin-left: 0 !important;  /* Reducido de 30px a 16px */
+  padding-left: 0;
+  border-left: none;
+}
+
+/* Ajusta cada respuesta individual */
+.reply-wrapper {
+  margin-left: 16px !important;  /* Igual que .replies para consistencia */
+  padding-left: 12px;           /* Reducido de 20px */
+}
+
+.reply-wrapper::before {
+  left: -1px;
+  width: 80px;
+}
+
+/* Stilos de reacciones a comentarios */
+.fb-reaction-btn-wrapper {
+  position: relative;
+  display: inline-block;
+
+  .fb-reaction-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: none;
+    font-weight: 600;
+    font-size: 15px;
+    color: #606770;
+    cursor: pointer;
+    padding: 2px 10px;
+    border-radius: 18px;
+    transition: background 0.2s;
+    z-index: 2;
+    position: relative;
+    .emoji {
+      font-size: 20px;
+    }
+    &.default {
+      color: #606770;
+      i { color: #606770; font-size: 18px; }
+    }
+    &.thumbs-up {
+      color: #1877f2;
+      .emoji { font-size: 20px; }
+    }
+    &.red-heart {
+      color: #f02849;
+      .emoji { font-size: 20px; }
+    }
+    &.crying-face {
+      color: #eaa823;
+      .emoji { font-size: 20px; }
+    }
+    &.angry-face {
+      color: #dd6b0e;
+      .emoji { font-size: 20px; }
+    }
+    &.grinning-squinting-face {
+      color: #f7b928;
+      .emoji { font-size: 20px; }
+    }
+    &.astonished-face {
+      color: #f0b90b;
+      .emoji { font-size: 20px; }
+    }
+    &:hover {
+      background: #f0f2f5;
+    }
+  }
+
+  .fb-emoji-options {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    padding: 6px 12px;
+    z-index: 10;
+    min-height: 40px;
+    pointer-events: auto;
+    margin-top: 0; // <-- Asegúrate de esto
+    .emoji-option {
+      font-size: 26px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      &:hover {
+        transform: scale(1.3);
+      }
+    }
+  }
+}
+
+.reply-reactions-count {
+  margin-left: auto; 
+  color: #606770;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  .icon {
+    margin-left: 3px;
+    font-size: 16px;
+  }
+}

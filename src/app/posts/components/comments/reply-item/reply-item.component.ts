@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { momentCalculateTimeFromNow } from '../../../../shared/date.utils';
 
 @Component({
   selector: 'app-reply-item',
@@ -19,8 +20,7 @@ export class ReplyItemComponent {
   @Output() showLessReplies = new EventEmitter<any>();
 
   calculateTimeFromNow(date: string) {
-    // Implementa tu lógica de tiempo aquí
-    return '';
+    return momentCalculateTimeFromNow(date);
   }
 
   onToggleReplyInput(uuid: string) {

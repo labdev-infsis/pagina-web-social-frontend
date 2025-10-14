@@ -9,6 +9,10 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 
+// Quill styles editor de texto 
+@import "../node_modules/quill/dist/quill.core.css";
+@import "../node_modules/quill/dist/quill.snow.css";
+
 :root {
 	--main-width: 1440px;
 	--nav-width: 1020px;
@@ -73,4 +77,54 @@ div.p-toast.p-component {
 		}
 	}
 
+}
+
+.section-content {
+	position: relative;
+	
+	.content {
+		display: flex;
+		gap: 5px;
+		h3 {
+			height: 30px;
+			align-content: center;
+		}
+		.text {
+			white-space: pre-wrap;
+			word-wrap: break-word; 
+			word-break: normal; 
+			min-width: 100%; 
+			text-align: justify;
+			p {
+
+				text-align: justify;
+				white-space: wrap;
+			}
+			ul {
+				text-align: start;
+			}
+		}
+	}
+}
+.edit-info {
+	cursor: pointer;
+	width: 30px; 
+	height: 30px; 
+	flex-shrink: 0;
+	border-radius: 50%; 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+	
+	&:hover {
+		background-color: #F2F2F2;
+	}
+}
+
+.media {
+	position: absolute;
+	top: 0;
+  	right: 0;
+  	background-color: white;
 }

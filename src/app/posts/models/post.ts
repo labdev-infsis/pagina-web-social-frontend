@@ -7,6 +7,7 @@ export interface Post {
     institution_id:    string;
     user_id:           string;
     comment_config_id: string;
+    post_type: string;
     date:              string;
     content:           Content;
     reactions:         Reactions;

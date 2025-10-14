@@ -11,6 +11,9 @@ import { UploadedMedia } from '../../models/uploaded-media';
 import { UploadedDocument } from '../../models/uploaded-document';
 import { FbUploadedMedia } from '../../models/fb-uploaded-media';
 import { Modal } from 'bootstrap';
+import { UserDetail } from '../../models/user-detail';
+import { faL } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-modal-edit-post',
@@ -36,6 +39,11 @@ export class ModalEditPostComponent {
   listOldMediaFile!: Media[]; //Lista de media editada que existe en el post
   fileDoc!: File;  //Doc añadido en edicion
   fbMediaResponse!: FbUploadedMedia;
+  currentUser!: UserDetail;
+  currentPostType!: string;
+  isAuthenticated: boolean = false;
+  documentWasRemoved: boolean = false; // Bandera para rastrear si el documento fue eliminado
+  mediaWasRemoved: boolean = false; // Bandera para rastrear si las imágenes/videos fueron eliminados
   typeMedia = {
     img_vid : 'images-videos',
     doc: 'document'
@@ -43,7 +51,8 @@ export class ModalEditPostComponent {
 
   constructor(
       private postService: PostService,
-      private formBuilder: FormBuilder
+      private formBuilder: FormBuilder,
+      private readonly authService: AuthService
   ){}
 
   ngOnInit(){
@@ -57,7 +66,12 @@ export class ModalEditPostComponent {
         console.log('Error al obtener la configuracion de comentarios', error)
       }
     })
+    this.getTypeByRol()
     this.buildForm()
+    
+    // Inicializar listOldMediaFile con los medios existentes del post
+    this.listOldMediaFile = this.postToEdit.content.media ? [...this.postToEdit.content.media] : [];
+    
     //No deshabilitar boton Guardar si el post viene con info
     this.disabledSaveButton.set(!(this.postToEdit.content.text != '' || this.postToEdit.content.media.length > 0));
     if(this.postToEdit.content.media.length > 0)
@@ -100,8 +114,15 @@ export class ModalEditPostComponent {
 
   //Establecer imagenes-videos ya existentes y Deshabilitar el boton de guardar si no hay imagenes
   setFilesMediaPostOld(fileMedia: Media[]){
-    this.listOldMediaFile = fileMedia;
-    this.listOldMediaFile ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+    // Asignar fileMedia o un array vacío si es undefined
+    this.listOldMediaFile = fileMedia || [];
+    // Solo deshabilitar el botón si hay elementos en el array
+    if (this.listOldMediaFile && this.listOldMediaFile.length > 0) {
+      this.disabledSaveButton.set(false);
+    } else if (this.postForm.get('contentPost')?.value === '') {
+      // Si no hay media ni texto, deshabilitar el botón
+      this.disabledSaveButton.set(true);
+    }
   }
   
   //Mostrar area de documentos y deshabilitar el boton de cargar imagenes
@@ -121,20 +142,50 @@ export class ModalEditPostComponent {
   //Establecer el Doc editado y Deshabilitar el boton de guardar si no hay archivo
   setFileDocPostAdded(doc: File){
     this.fileDoc = doc;
-    this.fileDoc ? this.disabledSaveButton.set(false) : this.disabledSaveButton.set(true);
+    // Asegurarse de que el tamaño del archivo sea mayor que 0
+    if (this.fileDoc && this.fileDoc.size > 0) {
+      this.disabledSaveButton.set(false);
+    } else {
+      this.disabledSaveButton.set(true);
+    }
+  }
+  
+  // Método para manejar la eliminación de un documento
+  handleDocumentRemoved(removed: boolean) {
+    if (removed) {
+      this.documentWasRemoved = true;
+      // Remover el documento de listOldMediaFile si existe
+      this.listOldMediaFile = this.listOldMediaFile.filter(media => media.type !== 'document');
+      // Habilitar el botón de guardar para que se pueda actualizar el post sin el documento
+      this.disabledSaveButton.set(false);
+    }
+  }
+  
+  // Método para manejar la eliminación de imágenes/videos
+  handleMediaRemoved(removed: boolean) {
+    if (removed) {
+      this.mediaWasRemoved = true;
+      // Habilitar el botón de guardar para que se pueda actualizar el post sin las imágenes/videos
+      this.disabledSaveButton.set(false);
+    }
   }
 
   sendMedia(type: string){
+    // Verificar si el post tiene contenido media
+    if (!this.postToEdit.content.media || this.postToEdit.content.media.length === 0) {
+      return []; // Retornar un array vacío si no hay media
+    }
+    
     if(type == this.typeMedia.img_vid){
       if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type != 'document')
         return this.postToEdit.content.media;
       else
-        return undefined;
+        return []; // Retornar un array vacío en lugar de undefined
     }else{
       if(this.postToEdit.content.media.length > 0 && this.postToEdit.content.media[0].type == 'document')
         return this.postToEdit.content.media;
       else
-        return undefined;
+        return []; // Retornar un array vacío en lugar de undefined
     }
   }
 
@@ -170,6 +221,36 @@ export class ModalEditPostComponent {
       }, 10);
     }
   }
+
+  getTypeByRol() {
+    this.isAuthenticated = this.authService.isAuthenticated();
+    if (this.isAuthenticated) {
+        this.postService.getUser().subscribe({
+        next:(user: UserDetail) => {
+          this.currentUser = user;
+          
+          this.currentPostType = this.determinePostType(this.currentUser.role);
+          
+        },
+        error:(error) => {
+          console.error('Error al obtener el usuario actual', error);
+          }
+        });
+    } 
+  }
+
+  private determinePostType(role: string): string {
+    switch (role) {
+      case 'ADMIN_BECAS':
+        return 'BECAS';
+      case 'ADMIN_CONVENIOS':
+        return 'CONVENIOS';
+      case 'ADMIN_PROYECTOS':
+        return 'PROYECTOS';
+      default:
+        return 'GENERAL';
+    }
+  }
   
   updatePost(){
     const valueFormPost = this.postForm.value;
@@ -181,11 +262,13 @@ export class ModalEditPostComponent {
       institution_id: this.institution.uuid,
       date: this.postToEdit.date,
       comment_config_id: this.selectedCommentConfig,
+      post_type: this.currentPostType,
       content: {
         text: valueFormPost.contentPost,
         media: []
       },
-      is_fb_posted: false
+      is_fb_posted: false,
+      fb_post_enable: false
     }
 
     //Si hay info para postear (texto, imagen o video, documento)
@@ -224,7 +307,8 @@ export class ModalEditPostComponent {
             });
 
             //Añadir las imagenes que ya habian en el post
-            editedPost.content.media = this.listOldMediaFile;
+            // Inicializar como array vacío si listOldMediaFile es undefined
+            editedPost.content.media = this.listOldMediaFile || [];
 
             //Añadir las nuevas medias que se agregaron
             Array.from(responseMedia).forEach((newMedia) => {
@@ -259,8 +343,13 @@ export class ModalEditPostComponent {
               fb_media_id: ''
             }
 
-            editedPost.content.media?.push(responseDoc)
+            if (!editedPost.content.media) {
+              editedPost.content.media = [];
+            }
+            
+            editedPost.content.media.push(responseDoc);
             editedPost.is_fb_posted = false;
+            editedPost.fb_post_enable = false;
             return this.postService.updatePost(this.postToEdit.uuid, editedPost);
           })
         ).subscribe({
@@ -273,16 +362,24 @@ export class ModalEditPostComponent {
             console.log('Error al actualizar el post con archivo',error)
           }
         })      
-      }else if(valueFormPost.contentPost != ''){//Si solo tiene texto
+      }else if(valueFormPost.contentPost != '' || this.mediaWasRemoved || this.documentWasRemoved){//Si solo tiene texto O si se eliminaron medios
+        // Usar directamente listOldMediaFile que ya contiene solo los medios que NO fueron eliminados
+        if(this.listOldMediaFile && this.listOldMediaFile.length > 0) {
+          // listOldMediaFile ya contiene solo los medios que deben preservarse
+          editedPost.content.media = [...this.listOldMediaFile];
+        } else {
+          // Si no hay medios en listOldMediaFile, significa que se eliminaron todos o no había ninguno
+          editedPost.content.media = [];
+        }
 
         this.postService.updatePost(this.postToEdit.uuid, editedPost).subscribe({
           next: (responseUpdatedPost) => {
-            console.log('post de solo texto actualizado',responseUpdatedPost);
+            console.log('post actualizado',responseUpdatedPost);
             window.location.reload();
             // this.postUpdatedEvent.emit(responseUpdatedPost);
           },
           error: (error) => {
-            console.log('Error al actualizar post solo texto', error)
+            console.log('Error al actualizar post', error)
           }
         })
       }

@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable, throwError } from 'rxjs';
+import { Comment } from '../../posts/models/comment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
-  private BASE_URL = 'http://localhost:9090/api/v1';
 
-  constructor(private http: HttpClient) {}
+  private readonly BASE_URL = `${environment.BACK_END_HOST_DEV}`;
+
+
+  constructor(private http: HttpClient) {
+  }
 
   getComments(postUuid: string): Observable<Comment[]> {
     return this.http.get<Comment[]>(
@@ -22,6 +27,97 @@ export class CommentService {
       commentData
     );
   }
+
+  // Obtener todos los mensajes para ser moderados
+  getCommentsToModerate(): Observable<Comment[]> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error("No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    
+    return this.http.get<Comment[]>(`${this.BASE_URL}/comments/moderated`, { headers });
+  }
+
+  // Aprobar un comentario moderado
+  approveModeratedComment(commentUuid: string): Observable<Comment>{
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error("No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const body = { uuid: commentUuid };
+
+    return this.http.put<Comment>(`${this.BASE_URL}/comments/approve`, body, { headers });
+  }
+
+  // Rechazar un comentario moderado
+  rejectModerateComment(commentUuid: string): Observable<Comment> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error("No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.put<Comment>(`${this.BASE_URL}/comments/reject`, commentUuid, { headers });
+  }
+
+  // Eliminar un comentario moderado
+  deleteModerateComment(commentUuid: string): Observable<Comment> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error("No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const body = { uuid: commentUuid };
+
+    return this.http.put<Comment>(`${this.BASE_URL}/comments/delete`, body, { headers });
+  }
+
+  // Obtener cantidad de commentarios para moderar
+  countModeratedComments(): Observable<number> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error("No hay token de autenticación");
+      return throwError(() => new Error("No autorizado"));
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<number>(`${this.BASE_URL}/comments/count-moderated`, { headers });
+  }
+
+  // Reaccionar a un comentario
 
   reactToComment(commentUuid: string, reactionData: any): Observable<any> {
     const token = localStorage.getItem('token');

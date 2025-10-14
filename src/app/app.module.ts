@@ -4,6 +4,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './authentication/http-interceptors/auth-interceptor';
+import { APP_INITIALIZER } from '@angular/core';
+import { AuthService } from './authentication/services/auth.service';
+export function refreshTokenFactory(authService: AuthService) {
+  return () => authService.tryRefreshOnStartup();
+}
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -26,6 +31,12 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { ScholarshipsMobilityComponent } from './pages/scholarships-mobility/scholarships-mobility.component';
 import { MembershipsComponent } from './pages/memberships/memberships.component';
 import { ReportsComponent } from './pages/reports/reports.component';
+import { CommentsModule } from "./comments/comments.module";
+import { EditorModule } from 'primeng/editor';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { EditInfoComponent } from './pages/edit-info/edit-info.component';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -40,7 +51,8 @@ import { ReportsComponent } from './pages/reports/reports.component';
     ProjectsComponent,
     ScholarshipsMobilityComponent,
     MembershipsComponent,
-    ReportsComponent
+    ReportsComponent,
+    EditInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -53,12 +65,23 @@ import { ReportsComponent } from './pages/reports/reports.component';
     FontAwesomeModule,
     NgbModule,
     PdfViewerModule,
-    BrowserAnimationsModule
+    CommentsModule,
+    BrowserAnimationsModule,
+    EditorModule,
+    FormsModule,
+    InputTextModule,
+    ToastModule
 ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: refreshTokenFactory,
+      deps: [AuthService],
       multi: true
     }
   ],

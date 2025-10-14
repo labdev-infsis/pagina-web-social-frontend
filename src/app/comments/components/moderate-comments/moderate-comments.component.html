@@ -1,0 +1,61 @@
+<div class="modal fade" id="moderateCommentModal" tabindex="-1" aria-labelledby="moderateCommentModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="moderateCommentModalLabel">Moderar comentarios</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="header-info">
+					<h6 class="mb-3">
+						<span *ngIf="totalModeratedComments > 0; else noComments">
+							{{ totalModeratedComments }} comentario{{ totalModeratedComments === 1 ? '' : 's' }} para moderar
+						</span>
+						<ng-template #noComments>
+							<span class="text-muted">No hay comentarios para moderar</span>
+						</ng-template>
+					</h6>
+				</div>
+				
+				<!-- Estado de carga -->
+				<div *ngIf="isLoading" class="text-center py-4">
+					<div class="spinner-border spinner-border-sm" role="status">
+						<span class="visually-hidden">Cargando...</span>
+					</div>
+					<p class="mt-2 text-muted">Cargando comentarios...</p>
+				</div>
+				
+				<!-- Lista de comentarios -->
+				<div *ngIf="!isLoading && listComments.length > 0">
+					<div class="comment-content" *ngFor="let comment of listComments">
+						<img src="{{ comment.user_photo }}" alt="" class="avatar">
+						<div class="content">
+							<div class="header-comment">
+								<h2>{{ comment.user_name }}</h2>
+								<div class="action">
+									<div class="toggle">
+										<input type="checkbox" id="button-moderate-{{ comment.uuid }}" (change)="onButtonApprovComment($event)" [value]="comment.uuid">
+										<label for="button-moderate-{{ comment.uuid }}"></label>
+									</div>
+									<button class="icon-delete" (click)="onButtonDeleteComment(comment.uuid)"></button>
+								</div>
+							</div>
+							<p class="comment">{{ comment.content }}</p>
+							<div class="date">{{ formatCommentDate(comment.date) }}</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Mensaje cuando no hay comentarios -->
+				<div *ngIf="!isLoading && listComments.length === 0" class="empty-state text-center py-5">
+					<div class="mb-3">
+						<i class="fas fa-comments fa-3x text-muted"></i>
+					</div>
+					<h5 class="text-muted">¡Excelente trabajo!</h5>
+					<p class="text-muted mb-0">No hay comentarios pendientes de moderación.</p>
+					<small class="text-muted">Todos los comentarios han sido revisados.</small>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

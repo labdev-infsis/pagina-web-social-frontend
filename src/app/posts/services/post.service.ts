@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, forkJoin } from 'rxjs';
 import { AuthService } from '../../authentication/services/auth.service';
 import { CreatePost } from '../models/create-post';
 import { Institution } from '../models/institution';
@@ -10,7 +10,6 @@ import { UploadedMedia } from '../models/uploaded-media';
 import { CreateReaction } from '../models/create-reaction';
 import { environment } from '../../../environments/environment';
 import { CommentConfig } from '../models/comment-config';
-import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiType } from '../models/emoji-type';
 import { PostComment } from '../models/post-comment';
@@ -26,12 +25,13 @@ export class PostService {
   private readonly FACEBOOK_PAGE_ID = `${environment.FACEBOOK_PAGE_ID}`;
   private readonly FACEBOOK_PAGE_ACCESS_TOKEN = `${environment.FACEBOOK_PAGE_ACCESS_TOKEN}`;
 
-  private reqHeader = { headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }) };
-  private page = 0;
-  private size = 5;
+  private readonly reqHeader = { 
+    headers: new HttpHeaders({ 'Authorization': 'Bearer ' + this.authService.getToken() }),
+    withCredentials: true
+  };
 
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private readonly http: HttpClient, private readonly authService: AuthService) { }
 
   // Método para obtener los datos de una institución
 
@@ -48,7 +48,7 @@ export class PostService {
 
   // Método para obtener el número de seguidores de una institución
   getNumberFollowers(uuid: string): Observable<any> {
-    return this.http.get<any>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
+    return this.http.get<number>(`${this.ROOT_URL}/institutions/${uuid}/followers/count`);
   }
 
   // Método para obtener un post por uuid
@@ -56,22 +56,23 @@ export class PostService {
     return this.http.get<Post>(`${this.ROOT_URL}/posts/${postUuid}`);
   }
 
-    // Método para obtener los posts
-    getPosts(): Observable<Post[]>{
-      const getPosts = 'posts'
-      const token = this.authService.getToken();
-      const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
-      return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
-    }
+  // Método para obtener los posts
+  getPosts(): Observable<Post[]> {
+    const getPosts = 'posts'
+    const token = this.authService.getToken();
+    const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
+    return this.http.get<Post[]>(`${this.ROOT_URL}/${getPosts}`, { headers });
+  }
+
+  getPostsByType(postType: string): Observable<Post[]> {
+    const urlByType = `${this.ROOT_URL}/posts?type=${postType}`;
+    return this.http.get<Post[]>(urlByType);
+  }
 
   //Metodo para obtener posts paginados
-  getPagedPosts(pageNumber : number): Observable<Post[]>{
+  getPagedPosts(pageNumber: number): Observable<Post[]> {
     const urlPagedPosts = `${this.ROOT_URL}/posts/paged?page=${pageNumber}&size=5`;
     return this.http.get<Post[]>(urlPagedPosts);
-  }
-  // Avanzar a la siguiente pagina de los posts
-  nextPage(): void {
-    this.page++;  // Avanzar a la siguiente página
   }
 
   //Método para crear un post
@@ -92,25 +93,24 @@ export class PostService {
     return this.http.post<UploadedMedia[]>(`${this.ROOT_URL}/${uploadImgs}`, formData, this.reqHeader)
   }
 
-    //Método para subir imagenes a facebook
+  //Método para subir imagenes a facebook
   uploadPhotoToFacebook(formData: FormData): Observable<FbUploadedMedia> {
     const uploadImgs = 'photos';
     const publishedStatus = 'false';
     return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${uploadImgs}?published=${publishedStatus}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
-    //Método para subir imagenes a facebook
+  //Método para subir imagenes a facebook
   publishVideoToFacebook(formData: FormData, description: string): Observable<FbUploadedMedia> {
-      const resource = 'videos';
-      return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?description=${description}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
+    const resource = 'videos';
+    return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?description=${description}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
   }
 
   //Método para subir documentos a facebook
-   publishDocumentToFacebook(formData: FormData, description: string, linkDoc: string): Observable<FbUploadedMedia> {
-        const resource = 'feed';
-        //linkDoc = 'http://imagenes.fcyt.umss.edu.bo/Calendario%20academico-2025.pdf';
-        return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?message=${description}&link=${linkDoc}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
-    }
+  publishDocumentToFacebook(formData: FormData, description: string, linkDoc: string): Observable<FbUploadedMedia> {
+    const resource = 'feed';
+    return this.http.post<FbUploadedMedia>(`${this.GRAPH_API_URL}/${this.FACEBOOK_PAGE_ID}/${resource}?message=${description}&link=${linkDoc}&access_token=${this.FACEBOOK_PAGE_ACCESS_TOKEN}`, formData);
+  }
 
   //Método para subir media (imagenes y videos)
   uploadMedia(formData: FormData): Observable<UploadedMedia[]> {
@@ -194,16 +194,12 @@ export class PostService {
 
   // Método para obtener los comentarios de un post
   getComments(postUuid: string): Observable<Comment[]> {
-    const endpoint = `posts/${postUuid}/comments`;
     return this.http.get<Comment[]>(`${this.ROOT_URL}/posts/${postUuid}/comments`);
   }
 
-
   // Método para agregar un comentario a un post usando uuid
-
-
   addComment(uuid: string, commentData: PostComment): Observable<PostComment> {
-    const endpoint = `post/${uuid}/comments`; 
+    const endpoint = `post/${uuid}/comments`;
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -212,16 +208,15 @@ export class PostService {
     }
 
     const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`  // 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`  // 
     });
 
     const fullUrl = `${this.ROOT_URL}/${endpoint}`;
 
-
     return this.http.post<PostComment>(fullUrl, commentData, { headers });
-
   }
+
   //Obtener todas las fotos de la institucion 
   getInstitutionPhotos(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/photos`;
@@ -234,13 +229,13 @@ export class PostService {
     return this.http.get<any[]>(url);
   }
 
-  
+
   //Obtener todos los videos de la institucion 
   getCommentReactions(uuid: string): Observable<any[]> {
     const url = `${this.ROOT_URL}/institutions/${uuid}/videos`;
     return this.http.get<any[]>(url);
   }
-  
+
   //Eliminar mi reaccion de post
   deleteReaction(postUuid: string): Observable<any> {
     const urlReactPost = 'reactions';
@@ -249,24 +244,77 @@ export class PostService {
 
 
 
-addReply(commentUuid: string, replyData: any): Observable<any> {
-  const token = localStorage.getItem('token'); // 🔥 Obtiene el token del almacenamiento local
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`  // 🔥 Incluye el token en el encabezado
-  };
+  addReply(commentUuid: string, replyData: any): Observable<any> {
+    const token = localStorage.getItem('token'); // 🔥 Obtiene el token del almacenamiento local
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`  // 🔥 Incluye el token en el encabezado
+    };
 
-  return this.http.post<any>(
-    `${this.ROOT_URL}/comments/${commentUuid}/replies`, 
-    replyData, 
-    { headers: headers }
-  );
-}
+    return this.http.post<any>(
+      `${this.ROOT_URL}/comments/${commentUuid}/replies`,
+      replyData,
+      { headers: headers }
+    );
+  }
 
-getRepliesByCommentUuid(commentUuid: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.ROOT_URL}/comments/${commentUuid}/replies`);
-}
+  getRepliesByCommentUuid(commentUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ROOT_URL}/comments/${commentUuid}/replies`);
+  }
 
 
-  
+  // Método para reaccionar a un comentario
+  reactToComment(commentUuid: string, body: { emojiTypeId: string; reactionDate: string }): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('No autorizado'));
+    }
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.post<any>(
+      `${this.ROOT_URL}/comment/${commentUuid}/reactions`,
+      body,
+      { headers }
+    );
+  }
+
+  deleteCommentReaction(commentUuid: string): Observable<any> {
+    return this.http.delete<any>(`${this.ROOT_URL}/comment/${commentUuid}/reactions`, this.reqHeader);
+  }
+
+  getCommentsReactions(commentUuid: string) {
+    return this.http.get<any[]>(
+      `${this.ROOT_URL}/comment/${commentUuid}/reactions`
+    );
+  }
+
+   /* Reacciones a respuestas (replies) */
+  reactToReply(replyUuid: string, body: { emoji_type_id: string; reaction_date: string }): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) return throwError(() => new Error('No autorizado'));
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post<any>(
+      `${this.ROOT_URL}/reply-reactions/${replyUuid}`,
+      body,
+      { headers }
+    );
+  }
+
+  getReplyReactions(replyUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.ROOT_URL}/reply-reactions/${replyUuid}`
+    );
+  }
+
+  deleteReplyReaction(replyUuid: string): Observable<any> {
+    return this.http.delete<any>(`${this.ROOT_URL}/reply-reactions/${replyUuid}/reactions`, this.reqHeader);
+  }
+
 }

@@ -13,9 +13,38 @@
           <div class="comment-actions mt-1">
             <span class="comment-time">{{ calculateTimeFromNow(comment.date) }}</span>
             <span class="mx-1">·</span>
-            <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
-            <!-- Reacciones y contador -->
-            <app-reactions [commentUuid]="comment.uuid"></app-reactions>
+            <ng-container *ngIf="authenticated">
+              <button class="reply-btn" (click)="toggleReplyInput(comment.uuid)">Responder</button>
+              <!-- Reaccionar y mostrar opciones de tipos de mojis -->
+              <div class="fb-reaction-btn-wrapper" (mouseenter)="showEmojiOptions[comment.uuid]=true"
+                (mouseleave)="showEmojiOptions[comment.uuid]=false">
+                <button type="button" class="fb-reaction-btn" [ngClass]="getEmojiClass(comment.uuid)"
+                  (click)="reactToComment(comment.uuid, getSelectedEmoji(comment.uuid)?.uuid || defaultEmoji.uuid)">
+                  <ng-container *ngIf="getSelectedEmoji(comment.uuid); else defaultLike">
+                    <span class="emoji">{{ getSelectedEmoji(comment.uuid)?.emoji_code }}</span>
+                    <span class="label">{{ getEmojiLabel(getSelectedEmoji(comment.uuid)?.emoji_name) }}</span>
+                  </ng-container>
+                  <ng-template #defaultLike>
+                    <i class="fa-regular fa-thumbs-up"></i>
+                    <span class="label">Me gusta</span>
+                  </ng-template>
+                </button>
+                <!-- Opciones de emojis al hacer hover -->
+                <div class="fb-emoji-options" *ngIf="showEmojiOptions[comment.uuid]">
+                  <ng-container *ngFor="let emoji of emojis">
+                    <span class="emoji-option" [title]="emoji.emoji_name"
+                      (click)="reactToComment(comment.uuid, emoji.uuid, true); showEmojiOptions[comment.uuid]=false">
+                      {{ emoji.emoji_code }}
+                    </span>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+            <span class="comment-reactions-count" *ngIf="getCommentReactionsCount(comment) > 0"
+              (click)="openCommentReactionsModal(comment)" style="cursor:pointer">
+              {{ getCommentReactionsCount(comment) }}
+              <i class="bi bi-hand-thumbs-up icon"></i>
+            </span>
           </div>
         </div>
       </div>
@@ -35,57 +64,14 @@
 
       <!-- Sección de respuestas -->
       <div class="replies" *ngIf="comment.replies && comment.replies.length > 0">
-        <div *ngFor="let reply of comment.replies | slice:0:replyLimit[comment.uuid]" class="reply-wrapper">
-          <!-- Contenido de la respuesta - Estructura similar a comentarios -->
-          <div class="d-flex align-items-start reply-row">
-            <!-- Avatar -->
-            <img [src]="reply.user_photo || 'assets/default-avatar.png'" alt="Foto de perfil" class="reply-img" />
 
-            <!-- Burbuja de la respuesta (similar a comentarios) -->
-            <div class="comment-bubble">
-              <p class="mb-1"><strong>{{ reply.name }} {{ reply.lastName }}</strong></p>
-              <p class="mb-1">{{ reply.content }}</p>
-              <div class="comment-actions mt-1">
-                <span class="reply-time">{{ calculateTimeFromNow(reply.createdDate) }}</span>
-                <span class="mx-1">·</span>
-                <button class="reply-btn" (click)="toggleReplyInput(reply.uuid)">Responder</button>
-                <!-- Componente de reacciones (igual que en comentarios) -->
-                <app-reactions [commentUuid]="reply.uuid"></app-reactions>
-              </div>
-            </div>
-          </div>
-
-          <!-- Input para responder a esta respuesta -->
-          <div *ngIf="replyInputVisible[reply.uuid]" class="reply-box">
-            <img [src]="currentUser?.photo_profile_path || 'assets/default-avatar.png'" alt="Foto de perfil"
-              class="reply-img" />
-            <div class="reply-input-container">
-              <input [(ngModel)]="replyText[reply.uuid]" placeholder="Escribe una respuesta..." class="reply-input"
-                (keydown.enter)="addReply(comment.uuid, reply.uuid, false)" />
-              <button class="send-reply-btn" (click)="addReply(comment.uuid, reply.uuid, false)">
-                <i class="bi bi-send"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Respuestas anidadas -->
-          <div class="nested-replies" *ngIf="reply.replies && reply.replies.length > 0">
-            <ng-container *ngTemplateOutlet="recursiveReplies; 
-            context: { replies: reply.replies | slice:0:replyLimit[reply.uuid], 
-            parentCommentUuid: comment.uuid }">
-            </ng-container>
-
-            <!-- Controles para mostrar más/menos respuestas -->
-            <button *ngIf="(replyLimit[reply.uuid] || 2) < (reply.replies?.length || 0)" class="view-more-replies"
-              (click)="showAllReplies(reply.uuid)">
-              Ver más respuestas
-            </button>
-            <button *ngIf="(replyLimit[reply.uuid] || 2) === (reply.replies?.length || 0)" class="view-less-replies"
-              (click)="showLessReplies(reply.uuid)">
-              Ver menos respuestas
-            </button>
-          </div>
-        </div>
+        <app-reply-list *ngIf="comment.replies && comment.replies.length > 0" [parentUuid]="comment.uuid"
+          [replies]="comment.replies" [currentUser]="currentUser" [replyInputVisible]="replyInputVisible"
+          [replyText]="replyText" [replyLimit]="replyLimit" [authenticated]="authenticated"
+          (toggleReplyInput)="toggleReplyInput($event)"
+          (addReply)="addReply(comment.uuid, $event.replyUuid, $event.isTopLevel)"
+          (showAllReplies)="showAllReplies($event)" (showLessReplies)="showLessReplies($event)">
+        </app-reply-list>
 
         <!-- Controles para mostrar más/menos respuestas del comentario principal -->
         <button *ngIf="(replyLimit[comment.uuid] || 0) < (comment.replies?.length || 0)" class="view-more-replies"

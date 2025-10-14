@@ -1,0 +1,26 @@
+
+.btn {
+    background-color: var(--blue-color);
+    --bs-btn-border-color: none;
+	width: 34px;
+	height: 34px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.bi {
+		font-size: x-large;
+	}
+}
+
+.editor-text {
+	display: flex;
+	gap: 1.5rem;
+
+	.edit-input-text {
+		height: 34px; 
+		padding: 10px; 
+		font-weight: 700; 
+		color: var(--bs-heading-color);
+	}
+}

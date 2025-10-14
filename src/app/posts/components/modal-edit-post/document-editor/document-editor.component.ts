@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, WritableSignal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal } from '@angular/core';
 import { Media } from '../../../models/media';
 
 @Component({
@@ -11,6 +11,9 @@ export class DocumentEditorComponent {
   @Input() mediaDocPost!: Media[] | undefined; //Documento que se recibe del post
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadNewFileDoc = new EventEmitter<File>(); 
+  @Output() documentRemovedEvent = new EventEmitter<boolean>(); // Nuevo evento para notificar la eliminación
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  
   showPreviewDoc = false;
   fileMediaDoc!: Media; //El doc del post - not undefined
   fileDoc!: File; //El doc nuevo que se puede añadir
@@ -34,10 +37,15 @@ export class DocumentEditorComponent {
   }
 
   changeInputMediaDoc(event: Event){
-    if(event.target instanceof HTMLInputElement && event.target.files){
-      this.fileDoc = event.target.files[0]
-      this.showPreviewDoc = true;
+    if(event.target instanceof HTMLInputElement && event.target.files && event.target.files.length > 0){
+      this.fileDoc = event.target.files[0];
+
+      this.fileType = this.getTypeFile(this.fileDoc.name);
+      
+      this.showPreviewDoc = true;      
       this.loadNewFileDoc.emit(this.fileDoc);
+    } else {
+      console.error('No se seleccionó ningún archivo o el evento no contiene archivos');
     }
   }
 
@@ -53,16 +61,34 @@ export class DocumentEditorComponent {
   }
 
   openInputFileDoc(){
-    const inputFileDoc = document.getElementById('input-file-doc');
-    inputFileDoc?.click();
+    // Usar ViewChild para acceder al input
+    if (this.fileInput && this.fileInput.nativeElement) {
+      console.log('Abriendo selector de archivos');
+      this.fileInput.nativeElement.click();
+    } else {
+      console.error('No se pudo encontrar el elemento de entrada de archivo');
+    }
   }
 
   closeCleanPreviewDoc(){
-    this.mediaDocPost = []; //Limpiar el doc del post (no rferenciarlo)
+    // Verificar si había un documento existente que estamos eliminando
+    const hadExistingDocument = this.mediaDocPost && this.mediaDocPost.length > 0;
+    
+    this.mediaDocPost = undefined; 
     this.fileDoc = new File([''],'');
-    this.showPreviewDoc  = false;
+    this.showPreviewDoc = false;
     this.showAreaDoc.set(false);
+    
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
 
-    this.closeAreaDocEvent.emit(this.showAreaDoc()); //Si se envia false es que se elimino el doc
+    // Emitir que se cerró el área de documentos
+    this.closeAreaDocEvent.emit(false);
+    
+    // Si había un documento existente, emitir que se eliminó
+    if (hadExistingDocument) {
+      this.documentRemovedEvent.emit(true);
+    }
   }
 }

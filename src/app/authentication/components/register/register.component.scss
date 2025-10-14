@@ -1,85 +1,135 @@
 .container {
-    border-radius: 0.5rem;
-    padding: 1.7rem 2rem;
-    border: 1px solid var(--blue-color);
+  border-radius: 0.5rem;
+  padding: 1.7rem 2rem;
+  border: 1px solid var(--blue-color);
 }
 
 .modal-content {
-    color: var(--blue-color);
-    padding: 2rem 1rem;
+  color: var(--blue-color);
+  padding: 2rem 1rem;
 }
 
 .modal-header {
-    border-bottom: none;  
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;  
-    padding: 0;  
-    position: relative;
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 0;
+  position: relative;
 }
 
 .modal-title {
-    flex: 1;  
-    text-align: center; 
-    color: var(--blue-color); 
+  flex: 1;
+  text-align: center;
+  color: var(--blue-color);
 }
 
 .btn-close {
-    border: none; 
-    font-size: 1.25rem; 
-    line-height: 1;  
-
-    position: absolute;
-    right: 10px;  
-    top: 50%;  
-    transform: translateY(-50%); 
-    z-index: 10;  
-
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
-
 .btn {
-    background-color: #003770;
+  background-color: #003770;
 }
 
 .botones {
-    justify-items: center;
-    padding: 1rem 0;
+  justify-items: center;
+  padding: 1rem 0;
+}
+
+.form-control {
+  border: 1px solid #003770 !important; 
 }
 
 .input-password {
-    position: relative;
-}
+  position: relative;
 
-input {
-    border: 1px solid var(--blue-color);
-}
+  input {
+    padding-right: 35px;
+  }
 
-.is-invalid ~ .invalid-feedback {
-    color: var(--red-color);
-}
-
-.bi {
-    cursor: pointer;
+  .eye {
     position: absolute;
-    right: 10px; 
+    right: 12px;
+    top: 50%;
+    transform: translateY(-60%);
+    cursor: pointer;
     color: #9FB0E7;
-    transform: translateY(-150%);
-    transition: .4s ease all;
+    z-index: 2;
+
+    &:hover {
+      color: var(--blue-color);
+    }
+  }
+
+  &.has-error .eye,
+  .is-invalid ~ .eye {
+    right: 2.15rem;
+    color: var(--red-color) !important;
+  }
 }
 
+.is-invalid {
+  border-color: var(--red-color) !important;
+}
 
-.bi:hover {
-    color: var(--blue-color);
+.invalid-feedback {
+  color: var(--red-color);
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
 }
 
 .hide {
-    display: none !important;
+  display: none !important;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+input[type="password"]::-moz-textfield-decoration {
+  display: none;
+}
+
+.input-password .is-invalid ~ .eye {
+  right: 2.15rem;
+  color: var(--red-color) !important;
+}
+
+.invalid-feedback {
+  min-height: 20px;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 576px) {
-    .botones {
-        min-width: 100%;
-    }
+  .botones {
+    min-width: 100%;
+  }
+
+  .input-password input {
+    padding-right: 30px;
+  }
+
+  .eye {
+    right: 10px;
+  }
 }

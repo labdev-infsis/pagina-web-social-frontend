@@ -46,19 +46,32 @@
 	.page-section {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 20px;
+		gap: 50px;
 		margin-bottom: 40px;
 		padding-bottom: 20px;
 		border-bottom: 1px solid var(--blue-color);
 
-		h3 {
-			font-size: 14px;
-			font-weight: 700;
-		}
-
+		
 		.section-content {
+			h3 {
+				font-size: 14px;
+				font-weight: 700;
+			}
+	
+			p {
+				text-align: justify;
+			}
+
+			.text {
+				text-align: justify;
+				p {
+					text-align: justify;
+					white-space: wrap;
+				}
+			}
 
 			.media-container {
+				position: relative;
 				padding-bottom: 20px;
 				width: 100%;
 			}

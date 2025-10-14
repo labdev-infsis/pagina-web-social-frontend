@@ -9,7 +9,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentsComponent } from './../comments/comments.component';
 import { PostComment } from '../../models/post-comment';
 import { UserDetail } from '../../models/user-detail';
-import { AuthService } from '../../../authentication/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -20,11 +19,12 @@ export class PostComponent {
   private modalService = inject(NgbModal);
   @Input() post: any;
   @Output() reactionChanged = new EventEmitter<void>(); // Nuevo Output para emitir eventos de cambio de reacción
+  @Input() currentUser!: UserDetail;
+  @Input() authenticated: boolean = false;
   comments: PostComment[] = [];
   newComment: string = '';
   showCommentInput: boolean = false;
-  currentUser !: UserDetail;
-  authenticated: boolean;
+  postUrl: string = "https://devpws.cs.umss.edu.bo/post/";
 
   @Output() requestDeletePost = new EventEmitter<string>();
   @Output() requestUpdatePost = new EventEmitter<Post>();
@@ -47,15 +47,12 @@ export class PostComponent {
   typeImages = ['image', 'image/jpeg', 'image/jpg', 'image/png'];
   typeVideos = ['video', 'video/mp4'];
   totalReactions = signal(0);
-
+  totalComments = signal(0);
 
   constructor(
-    private postService: PostService,
-    private authService: AuthService
-  ) {
-    this.authenticated = authService.isAuthenticated()
-  }
-
+    private postService: PostService
+  ) {}
+  
   ngOnInit() {
     this.listMediaPost = this.loadMediaPost();
   
@@ -68,23 +65,14 @@ export class PostComponent {
       }
     });
 
-    if (this.authenticated === true) {
-      this.postService.getUser().subscribe({
-          next:(user: UserDetail) => {
-            this.currentUser = user;
-          },
-          error:(error) => {
-            console.error('Error al obtener el usuario actual', error);
-          }
-        });
-    }
-
     if (this.post.reactions) {
       this.totalReactions.set(this.post.reactions.total_reactions);
       this.recuperarReaccion(); 
     } else {
       console.warn("Advertencia: this.post.reactions es undefined");
     }
+
+    this.totalComments.set(this.post.commentCounter.totalComments);
   }
   
 
@@ -120,8 +108,8 @@ export class PostComponent {
     return copyPost;
   }
 
-  openViewPostComments(post: Post) {
-    const modalRef = this.modalService.open(CommentsComponent, { size: 'xl', centered: true });
+  openViewPostComments(post: Post, initialImageIndex: number = 0) {
+    const modalRef = this.modalService.open(CommentsComponent, { size: 'lg', centered: true });
     modalRef.componentInstance.institution = this.institution;
     modalRef.componentInstance.post = post;
     modalRef.componentInstance.postUuid = post.uuid;
@@ -129,6 +117,10 @@ export class PostComponent {
     modalRef.componentInstance.postAuthor = this.institution.name;
     modalRef.componentInstance.postDate = this.calculateTimePost;
     modalRef.componentInstance.postDescription = post.content.text;
+    modalRef.componentInstance.initialImageIndex = initialImageIndex;
+    modalRef.dismissed.subscribe(() => {
+      this.totalComments.set(modalRef.componentInstance.comments.length);
+    });
   }
 
   getGridClass(media: Media[]): string {
@@ -241,7 +233,7 @@ export class PostComponent {
   }
 
   amountComments() {
-    return this.post.commentCounter.totalComments
+    return this.totalComments();
   }
 
   recuperarReaccion() {
@@ -360,5 +352,18 @@ export class PostComponent {
       console.log(textPost)
     }
     return textPost || '';
+  }
+
+  onShare() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Mira esta publicación',
+        url: this.postUrl + this.post.uuid
+      }).catch(() => { });
+    } else {
+      navigator.clipboard.writeText(this.postUrl).then(() => {
+        alert('URL copiada al portapapeles');
+      });
+    }
   }
 }
