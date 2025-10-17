@@ -11,7 +11,7 @@
       <div class="post-details">
         <!-- Información del autor -->
         <div class="d-flex flex-column">
-          <div class="d-flex flex-row justify-content-start" *ngIf="institution">
+          <div class="post-owner d-flex flex-row justify-content-start" *ngIf="institution">
             <img [src]="institution.logo_url" alt="Foto de perfil" class="img-profile" />
             <div class="info-user">
               <h2>{{ institution.name }}</h2>

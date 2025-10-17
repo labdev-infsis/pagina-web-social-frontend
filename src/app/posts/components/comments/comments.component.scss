@@ -25,10 +25,10 @@ $font-size-large: 1.2rem;
 .modal-container {
   display: flex;
   flex-direction: column;
-  height: 95vh;
+  height: 95%;
   min-height: 600px;
   max-height: 1200px;
-  width: 80vw;
+  width: 100%;
   max-width: 900px;
   background: white;
   border-radius: 8px;
@@ -71,6 +71,21 @@ $font-size-large: 1.2rem;
     .object-fit-md-contain {
       margin-bottom: 1rem;
     }
+  }
+}
+
+@media (max-width: 768px) {
+
+  .post-owner {
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+  
+  .modal-container .post-description {
+    padding: 1rem;
   }
 }
 
@@ -259,7 +274,6 @@ $font-size-large: 1.2rem;
       border: 1px solid $border-color;
 
       video, img {
-        display: block;
         width: 100%;
         height: auto;
         border-radius: 8px;
