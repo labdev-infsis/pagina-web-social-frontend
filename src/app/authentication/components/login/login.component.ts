@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
   usernameField!: ElementRef;
   correctCredentials: boolean = true;
   public isLoggedIn = false;
+  public isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,11 +43,14 @@ export class LoginComponent implements OnInit {
     if(dataValid){
       let login = this.loginForm.value;
 
-      this.auth.login(login.username, login.password).subscribe({
+      this.isLoading = true;
+      this.auth.login(login.username, login.password)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
         next: () => {
           this.isLoggedIn = true;
           this.router.navigate(['/']);
-          window.location.reload()
+          window.location.reload();
         },
         error: (error: any) => {
           console.log('se imprime esto',error)
