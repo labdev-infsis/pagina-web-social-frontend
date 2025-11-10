@@ -73,15 +73,15 @@ const routes: Routes = [
       { path: 'cudie', 
         component: ViewAllPostsCudieComponent
       },
-      {
-        path: 'profile',
-        component: ProfileComponent
-      }
     ],
   },
   {
     path: 'posts/:id',
     component: PageComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
   }
 ];
 

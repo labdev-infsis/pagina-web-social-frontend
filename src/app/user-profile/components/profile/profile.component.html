@@ -5,11 +5,11 @@
         </div>
 
         <div class="logo-overlay">
-            <img [src]="currentUser.photo_profile_path" alt="Foto ususario" class="career-logo">
+            <img *ngIf="currentUser" [src]="currentUser.photo_profile_path" alt="Foto ususario" class="user-logo">
         </div>
     </div>
 
     <div class="header-details">
-        <h3>{{ currentUser.name + ' ' + currentUser.lastName }}</h3>
+        <h3 *ngIf="currentUser">{{ currentUser.name + ' ' + currentUser.lastName }}</h3>
     </div>
 </div>
