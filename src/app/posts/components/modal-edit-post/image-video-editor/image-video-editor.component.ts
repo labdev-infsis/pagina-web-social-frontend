@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Media } from '../../../models/media';
 
 @Component({
@@ -85,44 +85,35 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
 
   async changeInputMedia(event: Event | DragEvent){
     event.preventDefault();
-    let valueMedia;
-    if (event instanceof DragEvent && event.dataTransfer) {
-      // Evento de arrastrar y soltar
-      valueMedia = event.dataTransfer;
-    } else if (event.target instanceof HTMLInputElement && event.target.files) {
-      // Evento de entrada de archivo
-      valueMedia = event.target;
+    const newFiles = this.getFilesFromEvent(event);
+
+    if (!newFiles || newFiles.length === 0) {
+      return;
+    }
+
+    if(newFiles && !this.isValidFileType(newFiles)){
+      alert('Por favor, seleccione solo imágenes o videos');
+       if (event.target instanceof HTMLInputElement) {
+        event.target.files = new DataTransfer().files; // Limpiar el input
+      }
+      return;
+    }
+
+    // Validar tamaño máximo de videos
+    if (this.hasOversizedVideo(newFiles)) {
+      this.handleOversizedVideoError(event);
+      return;
     }
     
+    this.showPreviewMedia = true;
+    //Renderizar imagenes videos seleccionados - ACUMULAR en lugar de reemplazar
+    this.listFileMediaAdded = [...this.listFileMediaAdded, ...newFiles];
     
-    if(valueMedia?.files && valueMedia.files.length >0 ){
-      this.showPreviewMedia = true;
-      //Renderizar imagenes videos seleccionados - ACUMULAR en lugar de reemplazar
-      const newFiles = Array.from(valueMedia.files);
-      this.listFileMediaAdded = [...this.listFileMediaAdded, ...newFiles];
-      
-      //Emitir al padre las images precargadas para habilitar el boton de publicar
-      this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
-      this.loadOldFilesMediaEvent.emit(this.listFileMediaPost); //Enviar imagenes existentes actualizadas (después de eliminaciones)
+    //Emitir al padre las images precargadas para habilitar el boton de publicar
+    this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
+    this.loadOldFilesMediaEvent.emit(this.listFileMediaPost); //Enviar imagenes existentes actualizadas (después de eliminaciones)
 
-      const newPreviews = newFiles.map(file => ({type: file.type, url: URL.createObjectURL(file)}));
-      this.mediaListPreviewAdded = [...this.mediaListPreviewAdded, ...newPreviews];
-    }
-  }
-
-  private readFileAsDataURL(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject('Error al leer el archivo');
-        }
-      };
-      reader.onerror = () => reject('Error al leer el archivo');
-      reader.readAsDataURL(file);
-    });
+    this.loadMediaPreviewsAppend(newFiles);
   }
 
   onDragOver(event: DragEvent): void {
@@ -138,29 +129,11 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
     return null;
   }
 
-  private processMediaFiles(files: File[], originalEvent: Event): void {
-    // Validar tamaño máximo de videos
-    if (this.hasOversizedVideo(files)) {
-      this.handleOversizedVideoError(originalEvent);
-      return;
-    }
-    
-    // Inicializar listFileMediaAdded si es nulo
-    if (!this.listFileMediaAdded) {
-      this.listFileMediaAdded = [];
-    }
-    
-    // Acumular archivos en lugar de reemplazarlos
-    const newFiles = Array.from(files);
-    this.listFileMediaAdded = [...this.listFileMediaAdded, ...newFiles];
-    
-    // Actualizar estado y emitir lista acumulada
-    this.showPreviewMedia = true;
-    this.loadNewFilesMediaEvent.emit(this.listFileMediaAdded);
-    this.loadOldFilesMediaEvent.emit(this.listFileMediaPost); //Enviar imagenes existentes
-    
-    // Leer archivos para previsualización
-    this.loadMediaPreviewsAppend(newFiles);
+  private isValidFileType(files: File[]): boolean {
+    return files.every(file => {
+      const fileType = file.type;
+      return fileType.startsWith('image/') || fileType.startsWith('video/');
+    });
   }
 
   private hasOversizedVideo(files: File[]): boolean {
@@ -178,7 +151,6 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
     }
     
     // Resetear estado
-    this.showPreviewMedia = false;
     this.mediaListPreviewAdded = [];
     this.listFileMediaAdded = [];
   }
@@ -300,11 +272,11 @@ export class ImageVideoEditorComponent implements OnInit, OnChanges {
   }
   
   private cleanUpMediaPreviews(): void {
-    this.mediaListPreviewAdded.forEach(media => {
+    for(const media of this.mediaListPreviewAdded){
       if (media.url) {
         URL.revokeObjectURL(media.url);
       }
-    });
+    }
     this.mediaListPreviewAdded = [];
   }
 }

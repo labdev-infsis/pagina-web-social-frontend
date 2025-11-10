@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, WritableSignal } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, WritableSignal } from '@angular/core';
 import { Media } from '../../../models/media';
 
 @Component({
@@ -6,14 +6,15 @@ import { Media } from '../../../models/media';
   templateUrl: './document-editor.component.html',
   styleUrl: './document-editor.component.scss'
 })
-export class DocumentEditorComponent {
+export class DocumentEditorComponent implements OnInit {
   @Input() showAreaDoc!: WritableSignal<boolean>;
   @Input() mediaDocPost!: Media[] | undefined; //Documento que se recibe del post
   @Output() closeAreaDocEvent = new EventEmitter<boolean>(); 
   @Output() loadNewFileDoc = new EventEmitter<File>(); 
   @Output() documentRemovedEvent = new EventEmitter<boolean>(); // Nuevo evento para notificar la eliminación
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  
+  public readonly SIZE = 100;
+  private readonly MAX_FILE_SIZE = this.SIZE * 1024 * 1024; // 100MB en bytes
   showPreviewDoc = false;
   fileMediaDoc!: Media; //El doc del post - not undefined
   fileDoc!: File; //El doc nuevo que se puede añadir
@@ -26,7 +27,7 @@ export class DocumentEditorComponent {
   fileType!: string;
 
   ngOnInit(){
-    if(this.mediaDocPost && this.mediaDocPost.length == 1){
+    if(this.mediaDocPost?.length == 1){
 
       this.fileMediaDoc = this.mediaDocPost[0];
       this.fileType = this.getTypeFile(this.fileMediaDoc.type);
@@ -40,6 +41,22 @@ export class DocumentEditorComponent {
     if(event.target instanceof HTMLInputElement && event.target.files && event.target.files.length > 0){
       this.fileDoc = event.target.files[0];
 
+      // Validar tipo archivo pdf
+      if(this.fileDoc && !this.isValidFileType(this.fileDoc.type)){
+        alert('Por favor, seleccione un documento tipo PDF');
+        //Limpiar el input file
+        event.target.files = new DataTransfer().files;
+        return;
+      }
+
+      // Validar tamaño de archivo
+      if(this.fileDoc && !this.isValidFileSize(this.fileDoc.size)){
+        alert(`El archivo es demasiado grande. Máximo permitido: ${this.SIZE}MB.`);
+        //Limpiar el input file
+        event.target.files = new DataTransfer().files;
+        return;
+      }
+
       this.fileType = this.getTypeFile(this.fileDoc.name);
       
       this.showPreviewDoc = true;      
@@ -47,6 +64,14 @@ export class DocumentEditorComponent {
     } else {
       console.error('No se seleccionó ningún archivo o el evento no contiene archivos');
     }
+  }
+
+  private isValidFileType(type: string): boolean {
+    return type.includes('pdf');
+  }
+
+  private isValidFileSize(size: number): boolean {
+    return size <= this.MAX_FILE_SIZE;
   }
 
   getTypeFile(type: string){
@@ -62,8 +87,7 @@ export class DocumentEditorComponent {
 
   openInputFileDoc(){
     // Usar ViewChild para acceder al input
-    if (this.fileInput && this.fileInput.nativeElement) {
-      console.log('Abriendo selector de archivos');
+    if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.click();
     } else {
       console.error('No se pudo encontrar el elemento de entrada de archivo');
@@ -79,7 +103,7 @@ export class DocumentEditorComponent {
     this.showPreviewDoc = false;
     this.showAreaDoc.set(false);
     
-    if (this.fileInput && this.fileInput.nativeElement) {
+    if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.value = '';
     }
 
