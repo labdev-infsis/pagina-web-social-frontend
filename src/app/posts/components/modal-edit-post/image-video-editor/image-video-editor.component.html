@@ -87,7 +87,7 @@
     </ng-container>
     
     <!-- Elemento visual para añadir más imágenes/videos integrado en el grid -->
-    <div class="media-container add-more-tile" (click)="openInputFileMedia()">
+    <div class="media-container add-more-tile" (click)="openInputFileMedia()" (keypress)="openInputFileMedia()">
       <div class="add-more-content">
         <i class="bi bi-plus-lg"></i>
       </div>
